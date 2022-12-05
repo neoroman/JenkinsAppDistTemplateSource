@@ -1,0 +1,43 @@
+{
+  "title": "07월 검증 버전",
+  "appVersion": "1.0.1",
+  "buildVersion": "2",
+  "versionKey": "",
+  "buildNumber": "11",
+  "buildTime": "2021.07.27 09:14",
+  "urlPrefix": "https://app.company.com/CompanyProject/FooBar/android_distributions/1.0.1/",
+  "releaseType": "release",
+  "files": [
+    {
+      "title": "Google Playstore 1차 난독화",
+      "size": "102MB",
+      "file": "CP_FooBar_1.0.1-GoogleStore-release.apk",
+      "plist": ""
+    },
+    {
+      "title": "One Store 1차 난독화",
+      "size": "102MB",
+      "file": "CP_FooBar_1.0.1-OneStore-release.apk",
+      "plist": ""
+    },
+    {
+      "title": "난독화파일_스크린샷",
+      "size": "png",
+      "file": "CP_FooBar_1.0.1_file.png",
+      "plist": ""
+    },
+    {
+      "title": "난독화스크립트_증적자료 ",
+      "size": "png",
+      "file": "CP_FooBar_1.0.1_Obfuscation.png",
+      "plist": ""
+    },
+    {
+      "title": "2차 난독화 Signing",
+      "size": "unsigned 버전 업로드 필요",
+      "file": "../android/android_signing.php?title=CP_FooBar_1.0.1",
+      "plist": ""
+    }
+  ],
+  "gitLastLog": "<li><span class=\"tit\">20210727</span><p class=\"txt\">3.3.1</p></li>\n<li><span class=\"tit\">20210726</span><p class=\"txt\">인증 후 선호정보 조회시 뮤직 객체 삭제</p></li>"
+}

@@ -1,0 +1,33 @@
+##
+.DS_Store
+# App binaries
+*.apk
+*.apk.idsig
+*.APK
+*.ipa
+*.IPA
+*.app
+*.aab
+*.aab.idig
+*.AAB
+*.AAB.idig
+**/*.xcarchive
+ios_distribution/ExportOptions.plist
+#[ia][on][sd]*_distributions/[0-9]*/*.html*
+[ia][on][sd]*/*.html
+##
+# PNG
+*_file.png
+*_Obfuscation.png
+*IxShieldCheck.png
+##
+# Log
+*.log
+*.bak
+##
+# i18n
+langcache/php_i18n_*
+##
+# etc
+PHPMailer
+info.php

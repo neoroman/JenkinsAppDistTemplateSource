@@ -1,0 +1,143 @@
+{
+	"os": {
+		"android": "Android",
+		"ios": "iOS"
+	},
+	"setup": {
+		"description2": "You could change config/config.json file directly after setup finished.",
+		"description": "Click 'Next' or 'Done' after update each field below.",
+		"step": "Step",
+		"title": "Distribution Site Installations"
+	},
+	"title": {
+		"h2_reset_password": "Reset Password",
+		"reset_password_input": "Input new password",
+		"reset_password_input2": "Input new password again",
+		"reset_password": "Password",
+		"reset_password_again": "Password Again",
+		"h2_client": "{Client} App Distributions",
+		"h2_domestic": " QA App Distributions",
+		"h2_domestic_in_os": "QA Page",
+		"tab_full_version": "Full Version",
+		"tab_qc_version": "QC Apply Version",
+		"admin_password": "Admin Password",
+		"feedback": "Leave feedback",
+		"tab_previous_version": "Previous Version",
+		"alt_previous_page": "Previous Page",
+		"register_distribution": "Register Distributions",
+		"distribution_version": "Version Information",		
+		"distribution_purpose": "Purpose of Distribution",
+		"distribution_purpose_example": "e.g. For special devices(max 10 characters)",
+		"distribution_detail": "Details of Distribution",
+		"distribution_detail_example": "e.g. Change Wi-Fi scan time to 15 seconds",
+		"distribution_2nd_signing_google_store": "Signed APK for Google Playstore 등록용(2nd)",
+		"distribution_2nd_signing_one_store": "Signed APK for One Store 등록용(2nd)",
+		"distribution_mail_usage": "Send E-mail Notification",
+		"distribution_mail_both_platform": "Deliver Android+iOS at the same time, only if same version and date",
+		"admin_password_guide": "Admin Password Guide",
+		"alt_resend_mail": "Modify and Resend Mail",
+		"register_2nd_apksigning": "Register 2nd APK signing",
+		"register_googlestore_apk": "Select 2nd signing APK for <span class=\"point_c1\">Google Store</span>",
+		"register_onestore_apk": "Select 2nd siging APK for <span class=\"point_c1\">One Store</span>",
+		"register_finished": "File upload <span class=\"point_c1\">finished</span>",
+		"send_link": "Send App. Link",
+		"email": "Email",
+		"email_example": "foo@company.com, foo2@company.com",
+		"link_to_send": "앱 링크",
+		"file_info": "File Informations",
+		"file_name": "Name",
+		"file_ext": "Extention",
+		"file_format": "Format",
+		"file_size": "Size",
+		"file_path": "Path",
+		"back": "Back",
+		"mandatory": "Mandatory",
+		"optional": "Optional"
+	},
+	"description": {
+		"notice16_password_reset": "Reset password in <font color=red>15 minute</font>.",
+		"notice15_android": "[Notice] 'Live APK' is connected to Commercial Server, 'Test APK' is connected to TestBed Server.",
+		"notice14_apple_ios_enterprise": "[Notice] <a href=https://support.apple.com/en-us/HT204460 target=_blank>Install custom enterprise apps on iOS (Link)</a>",
+		"mail_recommand": "App. Dev. Team introduce App. <BR />Now you could use many function, and more on your mobile device. <BR />Hope to enjoy your mobile work and life after download from link below.",
+		"notice13_input_email_for_link": "Click 'Send link' button after fill in 'Email' field.",
+		"notice12_not_permitted_extention": "Not permitted extention.",
+		"notice11_file_not_uploaded": "File is not uploaded.",
+		"notice10_file_not_selected": "File is not selected.",
+		"notice9_file_is_too_big": "File size exceed.",
+		"notice8_file_alert": "Select file to upload.",
+		"notice7_signing": "Click 'Upload' button after select apk signing target.",
+		"notice6_admin": "App > Settings > (Easter Egg) > Popup of Admin Password > App Environment",
+		"notice6_admin_detail": "※ Ask fix password to App Manager",
+		"notice5": "Click 'Send to Client' after input purpose and details",
+		"notice4": "Click <em class=\"ico_share\"><span class=\"hide\">Share</span></em> then share app to client via mail.&nbsp;After shared, click <em class=\"ico_share\"><span class=\"hide\">Share</span></em> button  to '<b>Modify and Resend Mail</b>'.",
+		"notice3_domestic": "Share App via mail. Using <em class=\"ico_share\"></em> button inside each platform pages.",
+		"notice2": "<font color=#132F50>App Store iOS size is Swift Library approximately 46 MB included. It's 70% after upload to AppStore</font>",
+		"notice1": "Site Notice: You cannot search again, unless click input work directly."
+	},
+	"company": {
+		"name": "{Company Name}",
+		"team": "App. Dev. Group",
+		"email": "appdev.svc@company.com"
+	},
+	"client": {
+		"short_url": "https://bit.ly/client_site",
+		"title": "{Client} {Business}",
+		"name": "{Client}",
+		"full_name": "{Client} Corporation"
+	},
+	"app": {
+		"name": "{App Name}",
+		"version": "{App Version}"
+	},
+	"button": {
+		"reset_password": "Reset Password",
+		"upload": "Upload",
+		"send_to_client": "Send to client",
+		"resend_mail": "Resend mail",
+		"link_to_client": "Check pages for {Client}",
+		"send_link": "Send link",
+		"link_to_recommand": "Send this app. link to colleague"
+	},
+	"search": {
+		"define5": "IoT",
+		"define4": "LTE",
+		"define3": "Pay",
+		"define2": "Device",
+		"define1": "Music",
+		"title": "Search",
+		"close": "Close",
+		"input_word": "Input word directly",
+		"select": "Select",
+		"reset_word": "Reset search word"
+	},
+	"mailHeader": {
+		"releaseKeyword": "QC",
+		"developKeyword": "Test",
+		"doNothingHere": "파라미터 설명을 위해 추가한 항목"
+	},
+	"mail": {
+		"releaseKeyword": "",
+		"developKeyword": "",
+		"from": "appdevaccount@company.com",
+        "from_name": "App Dist Support",
+        "to": "foo@client.com|foo2@client.com",
+        "to_name": "ClientName1|ClientName2",
+		"debug_to": "test@company.com",
+		"debug_to_name": "Receipient of Test for debug",
+        "reply_to": "appdev.svc@company.com",
+        "reply_to_name": "App Support",
+		"cc": "domestic@client.com|domestic2@client.com|appdev.svc@company.com",
+		"cc_name": "support1|support2|Company App Support"
+	},
+	"page": {
+		"next": "Next",
+		"prev": "Prev"
+	},
+	"copywrite": {
+		"years": "2017-2022",
+		"company": "{Company Title, such like FooBar Corp.}"
+	},
+	"error": {
+		"no_email": "Enter emails first!"
+	}
+}

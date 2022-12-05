@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>jQuery Nice Select</title>
+  <link rel="stylesheet" href="css/nice-select.css">
+
+</head>
+
+<body>
+  <div class="container">
+    <select>
+      <option value="1">Some option</option>
+      <option value="2">Another option</option>
+      <option value="3" disabled>A disabled option</option>
+      <option value="4">Potato</option>
+    </select>
+
+    <select>
+      <option data-display="Select">Nothing</option>
+      <option value="1">Some option</option>
+      <option value="2">Another option</option>
+      <option value="3" disabled>A disabled option</option>
+      <option value="4">Potato</option>
+    </select>
+
+    <select class="wide">
+      <option data-display="Select">Nothing</option>
+      <option value="1">Some option</option>
+      <option value="2">Another option</option>
+      <option value="3" disabled>A disabled option</option>
+      <option value="4">Potato</option>
+    </select>
+
+    <select class="right">
+      <option data-display="Select">Nothing</option>
+      <option value="1">Some option</option>
+      <option value="2">Another option</option>
+      <option value="3" disabled>A disabled option</option>
+      <option value="4">Potato</option>
+    </select>
+
+    <select class="small">
+      <option data-display="Select">Nothing</option>
+      <option value="1">Some option</option>
+      <option value="2">Another option</option>
+      <option value="3" disabled>A disabled option</option>
+      <option value="4">Potato</option>
+    </select>
+  </div>
+
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery.nice-select.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('select:not(.ignore)').niceSelect(); //style 제거시엔 select에 ignore 클래스 추가
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+{
+	"os": {
+		"android": "Android",
+		"ios": "iOS"
+	},
+	"setup": {
+		"description2": "설치 완료 후에는 config/config.json 파일을 직접 수정하실 수 있습니다.",
+		"description": "아래의 각 항목을 값을 설정하신 후 '다음' 또는 '완료' 버튼을 누르세요.",
+		"step": "단계",
+		"title": "배포 사이트 설치"
+	},
+	"title": {
+		"h2_reset_password": "비밀번호 재설정",
+		"reset_password_input": "신규 비밀번호 입력",
+		"reset_password_input2": "신규 비밀번호 확인",
+		"reset_password": "비밀번호",
+		"reset_password_again": "비밀번호 재입력",
+		"h2_client": "{고객사} 앱 배포",
+		"h2_domestic": "QA 앱 배포",
+		"h2_domestic_in_os": "QA 페이지",
+		"tab_full_version": "전체 버전",
+		"tab_qc_version": "검증 입고 버전",
+		"admin_password": "관리자 비밀번호",
+		"feedback": "피드백 남기기",
+		"tab_previous_version": "이전 버전",
+		"alt_previous_page": "이전 화면",
+		"register_distribution": "배포 등록",
+		"distribution_version": "배포 버전 정보",		
+		"distribution_purpose": "배포 목적",
+		"distribution_purpose_example": "예) 특정 단말 전용(max 10자 내외)",
+		"distribution_detail": "배포 상세",
+		"distribution_detail_example": "예) Wi-Fi 스캔 타임 15초로 변경",
+		"distribution_2nd_signing_google_store": "Google Playstore 등록용(2차 난독화)",
+		"distribution_2nd_signing_one_store": "One Store 등록용(2차 난독화)",
+		"distribution_mail_usage": "메일 발송 여부",
+		"distribution_mail_both_platform": "Android+iOS 동시 배포, 단 버전과 일자가 동일한 경우",
+		"admin_password_guide": "관리자 비밀번호 가이드",
+		"alt_resend_mail": "수정 및 메일 재전송",
+		"register_2nd_apksigning": "2차 난독화 파일 등록",
+		"register_googlestore_apk": "<span class=\"point_c1\">Google Store</span> 2차 난독화 파일 선택",
+		"register_onestore_apk": "<span class=\"point_c1\">One Store</span> 2차 난독화 파일 선택",
+		"register_finished": "파일 업로드 <span class=\"point_c1\">완료</span>",
+		"send_link": "앱 링크 전송",
+		"email": "이메일",
+		"email_example": "foo@company.com, foo2@company.com",
+		"link_to_send": "앱 링크",
+		"file_info": "파일 정보",
+		"file_name": "파일명",
+		"file_ext": "확장자",
+		"file_format": "파일형식",
+		"file_size": "파일크기",
+		"file_path": "저장위치",
+		"back": "뒤로가기",
+		"mandatory": "필수",
+		"optional": "선택"
+	},
+	"description": {
+		"notice16_password_reset": "<font color=red>15분</font> 내에 비밀번호를 재설정하시길 바랍니다.",
+		"notice15_android": "[안내] '<font color=blue><b>Live APK</b></font>'는 상용서버, '<font color=blue><b>Test APK</b></font>'는 TB서버와 연동됩니다.",
+		"notice14_apple_ios_enterprise": "[안내] <a href=https://support.apple.com/ko-kr/HT204460 target=_blank><font color=red>iOS에서 사용자 설정 기업용 앱 설치하기</font> (링크)</a>",
+		"mail_recommand": "앱개발팀에서 App을 소개합니다. <BR />이제 귀하의 모바일폰에서도 이용이 가능합니다. <BR />아래 링크에서 다운로드하여 모바일에서 편리하고 빠른 업무 보시길 바랍니다.",
+		"notice13_input_email_for_link": "'이메일'란에 이메일을 입력하신 후 '링크 보내기' 버튼을 누르세요.",
+		"notice12_not_permitted_extention": "허용되지 않는 확장자입니다.",
+		"notice11_file_not_uploaded": "파일이 제대로 업로드되지 않았습니다.",
+		"notice10_file_not_selected": "파일이 첨부되지 않았습니다.",
+		"notice9_file_is_too_big": "파일이 너무 큽니다.",
+		"notice8_file_alert": "업로드할 파일을 선택하십시오.",
+		"notice7_signing": "2차 난독화를 진행할 파일을 선택 후 '업로드'버튼을 누르세요.",
+		"notice6_admin": "앱 > 설정 > (이스터에그) > 관리자 비밀번호 팝업 > 앱 환경 설정",
+		"notice6_admin_detail": "※ 고정암호는 앱 담당에 문의바람",
+		"notice5": "배포 목적과 상세 내용(옵션)을 기입 후 '고객사 배포'버튼을 누르면 배포가 이루어집니다.",
+		"notice4": "<em class=\"ico_share\"><span class=\"hide\">공유</span></em>버튼을 눌러 해당 버전을 고객사에 배포합니다.&nbsp;배포 후에도 <em class=\"ico_share\"><span class=\"hide\">공유</span></em>를 클릭하면 '<b>수정 및 메일 재전송</b>'이 가능합니다.",
+		"notice3_domestic": "고객사 배포 및 메일 전송은 페이지내의 <em class=\"ico_share\"></em>배포 버튼으로 가능",
+		"notice2": "<font color=#132F50>App Store iOS 용량은 Swift Library 약 46MB가 포함. AppStore 업로드 시 실제 용량 약 70%</font>",
+		"notice1": "사이트 개편공지: 모바일에서는 검색어 입력 후 다시 입력하시려면 검색초기화 후 입력가능합니다."
+	},
+	"company": {
+		"name": "{우리회사명}",
+		"team": "앱 개발 그룹",
+		"email": "appdev.svc@company.com"
+	},
+	"client": {
+		"short_url": "https://bit.ly/client_site",
+		"title": "{고객사} {사업명}",
+		"name": "{고객사}",
+		"full_name": "{고객사} Corporation"
+	},
+	"app": {
+		"name": "{앱 명칭}",
+		"version": "{앱버전}"
+	},
+	"button": {
+		"reset_password": "비밀번호 재설정",
+		"upload": "업로드",
+		"send_to_client": "고객사 배포",
+		"resend_mail": "메일 재전송",
+		"link_to_client": "{고객사} 배포 페이지 확인",
+		"send_link": "링크 보내기",
+		"link_to_recommand": "동료에게 본 앱 링크 보내기"
+	},
+	"search": {
+		"define5": "IoT",
+		"define4": "LTE",
+		"define3": "결제",
+		"define2": "단말",
+		"define1": "뮤직",
+		"title": "검색",
+		"close": "닫기",
+		"input_word": "직접 입력",
+		"select": "선택",
+		"reset_word": "검색어 초기화"
+	},
+	"mailHeader": {
+		"releaseKeyword": "검증용",
+		"developKeyword": "테스트",
+		"doNothingHere": "파라미터 설명을 위해 추가한 항목"
+	},
+	"mail": {
+		"releaseKeyword": "",
+		"developKeyword": "",
+		"from": "appdevaccount@company.com",
+        "from_name": "앱 배포 담당",
+        "to": "foo@client.com|foo2@client.com",
+        "to_name": "고객사 담당자1|고객사 담당자2",
+		"debug_to": "neoroman@gmail.com",
+		"debug_to_name": "테스트 메일 수신자",
+        "reply_to": "appdev.svc@company.com",
+        "reply_to_name": "App Support",
+		"cc": "domestic@client.com|domestic2@client.com|appdev.svc@company.com",
+		"cc_name": "내부 담당자1|내부 담당자2|Company App Support"
+	},
+	"page": {
+		"next": "다음",
+		"prev": "이전"
+	},
+	"copywrite": {
+		"years": "2017-2022",
+		"company": "{페이지 하단 회사명, 예) 우리회사(주)}"
+	},
+	"error": {
+		"no_email": "이메일을 입력하세요!"
+	}
+}

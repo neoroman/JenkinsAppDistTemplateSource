@@ -1,0 +1,43 @@
+{
+  "title": "테스트 버전",
+  "appVersion": "1.0.0",
+  "buildVersion": "1",
+  "versionKey": "",
+  "buildNumber": "1",
+  "buildTime": "2021.09.07 19:00",
+  "urlPrefix": "https://app.company.com/CompanyProject/FooBar/ios_distributions/1.0.0/",
+  "releaseType": "develop",
+  "files": [
+    {
+      "title": "Ad-Hoc",
+      "size": "177MB",
+      "file": "CP_FooBar_1.0.0_Adhoc.ipa",
+      "plist": "CP_FooBar_1.0.0_Adhoc.plist"
+    },
+    {
+      "title": "Enterprise",
+      "size": "192MB",
+      "file": "CP_FooBar_1.0.0_Enter.ipa",
+      "plist": "CP_FooBar_1.0.0_Enter.plist"
+    },
+    {
+      "title": "Enterprise4Web",
+      "size": "B",
+      "file": "",
+      "plist": ""
+    },
+    {
+      "title": "",
+      "size": "",
+      "file": "",
+      "plist": ""
+    },
+    {
+      "title": "",
+      "size": "",
+      "file": "",
+      "plist": ""
+    }
+  ],
+  "gitLastLog": "<li><span class=\"tit\"><a href=http://bitbucket.company.com/projects/TGV/repos/app-ios_v4/commits/cdbbcc8>cdbbcc8</a></span><p class=\"txt\">일일안부 알람 수정 by 개발자</p></li>"
+}

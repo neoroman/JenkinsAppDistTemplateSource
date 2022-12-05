@@ -1,0 +1,43 @@
+{
+  "title": "테스트 버전",
+  "appVersion": "1.0.0",
+  "buildVersion": "1",
+  "versionKey": "",
+  "buildNumber": "1",
+  "buildTime": "2021.09.07 19:00",
+  "urlPrefix": "https://app.company.com/CompanyProject/FooBar/android_distributions/1.0.0/",
+  "releaseType": "develop",
+  "files": [
+    {
+      "title": "Live APK",
+      "size": "97MB",
+      "file": "CP_FooBar_1.0.0-LiveServer-debug.apk",
+      "plist": ""
+    },
+    {
+      "title": "GMMS TB APK",
+      "size": "96MB",
+      "file": "CP_FooBar_1.0.0-TestServer-debug.apk",
+      "plist": ""
+    },
+    {
+      "title": "",
+      "size": "",
+      "file": "",
+      "plist": ""
+    },
+    {
+      "title": "",
+      "size": "",
+      "file": "",
+      "plist": ""
+    },
+    {
+      "title": "",
+      "size": "",
+      "file": "",
+      "plist": ""
+    }
+  ],
+  "gitLastLog": "<li><span class=\"tit\"><a href=http://bitbucket.company.com/projects/TGV/repos/app-aos_v4/commits/66a26fd>66a26fd</a></span><p class=\"txt\">일일안부 알람 변경 by 개발자</p></li>\n<li>"
+}
