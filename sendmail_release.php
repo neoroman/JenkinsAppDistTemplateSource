@@ -167,6 +167,7 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
         $mail->Body   .= '<div style="background: ghostwhite; font-size: 12px; padding: 10px; border: 1px solid lightgray; margin: 10px;">';
         $mail->Body   .= '<a href='. L::client_short_url .'>'. L::client_short_url .'</a>&nbsp;(ID/PW: '. $siteUser .'/'. $sitePass .')';
         $mail->Body   .= '</div>';
+        $mail->Body   .= '※'. L::description_notice18;
         $mail->Body   .= '<br /><br />';
         $mail->Body   .= '<H2><b>수정 및 반영사항</b></H2>';
         $mail->Body   .= '항목:&nbsp;<br />';

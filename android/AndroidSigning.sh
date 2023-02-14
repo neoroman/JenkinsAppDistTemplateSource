@@ -114,10 +114,12 @@ if [ -d $ANDROID_BUILDTOOLS ]; then
   fi
 fi
 if test -z $ZIP_ALIGN; then
-  ZIP_ALIGN="/Users/dist_account/Library/Android/sdk/build-tools/32.0.0/zipalign"
+    echo "$HOSTNAME > Error: zipalign 명령어 없음 in $ZIP_ALIGN"
+    exit
 fi
 if test -z $APKSIGNER; then
-  APKSIGNER="/Users/dist_account/Library/Android/sdk/build-tools/32.0.0/apksigner"
+    echo "$HOSTNAME > Error: apksigner 명령어 없음 in $APKSIGNER"
+    exit
 fi
 ############################
 if test -z $INPUT_FILE; then
@@ -154,15 +156,10 @@ HTTPS_PREFIX="${FRONTEND_POINT}/${URL_PATH}/${APP_FOLDER}/"
 #####
 APK_GOOGLESTORE="${INPUT_FILE}$(cat $jsonConfig | $JQ '.android.outputGoogleStoreSuffix' | tr -d '"')"
 USING_BUNDLE_GOOGLESTORE=$(test $(cat $jsonConfig | $JQ '.android.GoogleStore.usingBundleAAB') = true && echo 1 || echo 0)
-# if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
-#   APK_GOOGLESTORE="${APK_GOOGLESTORE%.apk}.aab"
-# fi
+if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
+  AAB_GOOGLESTORE="${APK_GOOGLESTORE%.apk}.aab"
+fi
 APK_ONESTORE="${INPUT_FILE}$(cat $jsonConfig | $JQ '.android.outputOneStoreSuffix' | tr -d '"')"
-USING_BUNDLE_ONESTORE=$(test $(cat $jsonConfig | $JQ '.android.OneStore.usingBundleAAB') = true && echo 1 || echo 0)
-# if [ $USING_BUNDLE_ONESTORE -eq 1 ]; then
-#   APK_ONESTORE="${APK_ONESTORE%.apk}.aab"
-# fi
-#####
 ##### for debugging
 if [ $DEBUGGING -eq 1 ]; then
   USING_HTML=0
@@ -170,6 +167,7 @@ if [ $DEBUGGING -eq 1 ]; then
   USING_SLACK=0
   USING_JSON=1
 fi
+#####
 STOREPASS=$(cat $jsonConfig | $JQ '.android.keyStorePassword' | tr -d '"')
 KEYSTORE_FILE=$(cat $jsonConfig | $JQ '.android.keyStoreFile' | tr -d '"')
 if [ ! -f $KEYSTORE_FILE ]; then
@@ -195,14 +193,6 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE ]; then
     if [ -f $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE ]; then
         rm -f $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
     fi
-    # if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
-    #   $JAR_SIGNER -sigalg SHA1withRSA \
-    #               -digestalg SHA1 \
-    #               -keystore $KEYSTORE_FILE \
-    #               -storepass "${STOREPASS}" \
-    #               $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE "${CLIENT_NAME}" \
-    #               -signedjar $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
-    # else
     $JAR_SIGNER -sigalg SHA1withRSA \
                 -digestalg SHA1 \
                 -keystore $KEYSTORE_FILE \
@@ -218,7 +208,6 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE ]; then
       echo "${STOREPASS}" | $APKSIGNER sign -ks $KEYSTORE_FILE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
       $APKSIGNER verify --verbose $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
     fi
-    # fi
 else
     echo "$HOSTNAME > Error: 1차 난독화 버전 파일($OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE) 없음"
     exit
@@ -251,7 +240,24 @@ else
     echo "$HOSTNAME > Error: 1차 난독화 버전 파일($OUTPUT_FOLDER/$UNSIGNED_ONE_FILE) 없음"
     # exit
 fi
-
+#####
+# Step 1.3: For Google Store (AAB)
+if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
+    UNSIGNED_GOOGLE_BUNDLE="${outputUnsignedPrefix}${AAB_GOOGLESTORE}"
+    if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE ]; then
+        UNZIPALIGNED_GOOGLESTORE="unzipaligned_$AAB_GOOGLESTORE"
+        SIGNED_BUNDLE_GOOGLESTORE="${outputSignedPrefix}${AAB_GOOGLESTORE}"
+        if [ -f $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE ]; then
+            rm -f $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE
+        fi
+        $JAR_SIGNER -sigalg SHA1withRSA \
+                    -digestalg SHA1 \
+                    -keystore $KEYSTORE_FILE \
+                    -storepass "${STOREPASS}" \
+                    $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE "${CLIENT_NAME}" \
+                    -signedjar $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE
+    fi
+fi
 
 ######################################################
 if [ $USING_SLACK -eq 1 ]; then

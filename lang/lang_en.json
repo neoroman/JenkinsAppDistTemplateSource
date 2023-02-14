@@ -37,8 +37,9 @@
 		"admin_password_guide": "Admin Password Guide",
 		"alt_resend_mail": "Modify and Resend Mail",
 		"register_2nd_apksigning": "Register 2nd APK signing",
-		"register_googlestore_apk": "Select 2nd signing APK for <span class=\"point_c1\">Google Store</span>",
-		"register_onestore_apk": "Select 2nd siging APK for <span class=\"point_c1\">One Store</span>",
+		"register_googlestore_apk": "Select 2nd obfuscated unsigned <span class=\"point_c1\"><b>APK</b></span> for <span class=\"point_c1\">Google Store</span>",
+		"register_googlestore_aab": "Select 2nd obfuscated unsigned <span class=\"point_c1\"><b>AAB</b></span> for <span class=\"point_c1\">Google Store</span>",
+		"register_onestore_apk": "Select 2nd obfuscated unsigned APK for <span class=\"point_c1\">One Store</span>",
 		"register_finished": "File upload <span class=\"point_c1\">finished</span>",
 		"send_link": "Send App. Link",
 		"email": "Email",
@@ -55,6 +56,8 @@
 		"optional": "Optional"
 	},
 	"description": {
+		"notice18": "Try again in 3~5 minute max, after receive this mail.",
+		"notice17": "Binary download sync in 3~5min after 'Send to Client'.",
 		"notice16_password_reset": "Reset password in <font color=red>15 minute</font>.",
 		"notice15_android": "[Notice] 'Live APK' is connected to Commercial Server, 'Test APK' is connected to TestBed Server.",
 		"notice14_apple_ios_enterprise": "[Notice] <a href=https://support.apple.com/en-us/HT204460 target=_blank>Install custom enterprise apps on iOS (Link)</a>",

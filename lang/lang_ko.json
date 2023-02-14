@@ -37,8 +37,9 @@
 		"admin_password_guide": "관리자 비밀번호 가이드",
 		"alt_resend_mail": "수정 및 메일 재전송",
 		"register_2nd_apksigning": "2차 난독화 파일 등록",
-		"register_googlestore_apk": "<span class=\"point_c1\">Google Store</span> 2차 난독화 파일 선택",
-		"register_onestore_apk": "<span class=\"point_c1\">One Store</span> 2차 난독화 파일 선택",
+		"register_googlestore_apk": "<span class=\"point_c1\">Google Store</span> 2차 난독화 unsiged 파일 <span class=\"point_c1\"><b>APK</b></span> 선택",
+		"register_googlestore_aab": "<span class=\"point_c1\">Google Store</span> 2차 난독화 unsiged 파일 <span class=\"point_c1\"><b>AAB</b></span> 선택",
+		"register_onestore_apk": "<span class=\"point_c1\">One Store</span> 2차 난독화 unsiged 파일 선택",
 		"register_finished": "파일 업로드 <span class=\"point_c1\">완료</span>",
 		"send_link": "앱 링크 전송",
 		"email": "이메일",
@@ -55,6 +56,8 @@
 		"optional": "선택"
 	},
 	"description": {
+		"notice18": "메일 수신 후 다운로드 오류(404) 발생 시 최대 3~5분 후 다시 시도해주시길 바랍니다.",
+		"notice17": "'고객사 배포' 메일 발송 후 최대 3~5분 내로 다운로드 사이트 동기화가 이루어집니다.",
 		"notice16_password_reset": "<font color=red>15분</font> 내에 비밀번호를 재설정하시길 바랍니다.",
 		"notice15_android": "[안내] '<font color=blue><b>Live APK</b></font>'는 상용서버, '<font color=blue><b>Test APK</b></font>'는 TB서버와 연동됩니다.",
 		"notice14_apple_ios_enterprise": "[안내] <a href=https://support.apple.com/ko-kr/HT204460 target=_blank><font color=red>iOS에서 사용자 설정 기업용 앱 설치하기</font> (링크)</a>",

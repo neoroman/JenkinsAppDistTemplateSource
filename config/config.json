@@ -29,8 +29,8 @@
         "SMTPDebug": 0,
         "SMTPAuth": true,
         "Host": "your_mail_server_domain",
-        "Password": "your_mail_server_password_here",
         "Username": "your_mail_server_user_id",
+        "Password": "your_mail_server_password_here",
         "SMTPSecure": "tls",
         "Port": 587,
         "enabled": false

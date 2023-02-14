@@ -2,6 +2,7 @@
 require_once('config.php');
 global $topPath, $root;
 global $inUrl, $outUrl, $isDebugMode;
+global $outBoundPoint;
 
 require('common.php');
 
@@ -46,6 +47,9 @@ if ($input_os == "ios") {
   $newOS = "ios_distributions";
 } elseif ($input_os == "android") {
   $newOS = "android_distributions";
+}
+if ($_SERVER['SERVER_NAME'] == $outBoundPoint) {
+  exit("고객사 배포는 사내망에서만 가능합니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='2;url=/$topPath/$org_os/dist_$org_os.php'>");
 }
 
 $newPath = pathinfo($input_file, PATHINFO_DIRNAME);
@@ -256,7 +260,10 @@ if (startsWith(basename($input_file), "zzz_")) {
 
   <div class="container">
     <h2 class="stit"><?php echo L::client_title . " " . L::app_name . " " . L::title_register_distribution; ?></h2>
-    <p class="txt"><span class="ico"></span><?php echo L::description_notice5; ?></p>
+    <p class="txt">
+      <span class="ico"></span><?php echo L::description_notice5; ?><BR />
+      <span class="ico"></span><?php echo L::description_notice17; ?>
+    </p>
 
     <form action="#" method="POST" id="deliver" name="deliver" onsubmit="FormSubmit(this);">
       <input type="hidden" name="previous_page" value="<?php $prevPage ?>" />
@@ -349,6 +356,6 @@ if (startsWith(basename($input_file), "zzz_")) {
 <!-- common JS -->
 <script src="./js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v1"></script>
+<script src="./js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

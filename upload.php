@@ -3,9 +3,14 @@ session_start();
 
 require_once('config.php');
 global $usingLogin;
+global $outBoundPoint;
 
 if ($usingLogin && !isset($_SESSION['internal_id'])) {
-  header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    // Do nothing for remote API login on app.company.com
+  } else {
+      header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+  }
 }
 require('common.php');
 
@@ -23,10 +28,11 @@ if (strlen($input_file) > 0) {
       break;
   }
   $suffix = $json->{'android'}->{'outputGoogleStoreSuffix'};
-  if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'}) {
-    $suffix = str_replace('apk', 'aab', $suffix);
-  }
   $target_google = $base_dir ."/". $json->{'android'}->{'outputUnsignedPrefix'} . $input_file . $suffix;
+  if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'}) {
+    $aSuffix = str_replace('apk', 'aab', $suffix);
+    $bundle_google = $base_dir ."/". $json->{'android'}->{'outputUnsignedPrefix'} . $input_file . $aSuffix;
+  }
 
   $suffix = $json->{'android'}->{'outputOneStoreSuffix'};
   if ($json->{'android'}->{'OneStore'}->{'usingBundleAAB'}) {
@@ -98,6 +104,16 @@ if (strlen($input_file) > 0) {
         </div>
         <div class="item box_type4" style="width:600px !important;">
           <div class="cont">
+              <label for="rasisterA" class="txt_label"><?php echo L::title_register_googlestore_aab; ?></label>
+              <?php if (file_exists($bundle_google)) {
+                echo "<label class=\"txt_label\">". L::title_register_finished ."</label>";
+              } else {
+                echo "<input type=\"file\" name=\"bundle_google\" id=\"bundle_google\" style=\"width:90% !important;\">";
+              }?>
+          </div>
+        </div>
+        <div class="item box_type4" style="width:600px !important;">
+          <div class="cont">
     				<label for="rasisterA" class="txt_label"><?php echo L::title_register_onestore_apk; ?></label>
             <?php if (file_exists($target_one)) {
                 echo "<label class=\"txt_label\">". L::title_register_finished ."</label>";
@@ -137,6 +153,6 @@ if (strlen($input_file) > 0) {
 <!-- common JS -->
 <script src="./js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v1"></script>
+<script src="./js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

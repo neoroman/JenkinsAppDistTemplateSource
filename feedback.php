@@ -65,6 +65,8 @@ else if (isset($_POST["os"])) {
     <div class="btn_area">
       <a href="#" class="btn_send" id="feedback_button" class='btn btn-primary btn-large'>피드백 제공</a>
     </div>
+    <div><h1><font color=red>[안내] Jira 서버의 방화벽 정책 변경으로 피드백을 남길 수 없습니다.<BR />(2022/6/16 ~ )</font></h1></div>
+    <div><h1>개선 제안이나 이슈가 있으시면 [<b><a href="mailto:appdev.svc@company.com">메일: appdev.svc@company.com</a></b>]로 연락주시길 바랍니다.<BR /></h1></div>
   </div>
 </div>
 <!--//wrap-->
@@ -88,7 +90,7 @@ else if (isset($_POST["os"])) {
 <!-- app dist common for client JS -->
 <script src="./js/appDistCommon4client.js"></script>
 <!-- Jira issue collector -->
-<script type="text/javascript" src="http://jira.company.com/s/f0e9f7b3406188080a76afc7900388f3-T/-w3q5mi/72008/2a2759a63b9be9071626e429a5d3e82b/2.0.23/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=ko-KR&collectorId=c9c8ee91"></script>
+<script type="text/javascript" src="http://svcdiv.company.com/s/f0e9f7b3406188080a76afc7900388f3-T/-w3q5mi/72008/2a2759a63b9be9071626e429a5d3e82b/2.0.23/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=ko-KR&collectorId=c9c8ee91"></script>
 <script type="text/javascript">
   var osComp = '11605';
   if (getMobileOperatingSystem() == "iOS" ) {
@@ -97,6 +99,7 @@ else if (isset($_POST["os"])) {
     osComp = '11424';
   }
   var osName = getMobileOperatingSystem();
+  var jsAppVer, jsVersion;
   <?php
     if (isset($inputOS)) {
       if (strtolower($inputOS) == "ios" ) {
@@ -106,6 +109,14 @@ else if (isset($_POST["os"])) {
         echo "osComp = '11424';";
         echo "osName = 'Android';";
       }
+    }
+    if (isset($appVer)) {
+      $appVer = trim($appVer);
+      print("jsAppVer = '$appVer';\n");
+    }
+    if (isset($version)) {
+      $version = trim($version);
+      print("jsVersion = '$version';\n");
     }
   ?>
   window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS, {
@@ -118,10 +129,10 @@ else if (isset($_POST["os"])) {
         });
       },
       "fieldValues": {
-        summary: osName + " > 의견 또는 불편 사항<?php echo $appVer; ?>",
+        summary: osName + ' > 의견 또는 불편 사항 ' + jsAppVer,
         components: osComp,
         priority: "1",
-        affectsVersion: "<?php echo $version; ?>"
+        affectsVersion: jsVersion
       }
     }
   });

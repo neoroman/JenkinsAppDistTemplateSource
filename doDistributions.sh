@@ -316,8 +316,8 @@ function getDevToolInfo() {
       ReactNativeBin="${NodePath}/npm"
       export PATH=${NodePath}:$PATH
     else
-      NodePath=""
-      ReactNativeBin=""
+      NodePath="node"
+      ReactNativeBin="npm"
     fi
     OTHER_BUILD_ENV=""
     if [ $isFlutterEnabled -eq 1 ]; then
@@ -369,6 +369,9 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
     ##
     getDevToolInfo
     DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
+    if [ -z $(echo $DEV_ENV | xargs) ]; then
+      DEV_ENV="$(cd $WORKSPACE && $BUILD_COMMAND --version)"
+    fi
     DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
     DEV_ENV="${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}"
     ##
@@ -438,6 +441,9 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
     DEV_ENV="No Xcode.app installed...!"
   else
     DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
+    if [ -f $(which sw_vers) ]; then
+      DEV_ENV="$DEV_ENV <BR />Hostname: $(hostname)<BR />$(sw_vers)"
+    fi
   fi
   DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
   DEV_ENV="${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}"

@@ -3,9 +3,14 @@ session_start();
 
 require_once('config.php');
 global $usingLogin;
+global $outBoundPoint;
 
 if ($usingLogin && !isset($_SESSION['internal_id'])) {
-  header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    // Do nothing for remote API login on app.company.com
+  } else {
+    header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -67,6 +72,6 @@ if ($usingLogin && !isset($_SESSION['internal_id'])) {
 <!-- common JS -->
 <script src="./js/common.js"></script>
 <!-- app dist common for client JS -->
-<!--<script src="./js/appDistCommon4client.js?v1"></script>-->
+<!--<script src="./js/appDistCommon4client.js?v4"></script>-->
 </body>
 </html>

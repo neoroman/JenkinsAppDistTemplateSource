@@ -3,9 +3,14 @@ session_start();
 
 require_once('../config.php');
 global $usingLogin;
+global $outBoundPoint;
 
 if ($usingLogin && !isset($_SESSION['internal_id'])) {
-  header('Location: ../login.php?redirect='. $_SERVER['PHP_SELF']);
+  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    // Do nothing for remote API login on app.company.com
+  } else {
+    header('Location: ../login.php?redirect='. $_SERVER['PHP_SELF']);
+  }
 }
 
 require('../common.php');
@@ -28,13 +33,13 @@ $selectedPattern = "";
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title><?php echo L::client_title ." ". L::app_name ?></title>
-  <link rel="apple-touch-icon-precomposed" href="./images/<?php echo $icon->{'home'}; ?>">
+  <link rel="apple-touch-icon-precomposed" href="../images/<?php echo $icon->{'home'}; ?>">
   <!-- font CSS -->
   <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css?v1">
+  <link rel="stylesheet" href="../css/common.css?v2">
 </head>
 
 <body>
@@ -130,7 +135,7 @@ $selectedPattern = "";
         echo ($page + 1) <= $less_than ? '<a href="?page=' . ($page + 1) . '"><i class="arrow right"></i></a>' : '<i class="arrow right"></i>';      
         ?></h2>
         <p class="txt"><?php echo L::description_notice4; ?></p>
-        <!-- <p class="txt"><?php echo L::description_notice1; ?></p> -->
+        <p class="txt"><?php echo L::description_notice15_android; ?></p>
       </div>
 
       <div class="item_area">
@@ -168,8 +173,8 @@ $selectedPattern = "";
 <!-- placeholder JS : For ie9 -->
 <script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="../js/common.js"></script>
+<script src="../js/common.js?v1"></script>
 <!-- app dist common for client JS -->
-<script src="../js/appDistCommon4client.js?v1"></script>
+<script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

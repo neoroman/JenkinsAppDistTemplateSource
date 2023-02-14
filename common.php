@@ -187,7 +187,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
         $finalSnippet = "";
         if (file_exists("$path/$jsonfile")) {
             $jsonStr = file_get_contents("$path/$jsonfile");
-            $finalJson = json_validate($jsonStr);
+            $finalJson = json_validate2($jsonStr, false);
 
             if ($os == "ios") {
                 $osName = L::os_ios;
@@ -402,18 +402,30 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
                             $uploadAppLink = "appstore_upload.php?title=". $anItem->{'file'};
                             $uploadAppVersion = $finalJson->{'appVersion'} . "." . $finalJson->{'buildVersion'};
-                            $appStoreUploadLink = "<a href=\"javascript:appStoreUploading('". $uploadAppLink ."','". $uploadAppVersion ."');\" class=\"btn_$os\">" .strtoupper($os). " 배포 바로가기</a> <!-- 20220119 추가 -->";
+                            $appStoreUploadLink = "<a href=\"javascript:appStoreUploading('". $uploadAppLink ."','". $uploadAppVersion ."','" . "$frontEndProtocol://$frontEndPoint" . "');\" class=\"btn_$os\">" .strtoupper($os). " 배포 바로가기</a> <!-- 20220119 추가 -->";
                             // TODO: change button link after done uploaded to App Store, need to add AppID('1542294610') into config.json
                             // https://appstoreconnect.apple.com/apps/1542294610/testflight/ios
                         }
                         // Android download AAB Bundle and apk
-                        if ($os == "android" && $finalJson->{'releaseType'} == 'release' && 
-                        $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'} && 
-                        $json->{$os}->{'GoogleStore'}->{'title'} == $binTitle) {
-                            $itemClassForAppStore = "class=\"item_type2\"";
-                            $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
-                            $appStoreUploadLink = "<a href=\"$finalURL\" class=\"btn_$os\">" .strtoupper($os). " AAB 다운로드</a> <!-- 20220119 추가 -->";
-                            $finalURL = str_replace('aab', 'apk', $finalURL);
+                        if ($os == "android" && $finalJson->{'releaseType'} == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
+                            $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
+                            $bundleFilename = str_replace('apk', 'aab', $anItem->{'file'});
+                            $bundleFilePath = ".." . $pathArray[1] . $bundleFilename;
+
+                            if ($json->{$os}->{'GoogleStore'}->{'title'} == $binTitle) {
+                                // 출력 파일 자체가 *.aab임
+                                $itemClassForAppStore = "class=\"item_type2\"";
+                                $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
+                                $appStoreUploadLink = "<a href=\"$finalURL\" class=\"btn_$os\" alt=\"AAB 다운로드\">" .strtoupper($os). " AAB 다운로드</a> <!-- 20220119 추가 -->";
+                                $finalURL = str_replace('aab', 'apk', $finalURL);
+                            }
+                            else if (substr($bundleFilename, 0, 7) === 'signed_' && file_exists($bundleFilePath)) {
+                                // 2차 난독화 후 signing된 AAB를 표시함: 출력 파일은 *.apk임
+                                $itemClassForAppStore = "class=\"item_type2\"";
+                                $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
+                                $aTempAABFile = str_replace('apk', 'aab', $finalURL);
+                                $appStoreUploadLink = "<a href=\"$aTempAABFile\" class=\"btn_$os\" alt=\"signed AAB(2차 난독화) 다운로드\">" .strtoupper($os). " AAB 다운로드</a> <!-- 20220119 추가 -->";
+                            }
                         }
                         $finalSnippet .= "
                             <li $itemClassForAppStore> $itemClassForAppStoreDesc

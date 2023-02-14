@@ -2,7 +2,10 @@
 function json_validate($string) {
     return json_validate2($string, false);
 }
-function json_validate2($string, $opt)
+function json_validate2($string, $opt) {
+    return json_validate3($string, $opt, NULL);
+}
+function json_validate3($string, $opt, $msg)
 {
     // decode the JSON data
     $result = json_decode($string, $opt);
@@ -22,7 +25,11 @@ function json_validate2($string, $opt)
             $error = 'Control character error, possibly incorrectly encoded.';
             break;
         case JSON_ERROR_SYNTAX:
-            $error = 'Syntax error, malformed JSON.';
+            if (isset($msg)) {
+                $error = 'Syntax error, malformed JSON. Info:'. $msg;
+            } else {
+                $error = 'Syntax error, malformed JSON.';
+            }
             break;
         // PHP >= 5.3.3
         case JSON_ERROR_UTF8:

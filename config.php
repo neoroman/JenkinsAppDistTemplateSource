@@ -21,7 +21,7 @@ if (file_exists($class_i18n_path)) {
 $jsonFile = __DIR__ . "/config/config.json";
 if (file_exists($jsonFile)) {
     $jsonStr = file_get_contents($jsonFile);
-    $json = json_validate($jsonStr);
+    $json = json_validate2($jsonStr, false);
 } else {
     exit(101);
 }
@@ -58,6 +58,7 @@ $frontEndProtocol = $config->{'frontEndProtocol'};
 $frontEndPoint = $config->{'frontEndPoint'};
 $outBoundProtocol = $config->{'outBoundProtocol'};
 $outBoundPoint = $config->{'outBoundPoint'};
+$boanEndPoint = "https://boan.company.com:4000";
 // ----------------------------------------------------------
 $topPath = $config->{'topPath'};
 $outputPrefix = $config->{'outputPrefix'};
@@ -76,8 +77,8 @@ $topPathPreviousVersion = $config->{'topPathPreviousVersion'};
 $topPaths=explode("/", $topPath);
 $lastTopPath=$topPaths[1];
 $testTopPath="test/$lastTopPath";
+//    strpos($_SERVER['HTTP_HOST'], $frontEndPoint) !== false &&
 if (isset($_SERVER['HTTP_HOST']) &&
-    strpos($_SERVER['HTTP_HOST'], $frontEndPoint) !== false &&
     isset($_SERVER['REQUEST_URI']) &&
     strpos($_SERVER['REQUEST_URI'], $testTopPath) !== false) {
     $isDebugMode = true;
@@ -85,6 +86,7 @@ if (isset($_SERVER['HTTP_HOST']) &&
     $topPath = $testTopPath;
     $outBoundProtocol = $frontEndProtocol;
     $outBoundPoint = $frontEndPoint;
+    $boanEndPoint = "https://boan.company.com:4040";
 }
 elseif (isset($_SERVER['SERVER_NAME']) &&
         strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {

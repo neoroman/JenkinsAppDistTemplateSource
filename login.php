@@ -28,9 +28,9 @@ if (isset($_POST['login'])) {
       $row = $userDict[$loginID];
     }
     else if ($usingLoginRemoteAPI) {
-      $url = "https://boan.company.com:4000/secure?id=". urlencode($loginID) ."&pwd=" . urlencode($loginPW);
+      $url = "$boanEndPoint/secure?id=". urlencode($loginID) ."&pwd=" . urlencode($loginPW);
       $result = httpGet($url);
-      $finalJson = json_validate($result);
+      $finalJson = json_validate2($result, false);
       if (isset($finalJson->{'userId'}) && isset($finalJson->{'token'}) && isset($finalJson->{'email'}) && isset($finalJson->{'name'})) {
         $row = [
           "userId" => $finalJson->{'userId'},
@@ -203,7 +203,7 @@ else {
 <!-- common JS -->
 <script src="./js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v1"></script>
+<script src="./js/appDistCommon4client.js?v4"></script>
 </body>
 </html>
 

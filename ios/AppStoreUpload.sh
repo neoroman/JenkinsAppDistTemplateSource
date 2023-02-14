@@ -145,7 +145,8 @@ fi
 # Step 1.1: For App Store
 if [ -f $OUTPUT_FOLDER/$UPLOAD_IPA_FILE ]; then
     SIZE_UPLOAD_IPA_FILE=$(du -sh ${OUTPUT_FOLDER}/${UPLOAD_IPA_FILE} | awk '{print $1}')
-    ERROR=$(xcrun altool --upload-app -t ios -f "$OUTPUT_FOLDER/$UPLOAD_IPA_FILE" -u "${APPSTORE_AGENT_EMAIL}" -p "${APPSTORE_AGENT_PASSWORD}")
+    ## TODO: get ``xcrun altool`` output status from error_log or something, parsing and cope with it... on 2023.01.31
+    ERROR=$( xcrun altool --upload-app -t ios -f "$OUTPUT_FOLDER/$UPLOAD_IPA_FILE" -u "${APPSTORE_AGENT_EMAIL}" -p "${APPSTORE_AGENT_PASSWORD}" 2>&1 )
     if [ "$ERROR" != "" ]; then
       echo "$HOSTNAME > Xcrun altool output: ${ERROR}"
       exit

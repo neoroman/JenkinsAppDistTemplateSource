@@ -3,9 +3,14 @@ session_start();
 
 require_once('../config.php');
 global $usingLogin;
+global $outBoundPoint;
 
 if ($usingLogin && !isset($_SESSION['id'])) {
-  header('Location: ../login.php?redirect='. $_SERVER['PHP_SELF']);  
+  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    // Do nothing for remote API login on app.company.com
+  } else {
+    header('Location: ../login.php?redirect='. $_SERVER['PHP_SELF']);
+  }
 }
 
 require("../common.php");
@@ -22,13 +27,13 @@ $selectedPattern = "";
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title><?php echo L::client_title ." ". L::app_name ?></title>
-  <link rel="apple-touch-icon-precomposed" href="./images/<?php echo $icon->{'home'} ?>">
+  <link rel="apple-touch-icon-precomposed" href="../images/<?php echo $icon->{'home'} ?>">
   <!-- font CSS -->
   <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/common.css?v2">
 </head>
 
 <body>
@@ -173,6 +178,6 @@ $selectedPattern = "";
 <!-- common JS -->
 <script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="../js/appDistCommon4client.js?v1"></script>
+<script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

@@ -163,6 +163,10 @@ function enterprise4web(url) {
 ///////////////////////////////////////
 // Android signing for Android only
 function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOneStore) {
+	if (window.location.hostname === 'app.company.com') {
+		alert("[ Android 2차 난독화 ]\n\n 사내 네트워크에서만 가능합니다.");
+		return;
+	}
 	var pathArray = window.location.pathname.split('/');
 	var newPathname = "";
 	// 상태 패스인 경우
@@ -205,7 +209,15 @@ function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOne
 
 ///////////////////////////////////////
 // App Store uploading for iOS only
-function appStoreUploading(url, appVersion, isDomestic) {
+function appStoreUploading(url, appVersion, domesticEnd) {
+	if (window.location.hostname === 'app.company.com') {
+		const result = confirm("[ App Store Upload ]\n\n 사내 네트워크에서만 가능합니다.\n\n사내 사이트로 이동하시려면 '확인(OK)'을 누르세요.");
+		if (result == true && domesticEnd) {
+			window.location.href = domesticEnd + window.location.pathname;
+		}	
+		return;
+	}
+
 	const result = confirm("[ App Store 업로드 ]\n\n엡스토어에 업로드 하실 버전은 v" + appVersion + " 입니다.\n\n용량에 따라 수십초에서 수분이 소요될 수 있으므로 페이지 이동하지 마시고 로딩이 완료될 때까지 기다려주십시오.\n\n확인하셨다면 '확인(OK)'을 눌러서 진행합니다.");
 	if (result == true && url) {
 		window.uploadingAnimation('loadingAni');
