@@ -1,5 +1,9 @@
 <?php
-require('common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('common.php')) {
+  require('common.php');
+}
 global $root, $inUrl;
 
 $prevPage = $_SERVER['HTTP_REFERER'];
@@ -29,7 +33,7 @@ if (endsWith($referrer, "php")) {
 
   if ($file_name) {
     $file_name = str_replace('zzz_', '', $file_name);
-    foreach (glob("./$osDir/*/*$file_name*") as $filename) {
+    foreach (glob("../$osDir/*/*$file_name*") as $filename) {
         // Remove whole files instead of rename by EungShik Kim on 2022/03/24
         // echo "<H2>Delete HTML snippet.... [ DONE ]</H2>";
         // rename($filename, "$filename.deleted");
@@ -42,7 +46,7 @@ if (endsWith($referrer, "php")) {
     $jenkins = str_replace($ver, "", $file_title);
 
     // perform actions for each file found
-    foreach (glob("./$osDir/*/*$ver*.html") as $filename) {
+    foreach (glob("../$osDir/*/*$ver*.html") as $filename) {
       // jenkins 빌드번호가 맞는 경우만 삭제(rename)함 by EungShik Kim on 2019.11.25
       // echo "jenkins => $jenkins, ver => $ver";
       if (stripos(file_get_contents($filename), $jenkins)) {

@@ -1,28 +1,50 @@
 <?php
-require(__DIR__ . '/utils/json.php');
-$class_i18n_path = __DIR__ . '/utils/i18n.class.php';
-if (!file_exists($class_i18n_path)) {
-    $class_i18n_path = __DIR__ . '../utils/i18n.class.php'; 
+require(__DIR__ . '/phpmodules/utils/json.php');
+if (file_exists(__DIR__ . "/../lang/default.json")) {
+    $defaultLang = __DIR__ . "/../lang/default.json";
+    $langPath = __DIR__ . "/../lang";
+} else if (file_exists(__DIR__ . "/lang/default.json")) {
+    $defaultLang = __DIR__ . "/lang/default.json";
+    $langPath = __DIR__ . "/lang";
+} else {
+    exit(101);
 }
-if (file_exists($class_i18n_path)) {
-    require_once $class_i18n_path;
-    $i18n = new i18n();
-    $i18n->setCachePath(__DIR__  . '/langcache');
-    $i18n->setFilePath(__DIR__  . '/lang/lang_{LANGUAGE}.json'); // language file path
-    $i18n->setLangVariantEnabled(true); // trim region variant in language codes (e.g. en-us -> en)
-    $i18n->setFallbackLang('ko');
-    $i18n->setPrefix('L');
-    $i18n->setForcedLang('ko'); // force Korean, even if another user language is available
-    $i18n->setSectionSeparator('_');
-    $i18n->setMergeFallback(false); // make keys available from the fallback language
-    $i18n->init();
+if (file_exists($defaultLang)) {
+    $jsonStr = file_get_contents($defaultLang);
+    $json = json_validate2($jsonStr, false);
+    $lang = $json->{'LANGUAGE'};
+    $langFile = $langPath . '/lang_'. $lang . '.json';
+    if (!file_exists($langFile)) {
+        header('Location: setup.php');
+        exit(101);
+    }
+    $class_i18n_path = __DIR__ . '/phpmodules/utils/i18n.class.php';
+    if (!file_exists($class_i18n_path)) {
+        $class_i18n_path = __DIR__ . '/../phpmodules/utils/i18n.class.php'; 
+    }
+    if (file_exists($class_i18n_path)) {
+        require_once $class_i18n_path;
+        $i18n = new i18n();
+        $i18n->setCachePath(__DIR__  . '/../langcache');
+        $i18n->setFilePath($langFile); // language file path
+        $i18n->setLangVariantEnabled(true); // trim region variant in language codes (e.g. en-us -> en)
+        $i18n->setFallbackLang('ko');
+        $i18n->setPrefix('L');
+        $i18n->setForcedLang('ko'); // force Korean, even if another user language is available
+        $i18n->setSectionSeparator('_');
+        $i18n->setMergeFallback(false); // make keys available from the fallback language
+        $i18n->init();
+    }
 }
 // ----------------------------------------------------------
-$jsonFile = __DIR__ . "/config/config.json";
-if (file_exists($jsonFile)) {
-    $jsonStr = file_get_contents($jsonFile);
+if (file_exists(__DIR__ . "/../config/config.json")) {
+    $jsonStr = file_get_contents(__DIR__ . "/../config/config.json");
+    $json = json_validate2($jsonStr, false);
+} else if (file_exists(__DIR__ . "/config/config.json")) {
+    $jsonStr = file_get_contents(__DIR__ . "/config/config.json");
     $json = json_validate2($jsonStr, false);
 } else {
+    header('Location: setup.php');
     exit(101);
 }
 $userInfo = $json->{'users'};
@@ -53,7 +75,11 @@ if (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'localhost
     $config = $json->{'production'};
 }
 // ----------------------------------------------------------
-$documentRootPath = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
+if (isset($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
+    $documentRootPath = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
+} else if (isset($_SERVER['DOCUMENT_ROOT'])) {
+    $documentRootPath = $_SERVER['DOCUMENT_ROOT'];
+}
 $frontEndProtocol = $config->{'frontEndProtocol'};
 $frontEndPoint = $config->{'frontEndPoint'};
 $outBoundProtocol = $config->{'outBoundProtocol'};
@@ -95,7 +121,7 @@ elseif (isset($_SERVER['SERVER_NAME']) &&
     $documentRootPath = str_replace($topPath, '', $documentRootPath);
 }
 
-$root = "${documentRootPath}";
-$inUrl = "${frontEndProtocol}://${frontEndPoint}";
-$outUrl = "${outBoundProtocol}://${outBoundPoint}";
+$root = "$documentRootPath";
+$inUrl = "$frontEndProtocol://$frontEndPoint";
+$outUrl = "$outBoundProtocol://$outBoundPoint";
 ?>

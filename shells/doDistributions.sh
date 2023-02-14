@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
-jsonConfig="config/config.json"
-configPath="config.php"
+jsonConfig="../config/config.json"
+configPath="../config.php"
 my_dir="$(dirname "$0")"
 if [ -f $my_dir/sshFunctions.sh ]; then
     . $my_dir/sshFunctions.sh #> /dev/null 2>&1
@@ -287,7 +287,7 @@ function sendingEmail() {
     if [ $DEBUGGING -eq 1 ]; then
       mailApp="$FRONTEND_POINT/${TOP_PATH}/.test/testmail_release.php"
     else
-      mailApp="$FRONTEND_POINT/${TOP_PATH}/sendmail_release.php"
+      mailApp="$FRONTEND_POINT/${TOP_PATH}/phpmodules/sendmail_release.php"
     fi
     ##
     $CURL --data-urlencode "subject1=${subjectText}" \
@@ -301,9 +301,9 @@ function sendingEmail() {
 
   ##
   # Sync files to Neo2UA (Synology NAS)
-  if [ -f ./syncToNasNeo2UA.sh ]; then
-    ./syncToNasNeo2UA.sh
-  fi
+  # if [ -f ./syncToNasNeo2UA.sh ]; then
+  #   ./syncToNasNeo2UA.sh
+  # fi
 } # function sendingEmail
 
 function getDevToolInfo() {

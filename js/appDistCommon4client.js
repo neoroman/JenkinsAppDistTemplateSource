@@ -177,14 +177,14 @@ function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOne
 	if (!unsignedGoogle) {
 		const result = confirm("unsigned_" + file + "-GoogleStore-release.apk 파일이 업로드되지 않았습니다.\n\n업로드 사이트로 이동하시겠습니까?");
 		if (result == true) {
-			window.location.href = newPathname + "../upload.php?file=" + file;
+			window.location.href = newPathname + "../phpmodules/upload.php?file=" + file;
 		}
 		return;
 	}
 	if (!unsignedOneStore) {
 		const result = confirm("unsigned_" + file + "-OneStore-release.apk 파일이 업로드되지 않았습니다.\n\n업로드 사이트로 이동하시겠습니까?");
 		if (result == true) {
-			window.location.href = newPathname + "../upload.php?file=" + file;
+			window.location.href = newPathname + "../phpmodules/upload.php?file=" + file;
 		} else {
 			if (apksignerVersion != '0') {
 				const result = confirm("[ Android 2차 난독화 ]\n\n현재 apksigner v" + apksignerVersion + " 입니다.\n\n배포 버전과 맞는지 확인하시길 바랍니다.\n\n확인하셨다면 '확인(OK)'을 눌러서 진행합니다.");

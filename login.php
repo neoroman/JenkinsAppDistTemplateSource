@@ -4,7 +4,7 @@ session_start();
 require_once('config.php');
 global $conn, $topPath, $usingMySQL, $userDict;
 
-require('common.php');
+require('phpmodules/common.php');
 global $inUrl, $outUrl;
 
 if (isset($_POST['login'])) {

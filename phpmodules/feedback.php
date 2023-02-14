@@ -1,11 +1,11 @@
 <?php
 // session_start();
 
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 // global $usingLogin;
 
 // if ($usingLogin && !isset($_SESSION['internal_id'])) {
-//   header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+//   header('Location: /login.php?redirect='. $_SERVER['PHP_SELF']);
 // }
 if (isset($_GET["appVer"])) {
   $appVer=$_GET["appVer"];
@@ -31,15 +31,15 @@ else if (isset($_POST["os"])) {
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=0.5, maximum-scale=1.5, user-scalable=yes">
   <title><?php echo L::client_title ." ". L::app_name; ?></title>
-  <link rel="apple-touch-icon-precomposed" href="./images/HomeIcon.png">
+  <link rel="apple-touch-icon-precomposed" href="../images/HomeIcon.png">
   <!-- font CSS -->
-  <link rel="stylesheet" href="./font/NotoSans.css">
+  <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
-  <link rel="stylesheet" href="./css/nice-select.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="./css/common.css?v2">
+  <link rel="stylesheet" href="../css/common.css?v2">
   <!-- Jira Css -->
-  <link rel="stylesheet" href="./css/jira.css">
+  <link rel="stylesheet" href="../css/jira.css">
 </head>
 
 <body>
@@ -55,9 +55,9 @@ else if (isset($_POST["os"])) {
   <div class="container">
     <div class="box_guide">
       <h1 class="tit">아래의 '피드백 제공' 버튼을 눌러 의견 또는<BR /> 불편 사항을 남겨주세요!</h1>
-      <p class="stit">앱개발1팀에서 최선을 다해서 개선하도록 하겠습니다. 답변을 받으시려면 "꼭" 연락처(이메일)을 남겨주세요.</p>
+      <p class="stit">앱개발팀에서 최선을 다해서 개선하도록 하겠습니다. 답변을 받으시려면 "꼭" 연락처(이메일)을 남겨주세요.</p>
       <ul class="msg">
-        <li>담당: 서비스기술개발본부 > 서비스개발3부 > 앱개발1팀</li>
+        <li>담당: 개발본부 > 개발부 > 앱개발팀</li>
       </ul>
       <br />
       <!-- <img src="images/right-arrow.gif" width=300 height=160> -->
@@ -80,15 +80,15 @@ else if (isset($_POST["os"])) {
 <!-- //footer -->
 
 <!-- jquery JS -->
-<script src="./js/jquery-3.2.1.min.js"></script>
+<script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
-<script src="./js/jquery.nice-select.min.js"></script>
+<script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
-<script src="./plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="./js/common.js"></script>
+<script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js"></script>
+<script src="../js/appDistCommon4client.js"></script>
 <!-- Jira issue collector -->
 <script type="text/javascript" src="http://svcdiv.company.com/s/f0e9f7b3406188080a76afc7900388f3-T/-w3q5mi/72008/2a2759a63b9be9071626e429a5d3e82b/2.0.23/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=ko-KR&collectorId=c9c8ee91"></script>
 <script type="text/javascript">

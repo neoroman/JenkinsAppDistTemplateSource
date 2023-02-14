@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 global $topPath;
 
 if ($_GET["input_filename"]) {
@@ -9,7 +9,7 @@ else {
     $in_file=$_POST["input_filename"];
 }
 if (isset($in_file)) {
-    $files = glob("./android_distributions/[1-9].*/$in_file.*");
+    $files = glob("../android_distributions/[1-9].*/$in_file.*");
     foreach($files as $file) {
         $base_dir = pathinfo($file, PATHINFO_DIRNAME);
         break;

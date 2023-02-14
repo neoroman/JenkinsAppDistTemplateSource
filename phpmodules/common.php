@@ -98,14 +98,14 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     // TODO: 원본을 지워야할까? 아님 .deleted를 지워야할깡? on 2019.11.24
                     //continue;
                 }
-                //$content = preg_replace("/(<div class=\"large-4 columns\">)(<a href=\"\.\.\/remove_html_snippet\.php)(.*)(\">.*a>)/", "$1<!-- $2$3$4 --><br /><span style=\"position: relative;margin-top: -10px;margin-right: 10px;right: 0px;float: right;\">[<font color=red><b>삭제됨</b></font>]&nbsp;<a href='../undo_remove_html_snippet.php$3'>UNDO</a></span>", $content);
+                //$content = preg_replace("/(<div class=\"large-4 columns\">)(<a href=\"\.\.\/phpmodules\/remove_html_snippet\.php)(.*)(\">.*a>)/", "$1<!-- $2$3$4 --><br /><span style=\"position: relative;margin-top: -10px;margin-right: 10px;right: 0px;float: right;\">[<font color=red><b>삭제됨</b></font>]&nbsp;<a href='../phpmodules/undo_remove_html_snippet.php$3'>UNDO</a></span>", $content);
                 // <!-- 5타입 : box_type1(배포전), box_type2(배포후), box_type3(입고 검증전), box_type4(입고 검증후), box_type_del(삭제) -->
                 $typeKey = "_del";
                 //$content = preg_replace("/(<div class=\"item box_type)*(\">*$)/", "$1". $typeKey ."$2", $content);
             } else if (startsWith(basename($file), "zzz_")) {
                 // 아직 배포되지 않은 페이지
                 // DONE: 배포 목적 및 수정 사항 등 기재할 수 있도록 해야함 by EungShik Kim on 2019.11.24
-                //$content = preg_replace("/(<!--DIST_BOTTON--><a href=\")*(\" class=\"btn_share\"><span class=\"hide\">공유</span></a>)/", "$1../distributions.php?os=ios&file=$file$2", $content);
+                //$content = preg_replace("/(<!--DIST_BOTTON--><a href=\")*(\" class=\"btn_share\"><span class=\"hide\">공유</span></a>)/", "$1../phpmodules/distributions.php?os=ios&file=$file$2", $content);
 
                 // <!-- 5타입 : box_type1(배포전), box_type2(배포후), box_type3(입고 검증전), box_type4(입고 검증후), box_type_del(삭제) -->
                 $typeKey = "1";
@@ -219,23 +219,23 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             if (strpos($content, "remove_html_snippet")) {
                 $tempStr = explode("remove_html_snippet", $content);
                 $prefixStr = explode("\"><img", $tempStr[1]);
-                $removalUrl = "../remove_html_snippet" . $prefixStr[0];
+                $removalUrl = "../phpmodules/remove_html_snippet" . $prefixStr[0];
 
                 $undoRemovalUrl = preg_replace("/remove_html_snippet/", "undo_remove_html_snippet", $removalUrl);
             }
             // Above is legacy, now we can pass filename as arguments, 2021.08.01
             if ($isDebugMode) {
-                $removalUrl = "../remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
-                $undoRemovalUrl = "../undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+                $removalUrl = "../phpmodules/remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+                $undoRemovalUrl = "../phpmodules/undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
                 // Share script from original html snippet
-                $shareUrl = "../distributions.php?os=$os&type=$distMode&file=$file";
+                $shareUrl = "../phpmodules/distributions.php?os=$os&type=$distMode&file=$file";
             } else {
                 // It's not plf'2'mini.company.com domain
                 $inBoundPoint = "$frontEndProtocol://$frontEndPoint/$topPath";
-                $removalUrl = "$inBoundPoint/remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
-                $undoRemovalUrl = "$inBoundPoint/undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+                $removalUrl = "$inBoundPoint/phpmodules/remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+                $undoRemovalUrl = "$inBoundPoint/phpmodules/undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
                 // Share script from original html snippet
-                $shareUrl = "$inBoundPoint/distributions.php?os=$os&type=$distMode&file=" . urlencode($file);
+                $shareUrl = "$inBoundPoint/phpmodules/distributions.php?os=$os&type=$distMode&file=" . urlencode($file);
             }
             $resendingUrl = $shareUrl . "&resending=true";
 

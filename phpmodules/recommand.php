@@ -1,12 +1,16 @@
 <?php
 session_start();
 
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 global $topPath, $root;
 global $inUrl, $outUrl, $isDebugMode;
 global $documentRootPath, $frontEndProtocol, $frontEndPoint;
 
-require('common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('common.php')) {
+  require('common.php');
+}
 
 $prevPage = $_SERVER['HTTP_REFERER'];
 
@@ -105,11 +109,11 @@ if (isset($_POST['recommand'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title><?php echo L::client_title ." ". L::app_name ?></title>
   <!-- font CSS -->
-  <link rel="stylesheet" href="./font/NotoSans.css">
+  <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
-  <link rel="stylesheet" href="./css/nice-select.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="./css/common.css?v2">
+  <link rel="stylesheet" href="../css/common.css?v2">
   <script type="text/javascript">
   function FormSubmit(oForm) {
       var oHidden = oForm.elements["version"];
@@ -169,14 +173,14 @@ if (isset($_POST['recommand'])) {
 <!-- //footer -->
 
 <!-- jquery JS -->
-<script src="./js/jquery-3.2.1.min.js"></script>
+<script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
-<script src="./js/jquery.nice-select.min.js"></script>
+<script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
-<script src="./plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="./js/common.js"></script>
+<script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v4"></script>
+<script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

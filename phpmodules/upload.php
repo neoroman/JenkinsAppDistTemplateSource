@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 global $usingLogin;
 global $outBoundPoint;
 
@@ -9,10 +9,14 @@ if ($usingLogin && !isset($_SESSION['internal_id'])) {
   if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
     // Do nothing for remote API login on app.company.com
   } else {
-      header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+      header('Location: /login.php?redirect='. $_SERVER['PHP_SELF']);
   }
 }
-require('common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('common.php')) {
+  require('common.php');
+}
 
 if ($_GET["file"]) {
   $input_file=$_GET["file"];
@@ -22,7 +26,7 @@ else {
 }
 // Form submitted
 if (strlen($input_file) > 0) {
-  $files = glob("./android_distributions/[1-9].*/$input_file.*");
+  $files = glob("../android_distributions/[1-9].*/$input_file.*");
   foreach($files as $file) {
       $base_dir = pathinfo($file, PATHINFO_DIRNAME);
       break;
@@ -49,11 +53,11 @@ if (strlen($input_file) > 0) {
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title><?php echo L::company_name ." ". L::app_name ?></title>
   <!-- font CSS -->
-  <link rel="stylesheet" href="./font/NotoSans.css">
+  <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
-  <link rel="stylesheet" href="./css/nice-select.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="../css/common.css">
   <script type="text/javascript">
     function ValidateSubmit() {
         var oGoogle = document.getElementById('file_google');
@@ -145,14 +149,14 @@ if (strlen($input_file) > 0) {
 <!-- //footer -->
 
 <!-- jquery JS -->
-<script src="./js/jquery-3.2.1.min.js"></script>
+<script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
-<script src="./js/jquery.nice-select.min.js"></script>
+<script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
-<script src="./plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="./js/common.js"></script>
+<script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v4"></script>
+<script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>
