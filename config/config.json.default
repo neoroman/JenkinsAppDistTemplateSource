@@ -43,14 +43,19 @@
     "teams": {
         "iconImage": "images/Icon.png",
         "webhook": "https://company.webhook.office.com/webhookb2/57dae0bf-abb2-43df-b7c1-73121c5a75a4@13a84ba8-5a74-4cdf-a639-57395cf71a8f/IncomingWebhook/abb12c1b7cb74044b535c2dfa5031729/a9b785d5-fbf6-4857-add7-dc64d1dd64c1",
-        "enabled": true
+        "enabled": false
+    },
+    "discord": {
+        "channel": "#app_dist",
+        "webhook": "https://discordapp.com/api/webhooks/106516",
+        "enabled": false
     },
     "jira": {
         "projectKey": "{Jira Project Key}",
         "url": "http://jira.company.com/browse/"
     },
     "ssh": {
-        "enabled": true,
+        "enabled": false,
         "port": "22",
         "endpoint": "appdevteam@app.company.com",
         "target": "/Library/WebServer/Documents"
@@ -173,6 +178,7 @@
         "usingLoginRemoteAPI": false,
         "usingMySQL": false,
         "usingRecommandLink": false,
+        "urlLoginRemoteAPI": "https://boan.company.com:4040",
         "usingHTML": false,
         "usingPreviousVersion": false,
         "topPathPreviousVersion": "CompanyProject/oldFooBar"
@@ -186,6 +192,7 @@
         "outputPrefix": "Company_FooBar_",
         "usingLogin": false,
         "usingLoginRemoteAPI": false,
+        "urlLoginRemoteAPI": "https://boan.company.com:4000",
         "usingMySQL": false,
         "usingRecommandLink": false,
         "usingHTML": false,

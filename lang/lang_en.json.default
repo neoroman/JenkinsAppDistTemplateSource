@@ -72,7 +72,7 @@
 		"notice6_admin": "App > Settings > (Easter Egg) > Popup of Admin Password > App Environment",
 		"notice6_admin_detail": "※ Ask fix password to App Manager",
 		"notice5": "Click 'Send to Client' after input purpose and details",
-		"notice4": "Click <em class=\"ico_share\"><span class=\"hide\">Share</span></em> then share app to client via mail.&nbsp;After shared, click <em class=\"ico_share\"><span class=\"hide\">Share</span></em> button  to '<b>Modify and Resend Mail</b>'.",
+		"notice4": "Click <em class=\"ico_share\"><span class=\"hide\">Share</span></em> then share app to client via mail.&nbsp;After shared, click <em class=\"ico_share_orange\"><span class=\"hide\">Share</span></em> button  to '<b>Modify and Resend Mail</b>'.",
 		"notice3_domestic": "Share App via mail. Using <em class=\"ico_share\"></em> button inside each platform pages.",
 		"notice2": "<font color=#132F50>App Store iOS size is Swift Library approximately 46 MB included. It's 70% after upload to AppStore</font>",
 		"notice1": "Site Notice: You cannot search again, unless click input work directly."

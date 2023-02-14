@@ -264,7 +264,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             $finalSnippet .= $finalJson->{'buildVersion'} . " (" . $finalJson->{'buildTime'} . "), Jenkins(";
             $finalSnippet .= $finalJson->{'buildNumber'} . ")')\"><span class=\"hide\">복사</span></a>
 <!--DIST_BOTTON --><a href=\"$shareUrl\" class=\"btn_share\"><span class=\"hide\">공유</span></a>
-<!--REMOVE_BOTTON--><a href=\"javascript:deleteFiles('$removalUrl');\" class=\"btn_del\"><span class=\"hide\">삭제</span></a><a href=\"$undoRemovalUrl\" class=\"btn_re\"><span class=\"hide\">되돌리기</span></a>
+<!--REMOVE_BOTTON--><a href=\"javascript:deleteFiles('$removalUrl','$outBoundPoint');\" class=\"btn_del\"><span class=\"hide\">삭제</span></a><a href=\"$undoRemovalUrl\" class=\"btn_re\"><span class=\"hide\">되돌리기</span></a>
 <div class=\"cont\">
 <span class=\"date\">" . $finalJson->{'buildTime'} . "</span>
 <p class=\"stit\"><strong class=\"point_c\">". L::app_name ." ". $osName;
@@ -379,10 +379,10 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             if (file_exists($lastApkSigner)) {
                                 $anArray = explode('/', $lastApkSigner);
                                 $apkSignerVersion = $anArray[count($anArray) - 2];
-                                $finalURL = "javascript:androidSigning('$finalURL','$apkFile','$apkSignerVersion',$isGoogleExist,$isOneStoreExist);";
+                                $finalURL = "javascript:androidSigning('$finalURL', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, $outBoundPoint);";
                             } else {
                                 $apkSignerVersion = '0';
-                                $finalURL = "javascript:androidSigning('$apkSignerPath','$apkFile','$apkSignerVersion',$isGoogleExist,$isOneStoreExist);";
+                                $finalURL = "javascript:androidSigning('$apkSignerPath', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, $outBoundPoint);";
                             }
                         } else {
                             $finalURL = "javascript:appDownloader('$downUrl');";
@@ -402,7 +402,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
                             $uploadAppLink = "appstore_upload.php?title=". $anItem->{'file'};
                             $uploadAppVersion = $finalJson->{'appVersion'} . "." . $finalJson->{'buildVersion'};
-                            $appStoreUploadLink = "<a href=\"javascript:appStoreUploading('". $uploadAppLink ."','". $uploadAppVersion ."','" . "$frontEndProtocol://$frontEndPoint" . "');\" class=\"btn_$os\">" .strtoupper($os). " 배포 바로가기</a> <!-- 20220119 추가 -->";
+                            $appStoreUploadLink = "<a href=\"javascript:appStoreUploading('". $uploadAppLink ."','". $uploadAppVersion ."','" . "$frontEndProtocol://$frontEndPoint" . "','". $outBoundPoint ."');\" class=\"btn_$os\">" .strtoupper($os). " 배포 바로가기</a> <!-- 20220119 추가 -->";
                             // TODO: change button link after done uploaded to App Store, need to add AppID('1542294610') into config.json
                             // https://appstoreconnect.apple.com/apps/1542294610/testflight/ios
                         }

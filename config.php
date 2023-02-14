@@ -19,13 +19,15 @@ if (file_exists($defaultLang)) {
         exit(101);
     }
     $class_i18n_path = __DIR__ . '/phpmodules/utils/i18n.class.php';
+    $langCachePath = __DIR__ . '/langcache';
     if (!file_exists($class_i18n_path)) {
         $class_i18n_path = __DIR__ . '/../phpmodules/utils/i18n.class.php'; 
+        $langCachePath = __DIR__ . '/../langcache';
     }
     if (file_exists($class_i18n_path)) {
         require_once $class_i18n_path;
         $i18n = new i18n();
-        $i18n->setCachePath(__DIR__  . '/../langcache');
+        $i18n->setCachePath($langCachePath);
         $i18n->setFilePath($langFile); // language file path
         $i18n->setLangVariantEnabled(true); // trim region variant in language codes (e.g. en-us -> en)
         $i18n->setFallbackLang('ko');
@@ -84,7 +86,7 @@ $frontEndProtocol = $config->{'frontEndProtocol'};
 $frontEndPoint = $config->{'frontEndPoint'};
 $outBoundProtocol = $config->{'outBoundProtocol'};
 $outBoundPoint = $config->{'outBoundPoint'};
-$boanEndPoint = "https://boan.company.com:4000";
+$boanEndPoint = $config->{'urlLoginRemoteAPI'};
 // ----------------------------------------------------------
 $topPath = $config->{'topPath'};
 $outputPrefix = $config->{'outputPrefix'};
@@ -112,7 +114,7 @@ if (isset($_SERVER['HTTP_HOST']) &&
     $topPath = $testTopPath;
     $outBoundProtocol = $frontEndProtocol;
     $outBoundPoint = $frontEndPoint;
-    $boanEndPoint = "https://boan.company.com:4040";
+    $boanEndPoint = $json->{'development'}->{'urlLoginRemoteAPI'};
 }
 elseif (isset($_SERVER['SERVER_NAME']) &&
         strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {

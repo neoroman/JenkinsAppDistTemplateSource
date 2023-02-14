@@ -2,11 +2,11 @@
 // session_start();
 
 require_once(__DIR__ . '/../config.php');
-// global $usingLogin;
+// global $usingLogin, $topPath;
 
-// if ($usingLogin && !isset($_SESSION['internal_id'])) {
-//   header('Location: /login.php?redirect='. $_SERVER['PHP_SELF']);
-// }
+  // if ($usingLogin && !isset($_SESSION['internal_id'])) {
+  //   header('Location: /'. $topPath .'/login.php?redirect='. $_SERVER['PHP_SELF']);
+  // }
 if (isset($_GET["appVer"])) {
   $appVer=$_GET["appVer"];
 }

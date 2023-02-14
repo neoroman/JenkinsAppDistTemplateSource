@@ -135,9 +135,13 @@ function appDownloader(url) {
 
 ///////////////////////////////////////
 // for remove files, final warning
-function deleteFiles(url) {
+function deleteFiles(url, outboundDomain) {
 	if (url) {
-		var result = confirm("선택하신 빌드의 모든 파일이 삭제됩니다.\n\n삭제 후에는 수작업으로만 파일을 복구할 수 있습니다.\n\n\n진행 하겠습니까?\n\n");
+		if (outboundDomain && window.location.hostname === outboundDomain) {
+			alert("[ WARNING ]\n\n 사내 네트워크에서만 삭제가 가능합니다.");
+			return;
+		}	
+		var result = confirm("선택하신 빌드의 모든 파일이 삭제됩니다.\n\n삭제 후에는 수작업으로만 파일을 복구할 수 있습니다.\n\n\n완전 삭제를 진행 하시려면 '확인(OK)'를 누르세요.\n\n'취소(Cancel)'을 누르시면 임시 삭제(복원 가능)가 진행됩니다.\n\n");
 		if (result == true) {
 			window.location.href = url;
 		}
@@ -162,8 +166,8 @@ function enterprise4web(url) {
 
 ///////////////////////////////////////
 // Android signing for Android only
-function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOneStore) {
-	if (window.location.hostname === 'app.company.com') {
+function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOneStore, outboundDomain) {
+	if (outboundDomain && window.location.hostname === outboundDomain) {
 		alert("[ Android 2차 난독화 ]\n\n 사내 네트워크에서만 가능합니다.");
 		return;
 	}
@@ -209,8 +213,8 @@ function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOne
 
 ///////////////////////////////////////
 // App Store uploading for iOS only
-function appStoreUploading(url, appVersion, domesticEnd) {
-	if (window.location.hostname === 'app.company.com') {
+function appStoreUploading(url, appVersion, domesticEnd, outboundDomain) {
+	if (outboundDomain && window.location.hostname === outboundDomain) {
 		const result = confirm("[ App Store Upload ]\n\n 사내 네트워크에서만 가능합니다.\n\n사내 사이트로 이동하시려면 '확인(OK)'을 누르세요.");
 		if (result == true && domesticEnd) {
 			window.location.href = domesticEnd + window.location.pathname;

@@ -3,7 +3,7 @@
 # Written by EungShik Kim, 2021.10.08
 #
 #####
-jsonConfig="config/config.json"
+jsonConfig="../config/config.json"
 SCRIPT_NAME=$(basename $0)
 DEBUGGING=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
@@ -52,9 +52,15 @@ if [[ "$JQ" == "" ]]; then
 fi
 #####
 if [[ "${INPUT_OS}" == "ios" ]]; then
-    TARGET="./ios_distributions"
+    TARGET="../ios_distributions"
+    if [ ! -d $TARGET ]; then
+        TARGET="./ios_distributions"
+    fi
 elif [[ "${INPUT_OS}" == "android" ]]; then
-    TARGET="./android_distributions"
+    TARGET="../android_distributions"
+    if [ ! -d $TARGET ]; then
+        TARGET="./android_distributions"
+    fi
 fi
 if [ -f $jsonConfig ]; then
   if [ $DEBUGGING -eq 1 ]; then

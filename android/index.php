@@ -2,7 +2,7 @@
 session_start();
 
 require_once('../config.php');
-global $usingLogin;
+global $usingLogin, $topPath;
 global $outBoundPoint;
 
 $icon = $json->{'icon'};
@@ -11,7 +11,7 @@ if ($usingLogin && !isset($_SESSION['id'])) {
   if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
     // Do nothing for remote API login on app.company.com
   } else {
-    header('Location: /login.php?redirect='. $_SERVER['PHP_SELF']);
+    header('Location: /'. $topPath .'/login.php?redirect='. $_SERVER['PHP_SELF']);
   }
 }
 
@@ -39,7 +39,7 @@ $selectedPattern = "";
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css?v2">
+  <link rel="stylesheet" href="../css/common.css?v4">
 </head>
 
 <body>

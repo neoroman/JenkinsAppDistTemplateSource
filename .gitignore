@@ -31,6 +31,8 @@ ios_distribution/ExportOptions.plist
 langcache/php_i18n_*
 lang/lang_en.json
 lang/lang_ko.json
+# cache organization chart
+langcache/org_chart_*
 #####
 # etc
 PHPMailer
