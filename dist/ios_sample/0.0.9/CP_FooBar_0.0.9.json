@@ -1,6 +1,6 @@
 {
   "title": "테스트 버전",
-  "appVersion": "1.0.0",
+  "appVersion": "0.0.9",
   "buildVersion": "1",
   "versionKey": "",
   "buildNumber": "1",
@@ -11,14 +11,14 @@
     {
       "title": "Ad-Hoc",
       "size": "177MB",
-      "file": "CP_FooBar_1.0.0_Adhoc.ipa",
-      "plist": "CP_FooBar_1.0.0_Adhoc.plist"
+      "file": "CP_FooBar_0.0.9_Adhoc.ipa",
+      "plist": "CP_FooBar_0.0.9_Adhoc.plist"
     },
     {
       "title": "Enterprise",
       "size": "192MB",
-      "file": "CP_FooBar_1.0.0_Enter.ipa",
-      "plist": "CP_FooBar_1.0.0_Enter.plist"
+      "file": "CP_FooBar_0.0.9_Enter.ipa",
+      "plist": "CP_FooBar_0.0.9_Enter.plist"
     },
     {
       "title": "Enterprise4Web",

@@ -1,6 +1,6 @@
 {
   "title": "테스트 버전",
-  "appVersion": "1.0.0",
+  "appVersion": "0.0.8",
   "buildVersion": "1",
   "versionKey": "",
   "buildNumber": "1",
@@ -11,13 +11,13 @@
     {
       "title": "Live APK",
       "size": "97MB",
-      "file": "CP_FooBar_1.0.0-LiveServer-debug.apk",
+      "file": "CP_FooBar_0.0.8-LiveServer-debug.apk",
       "plist": ""
     },
     {
       "title": "GMMS TB APK",
       "size": "96MB",
-      "file": "CP_FooBar_1.0.0-TestServer-debug.apk",
+      "file": "CP_FooBar_0.0.8-TestServer-debug.apk",
       "plist": ""
     },
     {
