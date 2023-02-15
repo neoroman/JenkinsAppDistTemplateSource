@@ -20,6 +20,9 @@
 
 // $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
 // file_put_contents($configJson, $newJsonString);
+if (file_exists('config/config.json') && (file_exists('lang/lang_ko.json') || file_exists('lang/lang_en.json'))) {
+  header('Location: dist_domestic.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
