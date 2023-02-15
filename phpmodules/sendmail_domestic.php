@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 global $documentRootPath, $frontEndProtocol, $frontEndPoint, $topPath;
 
 if (isset($_GET["email"])) {
@@ -104,28 +104,17 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
           $mail->addAddress($to);               // Name is optional
         }
       }
-      else if (count(explode('|', L::mail_to)) > 0) {
-        $r_emails = explode('|', L::mail_to);
-        $r_name = explode('|', L::mail_to_name);
+
+      $mail->addReplyTo(L::mail_reply_to, L::copywrite_company . L::mail_reply_to_name);
+
+      if (count(explode('|', L::mail_reply_to)) > 0) {
+        $r_emails = explode('|', L::mail_reply_to);
+        $r_name = explode('|', L::mail_reply_to_name);
         for($i=0; $i<count($r_emails); $i++) {
           $mail->addAddress($r_emails[$i], $r_name[$i]);
         }
-      }
-      else {
-        $reci_email = trim('|', L::mail_to);
-        $reci_name = trim('|', L::mail_to_name);
-        $mail->addAddress($reci_email, $reci_name);
-      }
-      $mail->addReplyTo(L::mail_reply_to, L::copywrite_company . L::mail_reply_to_name);
-
-      if (count(explode('|', L::mail_cc)) > 0) {
-        $r_emails = explode('|', L::mail_cc);
-        $r_name = explode('|', L::mail_cc_name);
-        for($i=0; $i<count($r_emails); $i++) {
-          $mail->addCC($r_emails[$i], $r_name[$i]);
-        }
       } else {
-        $mail->addCC(L::company_email, L::company_name .' '. L::company_team);
+        $mail->addAddress(L::company_email, L::company_name .' '. L::company_team);
       }
 
       //Attachments
@@ -144,16 +133,17 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
       }
 
       // Site user
-      $siteUser = $json->{'users'}->{'app'}->{'userId'};
-      $sitePass = $json->{'users'}->{'app'}->{'password'};
+      $siteUser = $json->{'users'}->{'qc'}->{'userId'};
+      $sitePass = $json->{'users'}->{'qc'}->{'password'};
 
       //Content
       $mail->isHTML(true);                                  // Set email format to HTML
       if (isset($subject)) {
         $mail->Subject = $subject;
       } else {
-        $mail->Subject = '['. L::title_h2_client .'] '.date("Y.m.d");
+        $mail->Subject = '[앱배포] 내부 테스트 앱 배포: '.date("Y.m.d");
       }
+      $domestic_url = "$frontEndProtocol://$frontEndPoint/$topPath/dist_domestic.php";
       if (isset($message)) {
         $mail->Body    = $message;
         $mail->AltBody = $message;
@@ -163,11 +153,8 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
         $mail->Body   .= '<BODY>';
         $mail->Body   .= '<br />안녕하세요.<br />';
         $mail->Body   .= '<div>'.$message_header.'</div><br />';
-        $mail->Body   .= '<H2><b>설치 및 다운로드 URL</b></H2>';
-        $mail->Body   .= '<div style="background: ghostwhite; font-size: 12px; padding: 10px; border: 1px solid lightgray; margin: 10px;">';
-        $mail->Body   .= '<a href='. L::client_short_url .'>'. L::client_short_url .'</a>&nbsp;(ID/PW: '. $siteUser .'/'. $sitePass .')';
-        $mail->Body   .= '</div>';
-        $mail->Body   .= '※'. L::description_notice18;
+        $mail->Body   .= '<H2><b>내부 QA 사이트 URL</b></H2>';
+        $mail->Body   .= '<a href='. $domestic_url .'>'. $domestic_url .'</a>&nbsp;(ID/PW: '. $siteUser .'/'. $sitePass .')';
         $mail->Body   .= '<br /><br />';
         $mail->Body   .= '<H2><b>수정 및 반영사항</b></H2>';
         $mail->Body   .= '항목:&nbsp;<br />';
@@ -188,7 +175,7 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
 
         // This is the body in plain text for non-HTML mail clients
         $mail->AltBody  = '안녕하세요.\n\n'.$message_header.'\n\n';
-        $mail->AltBody .= '설치 및 다운로드 URL: '. L::client_short_url .' (ID/PW: '. $siteUser .'/'. $sitePass .')\n\n';
+        $mail->AltBody .= '설치 및 다운로드 URL: '. $domestic_url .' (ID/PW: '. $siteUser .'/'. $sitePass .')\n\n';
         $mail->AltBody .= '수정 및 반영사항\n항목:\n'.$message_description.'\n\n';
         if (isset($message_attachment)) {
           $mail->AltBody .= '첨부파일: '.$message_attachment.'\n\n';
@@ -203,7 +190,7 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
       echo 'Message has been sent';
   } catch (Exception $e) {
       $content = "Message could not be sent. Mailer Error: ". $mail->ErrorInfo;
-      $errFile = __DIR__ . "/sendmail.log";
+      $errFile = __DIR__ . "/../sendmail.log";
       file_put_contents($errFile, $content);
   }
 } else {

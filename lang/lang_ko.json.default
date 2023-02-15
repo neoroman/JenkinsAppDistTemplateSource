@@ -72,7 +72,7 @@
 		"notice6_admin": "앱 > 설정 > (이스터에그) > 관리자 비밀번호 팝업 > 앱 환경 설정",
 		"notice6_admin_detail": "※ 고정암호는 앱 담당에 문의바람",
 		"notice5": "배포 목적과 상세 내용(옵션)을 기입 후 '고객사 배포'버튼을 누르면 배포가 이루어집니다.",
-		"notice4": "<em class=\"ico_share\"><span class=\"hide\">공유</span></em>버튼을 눌러 해당 버전을 고객사에 배포합니다.&nbsp;배포 후에도 <em class=\"ico_share\"><span class=\"hide\">공유</span></em>를 클릭하면 '<b>수정 및 메일 재전송</b>'이 가능합니다.",
+		"notice4": "<em class=\"ico_share\"><span class=\"hide\">공유</span></em>버튼을 눌러 해당 버전을 고객사에 배포합니다.&nbsp;배포 후에도 <em class=\"ico_share_orange\"><span class=\"hide\">공유</span></em>를 클릭하면 '<b>수정 및 메일 재전송</b>'이 가능합니다.",
 		"notice3_domestic": "고객사 배포 및 메일 전송은 페이지내의 <em class=\"ico_share\"></em>배포 버튼으로 가능",
 		"notice2": "<font color=#132F50>App Store iOS 용량은 Swift Library 약 46MB가 포함. AppStore 업로드 시 실제 용량 약 70%</font>",
 		"notice1": "사이트 개편공지: 모바일에서는 검색어 입력 후 다시 입력하시려면 검색초기화 후 입력가능합니다."

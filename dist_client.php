@@ -79,7 +79,7 @@ if ($usingLogin && !isset($_SESSION['id'])) {
         if ($recommandEnabled && !$isAdminID) { 
         ?>
         <div class="btn_area">
-            <a href="./recommand.php" class="btn_send"><?php echo L::button_link_to_recommand; ?></a>
+            <a href="./phpmodules/recommand.php" class="btn_send"><?php echo L::button_link_to_recommand; ?></a>
             <!-- <p class="txt_link">(AOS iOS 모둠 페이지)</p> -->
         </div>
         <?php 

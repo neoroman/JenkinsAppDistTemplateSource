@@ -3,7 +3,7 @@ Language: HTML, PHP, Javascript
 
 ## Introduction
 - This a template web site for iOS / Android application distributions.
-- You can start jenkins build first then change config.json, etc.
+- You can start jenkins build first then change config.json, lang/lang_ko.json, lang/lang_en.json etc.
 
 
 ## Requirements
@@ -17,8 +17,6 @@ Language: HTML, PHP, Javascript
   ```
     git submodule add https://github.com/neoroman/JenkinsBuild.git jenkins
   ```
-- Edit config/config.json for various path for source, CLI commands, ... etc
-- Edit lang/lang_{ko,en}.json for messages on web pages.
 - After create jenkins item and input followings into ``Build`` section
   ```
     git submodule init
@@ -26,6 +24,22 @@ Language: HTML, PHP, Javascript
     git submodule foreach git pull origin main
     bash -ex ${WORKSPACE}/jenkins/jenkins-build.sh -p ios --toppath "Company/Project"
   ```
+  or just add submoule in jenkins forcefully
+  ```
+    git submodule add https://github.com/neoroman/JenkinsBuild.git jenkins
+    git config -f .gitmodules submodule.jenkins.url https://github.com/neoroman/JenkinsBuild.git
+    git submodule sync
+    git submodule update --force --recursive --init --remote
+    git submodule foreach git pull origin main
+    bash -ex ${WORKSPACE}/jenkins/build.sh -p ios --toppath "Company/Project"
+  ```
+
+- Jenkins probably failed for the first time.
+- Copy ``config/config.json.default`` to ``config/config.json``
+- Edit ``config/config.json`` for various path for source, CLI commands, ... etc
+- Copy ``config/lang/lang_{ko,en}.json.default`` to ``lang/lang_{ko,en}.json``
+- Edit ``lang/lang_{ko,en}.json`` for messages on web pages.
+
 
 
 ## Configuration
@@ -33,6 +47,11 @@ Language: HTML, PHP, Javascript
 - ``lang/lang_ko.json``: php-i18n for Korean
 - ``lang/lang_en.json``: php-i18n for English
 - You can add more langauge file in lang/ if you need.
+
+
+## Configuration for only App Store
+- Copy ``config/ExportOptions_AppStore.plist.default`` to ``config/ExportOptions_AppStore.plist``
+- Edit values for keys properly for your Application informations in App Store
 
 
 ## Author

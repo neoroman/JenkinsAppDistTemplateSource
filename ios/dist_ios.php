@@ -2,18 +2,22 @@
 session_start();
 
 require_once('../config.php');
-global $usingLogin;
+global $usingLogin, $topPath;
 global $outBoundPoint;
 
 if ($usingLogin && !isset($_SESSION['internal_id'])) {
   if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
     // Do nothing for remote API login on app.company.com
   } else {
-    header('Location: ../login.php?redirect='. $_SERVER['PHP_SELF']);
+    header('Location: /'. $topPath .'/login.php?redirect='. $_SERVER['PHP_SELF']);
   }
 }
 
-require('../common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('phpmodules/common.php')) {
+  require('phpmodules/common.php');
+}
 if (file_exists("../.access_file.php")) {
     require_once('../.access_file.php');
     global $accessToken, $dateString;
@@ -39,7 +43,7 @@ $selectedPattern = "";
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css?v2">
+  <link rel="stylesheet" href="../css/common.css?v4">
 </head>
 
 <body>
@@ -94,7 +98,7 @@ $selectedPattern = "";
       </div>
       <!-- //검색 팝업 : modal-S(모바일의 경우만 모달처리됨) -->
 
-      <a href="../pw_guide_uaqa.php" class="link_pw"><?php echo L::title_admin_password; ?></a>
+      <a href="../phpmodules/pw_guide_uaqa.php" class="link_pw"><?php echo L::title_admin_password; ?></a>
       <a href="#modal-S" class="link_search"><?php echo L::search_title; ?></a>
     </div>
   </div>

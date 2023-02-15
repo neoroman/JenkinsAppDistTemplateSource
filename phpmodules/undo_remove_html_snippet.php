@@ -1,5 +1,9 @@
 <?php
-require('common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('common.php')) {
+  require('common.php');
+}
 global $root, $inUrl;
 
 $prevPage = $_SERVER['HTTP_REFERER'];
@@ -28,7 +32,7 @@ if (endsWith($referrer, "php")) {
   }
 
   if ($file_name) {
-    foreach (glob("./$osDir/*/*$file_name.html.deleted") as $filename) {
+    foreach (glob("../$osDir/*/*$file_name.html.deleted") as $filename) {
       echo "<H2>Undo removed HTML snippet.... [ DONE ]</H2>";
       $undoPath = pathinfo($filename, PATHINFO_DIRNAME);
       $undoFilename = basename($filename, '.deleted');
@@ -40,7 +44,7 @@ if (endsWith($referrer, "php")) {
     $jenkins = $arr[1];
 
     // perform actions for each file found
-    foreach (glob("./$osDir/*/*$ver*.html.deleted") as $filename) {
+    foreach (glob("../$osDir/*/*$ver*.html.deleted") as $filename) {
       // jenkins 빌드번호가 맞는 경우만 삭제(rename)함 by EungShik Kim on 2019.11.25
       if (stripos(file_get_contents($filename), $jenkins)) {
         echo "<H2>Undo removed HTML snippet.... [ DONE ]</H2>";

@@ -1,10 +1,14 @@
 <?php
-require_once('config.php');
+require_once(__DIR__ . '/../config.php');
 global $topPath, $root;
 global $inUrl, $outUrl, $isDebugMode;
 global $outBoundPoint;
 
-require('common.php');
+if (file_exists('../phpmodules/common.php')) {
+  require('../phpmodules/common.php');
+} else if (file_exists('common.php')) {
+  require('common.php');
+}
 
 if (isset($_SERVER['HTTP_REFERER'])) {
   $prevPage = $_SERVER['HTTP_REFERER'];
@@ -106,11 +110,11 @@ if (isset($_POST['deliver'])) {
     if (file_exists("./$newOS/$newPath/".basename($input_file))) {
       $newFilename = basename($input_file);
       if ($isDebugMode) {
-        $output = shell_exec('./doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-        echo 'INPUT => ./doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
+        $output = shell_exec('../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+        echo 'INPUT => ../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
         exit("$output<BR />고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
       } else {
-        $output = shell_exec('./doDistributions.sh resend -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) .  ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+        $output = shell_exec('../shells/doDistributions.sh resend -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) .  ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
         if ($input_os == 'both') {
           exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$org_os/dist_$org_os.php'>");
         } else {
@@ -190,20 +194,20 @@ if (isset($_POST['deliver'])) {
         file_put_contents($iOS_incFile, $content);
         file_put_contents($Android_incFile, $content);
 
-        if (file_exists("./ios_distributions/$newPath/".basename($input_file))) {
-          rename("./ios_distributions/$newPath/".basename($input_file), "ios_distributions/$newPath/$newFilename");
+        if (file_exists("../ios_distributions/$newPath/".basename($input_file))) {
+          rename("../ios_distributions/$newPath/".basename($input_file), "ios_distributions/$newPath/$newFilename");
         }
-        if (file_exists("./android_distributions/$newPath/".basename($input_file))) {
-          rename("./android_distributions/$newPath/".basename($input_file), "android_distributions/$newPath/$newFilename");
+        if (file_exists("../android_distributions/$newPath/".basename($input_file))) {
+          rename("../android_distributions/$newPath/".basename($input_file), "android_distributions/$newPath/$newFilename");
         }
       }
 
       if ($isDebugMode) {
-        $output = shell_exec('./doDistributions.sh -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-        echo 'INPUT => ./doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
+        $output = shell_exec('../shells/doDistributions.sh -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+        echo 'INPUT => ../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
         exit("$output<BR />고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
       } else {
-        $output = shell_exec('./doDistributions.sh -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+        $output = shell_exec('../shells/doDistributions.sh -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
           if ($input_os != 'both') {
             exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$input_os/dist_$input_os.php'>");
           } else {
@@ -232,11 +236,11 @@ if (startsWith(basename($input_file), "zzz_")) {
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title><?php echo L::client_title ." ". L::app_name ?></title>
   <!-- font CSS -->
-  <link rel="stylesheet" href="./font/NotoSans.css">
+  <link rel="stylesheet" href="../font/NotoSans.css">
   <!-- select Css -->
-  <link rel="stylesheet" href="./css/nice-select.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="../css/common.css">
   <script type="text/javascript">
   function FormSubmit(oForm) {
       var oHidden = oForm.elements["version"];
@@ -348,14 +352,14 @@ if (startsWith(basename($input_file), "zzz_")) {
 <!-- //footer -->
 
 <!-- jquery JS -->
-<script src="./js/jquery-3.2.1.min.js"></script>
+<script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
-<script src="./js/jquery.nice-select.min.js"></script>
+<script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
-<script src="./plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="./js/common.js"></script>
+<script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="./js/appDistCommon4client.js?v4"></script>
+<script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>

@@ -323,7 +323,7 @@ if [ $USING_MAIL -eq 1 ]; then
   --data-urlencode "subject2=Google Playstore, OneStore 등록용 버전 생성 알림" \
   --data-urlencode "message_header=안드로이드 2차 난독화 signing 버전 전달합니다.<br /><br /><br />첨부파일: <br /><br />구글Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}</a><br />원Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}</a><br />" \
   --data-urlencode "message_description=${SHORT_GIT_LOG}<br /><br /><br />" \
-  ${FRONTEND_POINT}/${TOP_PATH}/sendmail_domestic.php
+  ${FRONTEND_POINT}/${TOP_PATH}/phpmodules/sendmail_domestic.php
 fi
 
 if [ $USING_JSON -eq 1 ]; then
@@ -498,7 +498,7 @@ if [ $USING_TEAMS_WEBHOOK -eq 1 ]; then
     $CURL -H "Content-Type: application/json" -d "${JSON_ALL}" $TEAMS_WEBHOOK
     ##
     # Sync files to Neo2UA (Synology NAS)
-    if [ -f ../syncToNasNeo2UA.sh ]; then
-      ../syncToNasNeo2UA.sh
-    fi
+    # if [ -f ../shells/syncToNasNeo2UA.sh ]; then
+    #   ../shells/syncToNasNeo2UA.sh
+    # fi
 fi

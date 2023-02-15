@@ -4,7 +4,7 @@ session_start();
 require_once('config.php');
 global $conn, $topPath, $usingMySQL, $userDict;
 
-require('common.php');
+require('phpmodules/common.php');
 global $inUrl, $outUrl;
 
 if (isset($_POST['login'])) {
@@ -129,7 +129,7 @@ if (isset($_POST['login'])) {
   <!-- select Css -->
   <link rel="stylesheet" href="./css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/common.css?v3">
   <script type="text/javascript">
   function LoginGetParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -147,6 +147,8 @@ if (isset($_POST['login'])) {
 <body>
 <?php
 $loginType = "<input type=\"hidden\" name=\"login_type\" value=\"1\" />";
+$login_desc = "* 본인의 ". L::app_name ." ID/PW로 로그인 하세요.";
+$reset_password = '<BR />[ <a href="password_find.php">비밀번호 찾기</a> ]';
 echo "<!-- wrap -->";
 //<!-- (외부로그인)login_type1, (내부로그인)login_type2 -->
 if (isset($_GET['redirect'])) {
@@ -154,6 +156,7 @@ if (isset($_GET['redirect'])) {
   if (strpos($redirUrl, 'dist_domestic') || strpos($redirUrl, 'dist_android') || strpos($redirUrl, 'dist_ios')) {
     echo "<div class=\"wrap login_type2\">";
     $loginType = "<input type=\"hidden\" name=\"login_type\" value=\"2\" />";
+    $login_desc = "";
   }
   else {
     echo "<div class=\"wrap login_type1\">";
@@ -175,9 +178,11 @@ else {
   				<label class="id_type"><input type="text" name="login_id" class="inp_text" placeholder="아이디를 입력하세요." required></label>
   				<label class="pw_type"><input type="password" name="login_pw" class="inp_text" placeholder="비밀번호를 입력하세요." required></label>
   			</div>
+        <?php if (isset($login_desc) && strlen($login_desc) > 0) echo "<div>$login_desc</div>"; ?>
         <div class="btn_area">
           <input type="submit" class="btn_login" name="login" value="로그인" />
         </div>
+        <?php if (isset($reset_password) && strlen($reset_password) > 0) echo "<div class=\"find_password\">$reset_password</div>"; ?>
         <?php if (isset($error_message) && strlen($error_message) > 0) echo "<div>$error_message</div>"; ?>
   		</fieldset>
     </form>
