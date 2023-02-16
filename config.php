@@ -1,4 +1,5 @@
 <?php
+$localTopDir = __DIR__;
 require(__DIR__ . '/phpmodules/utils/json.php');
 if (file_exists(__DIR__ . "/../lang/default.json")) {
     $defaultLang = __DIR__ . "/../lang/default.json";

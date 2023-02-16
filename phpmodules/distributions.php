@@ -45,32 +45,27 @@ else if (isset($_POST["resending"])) {
   $is_reseding=$_POST["resending"];
 }
 
-$newOS = $input_os;
 $org_os = $input_os;
-if ($input_os == "ios") {
-  $newOS = "ios_distributions";
-} elseif ($input_os == "android") {
-  $newOS = "android_distributions";
-}
 if ($_SERVER['SERVER_NAME'] == $outBoundPoint) {
   exit("고객사 배포는 사내망에서만 가능합니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='2;url=/$topPath/$org_os/dist_$org_os.php'>");
 }
 
-$newPath = pathinfo($input_file, PATHINFO_DIRNAME);
-if (startsWith($newPath, './')) {
-  $newPath = substr($newPath, 2);
-} else if (startsWith($newPath, '../') && !file_exists($newPath) && strpos($newPath, $newOS)) {
-  $newPath = substr($newPath, 3 + strlen($newOS) + 1);
+$path = pathinfo($input_file, PATHINFO_DIRNAME);
+$basename = basename($input_file);
+$basenameWithoutExt = basename($input_file, '.html');
+$incFilename = $basenameWithoutExt . ".inc.php";
+$incFile = "$path/$incFilename";
+if ($input_os == "ios") {
+  $iOS_incFile = $incFile;
+  $iOS_path = $path;
+  $Android_incFile = str_replace('ios_distributions', 'android_distributions', $incFile);
+  $Android_path = str_replace('ios_distributions', 'android_distributions', $path);
+} elseif ($input_os == "android") {
+  $iOS_incFile = str_replace('android_distributions', 'ios_distributions', $incFile);
+  $iOS_path = str_replace('android_distributions', 'ios_distributions', $path);
+  $Android_incFile = $incFile;
+  $Android_path = $path;
 }
-$filename = basename($input_file, '.html') . ".inc.php";
-if (startsWith(basename($input_file), "zzz_")) {
-  $newFilename = substr(basename($input_file), 4);
-  $filename = basename($newFilename, '.html') . ".inc.php";
-}
-$incFile = "$newOS/$newPath/$filename";
-$iOS_incFile = "ios_distributions/$newPath/$filename";
-$Android_incFile = "android_distributions/$newPath/$filename";
-
 if (isset($is_reseding) && $is_reseding && file_exists($incFile)) {
   require_once($incFile);
 }
@@ -84,142 +79,13 @@ if (isset($_POST['deliver'])) {
   if (isset($_POST['sendBothPlatform']) && $_POST['sendBothPlatform'] == "1") {
     $input_os = 'both';
   }
-
-  if (isset($_POST['resend'])) {
-    if (isset($_POST['version_target']) && strlen($_POST['version_target'])>0) {
-      $aVersionTarget = $_POST['version_target'];
-      $aVersionDetails = "";
-      if (isset($_POST['version_details'])) {
-        $aVersionDetails = $_POST['version_details'];
-      }
-
-      if (file_exists($incFile)) {
-        unlink($incFile);
-      }
-      $content = "<?php\n"
-      ."\$version_target = \"$aVersionTarget\";\n"
-      ."\$version_details = \"$aVersionDetails\";\n"
-      ."?>\n";
-      if ($input_os != 'both') {
-        file_put_contents($incFile, $content);
-      } else {
-        $result_ios = file_put_contents($iOS_incFile, $content);
-        $result_aos = file_put_contents($Android_incFile, $content);
-      }
-    }
-    if (file_exists("./$newOS/$newPath/".basename($input_file))) {
-      $newFilename = basename($input_file);
-      if ($isDebugMode) {
-        $output = shell_exec('../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-        echo 'INPUT => ../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
-        exit("$output<BR />고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
-      } else {
-        $output = shell_exec('../shells/doDistributions.sh resend -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) .  ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-        if ($input_os == 'both') {
-          exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$org_os/dist_$org_os.php'>");
-        } else {
-          exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$input_os/dist_$input_os.php'>");
-        }
-      }
-    }
-    else {
-      $debugDesc  = "Is startsWith(basename($input_file), \"zzz_\") is ". startsWith(basename($input_file), "zzz_");
-      $debugDesc .= "Is file_exists(\"./$newOS/$newPath/\".basename($input_file)) is ". file_exists("./$newOS/$newPath/".basename($input_file));
-      exit("$debugDesc<br /> 고객사 배포 실패 <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
-    }
+  if (file_exists("$path/$basename")) {
+    $newFilename = renameInputFile();
+    executeShellScript($newFilename, isset($_POST['resend']));
+    updateVersionTag();    
   }
-  else if (isset($_POST['version_target']) && strlen($_POST['version_target'])>0) {
-    $aVersionTarget = $_POST['version_target'];
-    echo "<H1><span style=\"color: pink; \">$aVersionTarget</span></H1>
-    <script>
-      const countDownTimer = function (id, date) { 
-        var _vDate = new Date(date); // 전달 받은 일자 
-        var _second = 1000; 
-        var _minute = _second * 60; 
-        var _hour = _minute * 60; 
-        var _day = _hour * 24; 
-        var timer; 
-        function showRemaining() { 
-          var now = new Date(); 
-          var distDt = _vDate - now; 
-          if (distDt < 0) { 
-            clearInterval(timer); 
-            document.getElementById(id).textContent = '완료 되었습니다!'; 
-            return; 
-          } 
-          // var days = Math.floor(distDt / _day); 
-          // var hours = Math.floor((distDt % _day) / _hour); 
-          // var minutes = Math.floor((distDt % _hour) / _minute); 
-          var seconds = Math.floor((distDt % _minute) / _second); 
-          // document.getElementById(id).textContent = days + '일 '; 
-          // document.getElementById(id).textContent += hours + '시간 '; 
-          // document.getElementById(id).textContent += minutes + '분 '; 
-          document.getElementById(id).textContent = seconds + '초'; 
-        } 
-        timer = setInterval(showRemaining, 1000); 
-      } 
-      function startTimer() {
-        var dateObj = new Date(); 
-        dateObj.setTime(Date.now() + 1 * 61 * 1000); // Add 1 minutes to current timestamp
-        countDownTimer('sample01', dateObj); // 1분후 
-        // countDownTimer('sample02', '04/01/2024 00:00 AM'); // 2024년 4월 1일까지, 시간을 표시하려면 01:00 AM과 같은 형식을 사용한다. 
-        // countDownTimer('sample03', '04/01/2024'); // 2024년 4월 1일까지 
-        // countDownTimer('sample04', '04/01/2019'); // 2024년 4월 1일까지 
-      }
-      startTimer();
-    </script>
-    <body>
-    <div id='sample01' style='font-size:200px;color:pink'></div>
-    </body>
-    ";
-    $aVersionDetails = "";
-
-    if (isset($_POST['version_details']) && strlen($_POST['version_details'])>0) {
-      $aVersionDetails = $_POST['version_details'];
-    }
-    if (file_exists($incFile)) {
-      unlink($incFile);
-    }
-    $content = "<?php\n"
-    ."\$version_target = \"$aVersionTarget\";\n"
-    ."\$version_details = \"$aVersionDetails\";\n"
-    ."?>\n";
-
-    if (startsWith(basename($input_file), "zzz_") && file_exists("./$newOS/$newPath/".basename($input_file))) {
-      $newFilename = substr(basename($input_file), 4);
-      if ($input_os != 'both') {
-        file_put_contents($incFile, $content);
-        rename("./$newOS/$newPath/".basename($input_file), "$newOS/$newPath/$newFilename");
-      } else {
-        file_put_contents($iOS_incFile, $content);
-        file_put_contents($Android_incFile, $content);
-
-        if (file_exists("../ios_distributions/$newPath/".basename($input_file))) {
-          rename("../ios_distributions/$newPath/".basename($input_file), "ios_distributions/$newPath/$newFilename");
-        }
-        if (file_exists("../android_distributions/$newPath/".basename($input_file))) {
-          rename("../android_distributions/$newPath/".basename($input_file), "android_distributions/$newPath/$newFilename");
-        }
-      }
-
-      if ($isDebugMode) {
-        $output = shell_exec('../shells/doDistributions.sh -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-        echo 'INPUT => ../shells/doDistributions.sh resend -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
-        exit("$output<BR />고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
-      } else {
-        $output = shell_exec('../shells/doDistributions.sh -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-          if ($input_os != 'both') {
-            exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$input_os/dist_$input_os.php'>");
-          } else {
-            exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=/$topPath/$org_os/dist_$org_os.php'>");
-          }
-      }
-    }
-    else {
-      $debugDesc  = "Is startsWith(basename($input_file), \"zzz_\") is ". startsWith(basename($input_file), "zzz_");
-      $debugDesc .= "Is file_exists(\"./$newOS/$newPath/\".basename($input_file)) is ". file_exists("./$newOS/$newPath/".basename($input_file));
-      exit("$debugDesc<br /> 고객사 배포 실패 <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
-    }
+  else {
+    printError();
   }
 }
 if (startsWith(basename($input_file), "zzz_")) {
@@ -248,6 +114,8 @@ if (startsWith(basename($input_file), "zzz_")) {
       var oTextbox = oForm.elements["version_txt"];
       if (oHidden && oDDL && oTextbox)
           oHidden.value = (oDDL.value == "") ? oTextbox.value : oDDL.value;
+
+      window.uploadingAnimation( 'loadingAni' );
   }
   </script>
 </head>
@@ -351,15 +219,112 @@ if (startsWith(basename($input_file), "zzz_")) {
 </div>
 <!-- //footer -->
 
+<!-- loading :220127추가 -->
+<div class="loading_dimm" style="visibility: hidden;">
+  <span class="animation" id="loadingAni"></span>
+</div>
+<!-- //loading : 220127추가 -->
+
 <!-- jquery JS -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
 <script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
 <script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<!-- loading -->
+<script src="../plugin/lottie.js"></script>
+<script src="../js/loading.js"></script> <!-- 220127추가 -->
 <!-- common JS -->
 <script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
 <script src="../js/appDistCommon4client.js?v4"></script>
 </body>
 </html>
+
+<?php
+function executeShellScript($newFilename, $isResend) {
+  global $org_os, $input_os;
+  global $isSendingEmail, $root, $topPath, $inUrl, $outUrl;
+  global $isDebugMode;
+
+  $resendArg = "resend";
+  if (!$isResend) {
+    $resendArg = "";
+  }
+  if ($isDebugMode) {
+    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '. $resendArg .' -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+    echo 'INPUT => ' .__DIR__. '/../shells/doDistributions.sh '. $resendArg .' -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
+    exit("$output<BR />고객사 배포가 완료되었습니다. <br /><script type=\"text/javascript\">window.stopAnimation();</script><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
+  } else {
+    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '. $resendArg .' -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) .  ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+    if ($input_os == 'both') {
+      $goBackUrl = "/$topPath/$org_os/dist_$org_os.php";
+    } else {
+      $goBackUrl = "/$topPath/$input_os/dist_$input_os.php";
+    }
+    exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=$goBackUrl'>");
+  }
+}
+function printError() {
+  global $path, $basename;
+
+  $debugDesc  = "Is startsWith($basename, \"zzz_\") is ". startsWith($basename, "zzz_");
+  $debugDesc .= "<BR /><BR />";
+  $debugDesc .= "Is file_exists(\"$path/\".$basename) is ". file_exists("$path/".$basename);
+  $debugDesc .= "<BR /><BR />";
+  exit("$debugDesc<br /> 고객사 배포 실패 <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
+}
+
+function updateVersionTag() {
+  global $input_os, $incFile, $iOS_incFile, $Android_incFile;
+
+  if (isset($_POST['version_target']) && strlen($_POST['version_target'])>0) {
+    $aVersionTarget = $_POST['version_target'];
+    $aVersionDetails = "";
+    if (isset($_POST['version_details'])) {
+      $aVersionDetails = $_POST['version_details'];
+    }
+
+    $content = "<?php\n"
+    ."\$version_target = \"$aVersionTarget\";\n"
+    ."\$version_details = \"$aVersionDetails\";\n"
+    ."?>\n";
+
+    if ($input_os != 'both') {
+      if (file_exists($incFile)) {
+        unlink($incFile);
+      }
+        file_put_contents($incFile, $content);
+    } else {
+      if (file_exists($iOS_incFile)) {
+        unlink($iOS_incFile);
+      }
+      file_put_contents($iOS_incFile, $content);
+      if (file_exists($Android_incFile)) {
+        unlink($Android_incFile);
+      }
+      file_put_contents($Android_incFile, $content);
+    }
+  }
+}
+function renameInputFile() {
+  global $path, $basename;
+  global $input_os, $incFile, $iOS_path, $Android_path;
+
+  if (startsWith($basename, "zzz_") && file_exists("$path/$basename")) {
+    $newFilename = substr(basename($basename), 4);
+    if ($input_os != 'both') {
+      rename("$path/$basename", "$path/$newFilename");
+    } else {
+      if (file_exists("$iOS_path/$basename")) {
+        rename("$iOS_path/$basename", "$iOS_path/$newFilename");
+      }
+      if (file_exists("$Android_path/$basename")) {
+        rename("$Android_path/$basename", "$Android_path/$newFilename");
+      }
+    }
+    return $newFilename;
+  }
+  return $basename;
+}
+?>
