@@ -18,10 +18,18 @@ function getPaginationSnippets($os, $isDomesticQA)
     }
 
     if ($os == "android") {
-        $files = glob("../android_distributions/[0-9].*/*.$fileKey");
+        if (file_exists('../android_distributions')) {
+            $files = glob("../android_distributions/[0-9].*/*.$fileKey");
+        } else {
+            $files = glob("../../android_distributions/[0-9].*/*.$fileKey");
+        }
     }
     else if ($os == "ios") {
-        $files = glob("../ios_distributions/[0-9].*/*.$fileKey");
+        if (file_exists('../ios_distributions')) {
+            $files = glob("../ios_distributions/[0-9].*/*.$fileKey");
+        } else {
+            $files = glob("../../ios_distributions/[0-9].*/*.$fileKey");
+        }
     }
 
     usort($files, function($a, $b) {
