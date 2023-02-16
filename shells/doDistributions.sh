@@ -1,7 +1,13 @@
 #!/bin/sh
 ##
 jsonConfig="../config/config.json"
+if [ ! -f $jsonConfig ]; then
+  jsonConfig="../../config/config.json"
+fi
 configPath="../config.php"
+if [ ! -f $configPath ]; then
+  configPath="../../config.pnp"
+fi
 my_dir="$(dirname "$0")"
 if [ -f $my_dir/sshFunctions.sh ]; then
     . $my_dir/sshFunctions.sh #> /dev/null 2>&1

@@ -1,9 +1,11 @@
 <?php
-if (file_exists('../config.php')) {
-    require_once('../config.php');
-} 
-elseif (file_exists('config.php')) {
-    require_once('config.php');
+if (!class_exists('i18n')) {
+    if (file_exists('../config.php')) {
+        require_once('../config.php');
+    } 
+    elseif (file_exists('config.php')) {
+        require_once('config.php');
+    }    
 }
 require(__DIR__ . '/utils/string.php');
 
@@ -18,18 +20,18 @@ function getPaginationSnippets($os, $isDomesticQA)
     }
 
     if ($os == "android") {
-        if (file_exists('../android_distributions')) {
-            $files = glob("../android_distributions/[0-9].*/*.$fileKey");
-        } else {
-            $files = glob("../../android_distributions/[0-9].*/*.$fileKey");
+        $findingPath = realpath(__DIR__ . "/../android_distributions");
+        if (!$findingPath) {
+            $findingPath = realpath(__DIR__ . "/../../android_distributions");
         }
+        $files = glob($findingPath . "/[0-9].*/*.$fileKey");
     }
     else if ($os == "ios") {
-        if (file_exists('../ios_distributions')) {
-            $files = glob("../ios_distributions/[0-9].*/*.$fileKey");
-        } else {
-            $files = glob("../../ios_distributions/[0-9].*/*.$fileKey");
+        $findingPath = realpath(__DIR__ . "/../ios_distributions");
+        if (!$findingPath) {
+            $findingPath = realpath(__DIR__ . "/../../ios_distributions");
         }
+        $files = glob($findingPath . "/[0-9].*/*.$fileKey");
     }
 
     usort($files, function($a, $b) {
@@ -47,10 +49,6 @@ function getPaginationSnippets($os, $isDomesticQA)
         $start_val = ($page * $CardsPerSite) - $CardsPerSite;
         $end_val = $start_val + ($CardsPerSite - 1);
     }
-
-    // for($i=$start_val;$i<=$end_val;$i++){
-    //     echo $files[$i].' ';
-    // }
 
     $less_than = $total_data / $CardsPerSite;
     if ($less_than > intval($less_than)) $less_than = $less_than + 1;
@@ -102,22 +100,10 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 // for 회사 내부 QA 페이지용만 bak에 대해서 처리함 on 2019.11.22
                 $path = pathinfo($file, PATHINFO_DIRNAME);
                 $filename = basename($file, '.deleted');
-                if (file_exists("$path/$filename")) {
-                    // TODO: 원본을 지워야할까? 아님 .deleted를 지워야할깡? on 2019.11.24
-                    //continue;
-                }
-                //$content = preg_replace("/(<div class=\"large-4 columns\">)(<a href=\"\.\.\/phpmodules\/remove_html_snippet\.php)(.*)(\">.*a>)/", "$1<!-- $2$3$4 --><br /><span style=\"position: relative;margin-top: -10px;margin-right: 10px;right: 0px;float: right;\">[<font color=red><b>삭제됨</b></font>]&nbsp;<a href='../phpmodules/undo_remove_html_snippet.php$3'>UNDO</a></span>", $content);
-                // <!-- 5타입 : box_type1(배포전), box_type2(배포후), box_type3(입고 검증전), box_type4(입고 검증후), box_type_del(삭제) -->
                 $typeKey = "_del";
-                //$content = preg_replace("/(<div class=\"item box_type)*(\">*$)/", "$1". $typeKey ."$2", $content);
             } else if (startsWith(basename($file), "zzz_")) {
                 // 아직 배포되지 않은 페이지
-                // DONE: 배포 목적 및 수정 사항 등 기재할 수 있도록 해야함 by EungShik Kim on 2019.11.24
-                //$content = preg_replace("/(<!--DIST_BOTTON--><a href=\")*(\" class=\"btn_share\"><span class=\"hide\">공유</span></a>)/", "$1../phpmodules/distributions.php?os=ios&file=$file$2", $content);
-
-                // <!-- 5타입 : box_type1(배포전), box_type2(배포후), box_type3(입고 검증전), box_type4(입고 검증후), box_type_del(삭제) -->
                 $typeKey = "1";
-                //$content = preg_replace("/(<div class=\"item box_type)*(\">*$)/", "$1". $typeKey ."$2", $content);
             }
         } else {
             // 외부(고객사) 배포 페이지 //////////////////////////////////////////////////////////
@@ -135,7 +121,6 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 } else {
                     $typeKey = "4";
                 }
-                //$content = preg_replace("/(<div class=\"item box_type)*(\">*$)/", "$1". $typeKey ."$2", $content);
             } else if ($os == "ios" && strpos($content, '(앱스토어 검증버전)')) {
                 // <!-- 5타입 : box_type1(배포전), box_type2(배포후), box_type3(입고 검증전), box_type4(입고 검증후), box_type_del(삭제) -->
                 if (startsWith(basename($file), "zzz_")) {
@@ -143,7 +128,6 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 } else {
                     $typeKey = "4";
                 }
-                //$content = preg_replace("/(<div class=\"item box_type)*(\">*$)/", "$1". $typeKey ."$2", $content);
             }
         }
 
@@ -185,11 +169,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
         // START: Fetch JSON data
         if (startsWith($basenameWithoutExt, "zzz_")) {
-            // $tmpOut = explode("zzz_", $basenameWithoutExt);
-            // $basenameWithoutExt = $tmpOut[1];
             $basenameWithoutExt = substr($basenameWithoutExt, 4);
-
-            //echo "<H1><font color=pink>JSON FILE:::$basenameWithoutExt</font></H1>";
         }
         $jsonfile = $basenameWithoutExt . ".json";
         $finalSnippet = "";
@@ -210,7 +190,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                         $typeKey = "4";
                     }
                 } elseif ($os == "ios") {
-                    $appstoreIPA = glob("../ios_distributions/[1-9].*/" . $basenameWithoutExt . "_AppStore.ipa");
+                    $appstoreIPA = glob($path . "/" . $basenameWithoutExt . "_AppStore.ipa");
                     if (count($appstoreIPA) > 0) {
                         if (startsWith(basename($file), "zzz_")) {
                             $typeKey = "3";
@@ -223,20 +203,25 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
             $distMode=$finalJson->{'releaseType'};
 
+            $php_module_prefix = "../phpmodules";
+            if (!file_exists($php_module_prefix)) {
+                $php_module_prefix = "../../phpmodules";
+            }
+
             // Removal script from original html snippet
             if (strpos($content, "remove_html_snippet")) {
                 $tempStr = explode("remove_html_snippet", $content);
                 $prefixStr = explode("\"><img", $tempStr[1]);
-                $removalUrl = "../phpmodules/remove_html_snippet" . $prefixStr[0];
+                $removalUrl = "$php_module_prefix/remove_html_snippet" . $prefixStr[0];
 
                 $undoRemovalUrl = preg_replace("/remove_html_snippet/", "undo_remove_html_snippet", $removalUrl);
             }
             // Above is legacy, now we can pass filename as arguments, 2021.08.01
-            if ($isDebugMode) {
-                $removalUrl = "../phpmodules/remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
-                $undoRemovalUrl = "../phpmodules/undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+            if (true /*$isDebugMode*/) {
+                $removalUrl = "$php_module_prefix/remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
+                $undoRemovalUrl = "$php_module_prefix/undo_remove_html_snippet.php?os=$os&file=" . urlencode($basenameWithoutExt);
                 // Share script from original html snippet
-                $shareUrl = "../phpmodules/distributions.php?os=$os&type=$distMode&file=$file";
+                $shareUrl = "$php_module_prefix/distributions.php?os=$os&type=$distMode&file=" . urlencode($file);
             } else {
                 // It's not plf'2'mini.company.com domain
                 $inBoundPoint = "$frontEndProtocol://$frontEndPoint/$topPath";
@@ -331,10 +316,13 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             if (!startsWith($plistUrl, "http")) {
                                 $plistUrl = $finalJson->{'urlPrefix'} . $plistUrl;
                             }
+                            if (!startsWith($plistUrl, "http")) {
+                                $plistUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $plistUrl;
+                            }
                             $downUrl = "itms-services://?action=download-manifest&url=" . $plistUrl;
                         }
 
-                        if (!$isDebugMode) {
+                        if (startsWith($downUrl, "http")) {
                             // It's not plf'2'mini.company.com domain
                             $downUrl = str_replace($frontEndProtocol, $outBoundProtocol, $downUrl);
                             $downUrl = str_replace($frontEndPoint, $outBoundPoint, $downUrl);
@@ -350,9 +338,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             if ($tempPort > 0) {
                                 $exEndPoint .= ":" . $tempPort;
                             }
-                            // if ($frontEndProtocol != $exEndPoint) {
-                                $downUrl = str_replace($exEndPoint, $outBoundPoint, $downUrl);
-                            // }
+                            $downUrl = str_replace($exEndPoint, $outBoundPoint, $downUrl);
+                        } else if (!startsWith($downUrl, "itms-services")) {
+                            $downUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $downUrl;
                         }
 
                         if (strpos($downUrl, 'android_signing.php') !== false) {
@@ -368,16 +356,10 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
                             $unsignedPrefix = $json->{$os}->{'outputUnsignedPrefix'};
                             $googleSuffix = $json->{$os}->{'outputGoogleStoreSuffix'};
-                            // if ($json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
-                            //     $googleSuffix = str_replace('apk', 'aab', $googleSuffix);
-                            // }
                             if (file_exists("$path/$unsignedPrefix$apkFile$googleSuffix")) {
                                 $isGoogleExist = 1;
                             }
                             $oneSuffix = $json->{$os}->{'outputOneStoreSuffix'};
-                            // if ($json->{$os}->{'OneStore'}->{'usingBundleAAB'}) {
-                            //     $oneSuffix = str_replace('apk', 'aab', $googleSuffix);
-                            // }
                             if (file_exists("$path/$unsignedPrefix$apkFile$oneSuffix")) {
                                 $isOneStoreExist = 1;
                             }

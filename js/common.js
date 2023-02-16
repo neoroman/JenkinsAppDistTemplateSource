@@ -114,13 +114,16 @@ $(document).ready(function(){
 		ani.play();
 		$('.loading_dimm').css('visibility', 'visible');
 		$('.loading_dimm').parents('body').css('overflow','hidden');
-		console.log('111.ozlab:::target(' + target + ') =>', document.getElementById( target ));
+		// console.log('111.ozlab:::target(' + target + ') =>', document.getElementById( target ));
 	};
 	window.stopAnimation = function() {
 		$('.loading_dimm').parents('body').css('overflow','visible');
 		$('.loading_dimm').css('visibility', 'hidden');
-		console.log('222.ozlab::: =>', document.getElementById('loading_dimm'));
+		// console.log('222.ozlab::: =>', document.getElementById('loading_dimm'));
 	}
 	// 사용법: Usage
+	// Usage of turning ON
 	// window.uploadingAnimation( 'loadingAni' );
+	// Usage of turning OFF
+	// window.stopAnimation();
 });
