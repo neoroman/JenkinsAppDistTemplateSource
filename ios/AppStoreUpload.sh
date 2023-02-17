@@ -213,5 +213,5 @@ if [ $USING_TEAMS_WEBHOOK -eq 1 ]; then
                 \"markdown\": true
         }]
       }"
-  $CURL -H "Content-Type: application/json" -d "${JSON_ALL}" $TEAMS_WEBHOOK
+  $CURL -k -H "Content-Type: application/json" -d "${JSON_ALL}" $TEAMS_WEBHOOK
 fi

@@ -296,7 +296,7 @@ function sendingEmail() {
       mailApp="$FRONTEND_POINT/${TOP_PATH}/phpmodules/sendmail_release.php"
     fi
     ##
-    $CURL --data-urlencode "subject1=${subjectText}" \
+    $CURL -k --data-urlencode "subject1=${subjectText}" \
       --data-urlencode "subject2=version ${appVersion}.${buildVersion}" \
       --data-urlencode "html_header=${HTML_HEADER}" \
       --data-urlencode "message_header=<br />${messageHeader}<br /><br /><H2><b>배포 파일 정보</b></H2>$DOWNLOAD_URLS" \

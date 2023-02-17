@@ -319,7 +319,7 @@ if [ $USING_MAIL -eq 1 ]; then
     lang_file="../lang/lang_${language}.json"
     APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   fi
-  $CURL --data-urlencode "subject1=[${APP_NAME} > ${HOSTNAME}] Android 자동 2차 난독화 -" \
+  $CURL -k --data-urlencode "subject1=[${APP_NAME} > ${HOSTNAME}] Android 자동 2차 난독화 -" \
   --data-urlencode "subject2=Google Playstore, OneStore 등록용 버전 생성 알림" \
   --data-urlencode "message_header=안드로이드 2차 난독화 signing 버전 전달합니다.<br /><br /><br />첨부파일: <br /><br />구글Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}</a><br />원Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}</a><br />" \
   --data-urlencode "message_description=${SHORT_GIT_LOG}<br /><br /><br />" \
@@ -495,7 +495,7 @@ if [ $USING_TEAMS_WEBHOOK -eq 1 ]; then
                   \"markdown\": true
           }]
         }"
-    $CURL -H "Content-Type: application/json" -d "${JSON_ALL}" $TEAMS_WEBHOOK
+    $CURL -k -H "Content-Type: application/json" -d "${JSON_ALL}" $TEAMS_WEBHOOK
     ##
     # Sync files to Neo2UA (Synology NAS)
     # if [ -f ../shells/syncToNasNeo2UA.sh ]; then
