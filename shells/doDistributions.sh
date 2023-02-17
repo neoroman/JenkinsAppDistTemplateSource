@@ -443,14 +443,15 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
   ##
   getDevToolInfo
-  if [[ -z "$XCODE" ]]; then
-    DEV_ENV="No Xcode.app installed...!"
-  else
+  if command -v xcodebuild >/dev/null 2>&1 ; then
     DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
     if [ -f $(which sw_vers) ]; then
       DEV_ENV="$DEV_ENV <BR />Hostname: $(hostname)<BR />$(sw_vers)"
     fi
+  else
+    DEV_ENV="No Xcode.app installed...!"
   fi
+
   DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
   DEV_ENV="${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}"
   ##
