@@ -1,11 +1,11 @@
 <?php
 if (!class_exists('i18n')) {
-    if (file_exists('../config.php')) {
-        require_once('../config.php');
-    } 
-    elseif (file_exists('config.php')) {
-        require_once('config.php');
-    }    
+    if (file_exists(__DIR__ .'/../config.php')) {
+        require_once(__DIR__ . '/../config.php');
+    }  
+    else if (file_exists(__DIR__ .'/../../config.php')) {
+        require_once(__DIR__ . '/../../config.php');
+    }  
 }
 require(__DIR__ . '/utils/string.php');
 

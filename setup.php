@@ -1,25 +1,4 @@
 <?php
-// require_once('config.php');
-// global $topPath, $root;
-// global $inUrl, $outUrl, $isDebugMode;
-
-// require('./phpmodules/common.php');
-
-// $configJson = "./config/config.json";
-// if (file_exists($configJson)) {
-//   $jsonString = file_get_contents($configJson);
-//   $data = json_decode($jsonString, false);
-// } else {
-//   echo "<H1>ERROR unknown</H1>";
-//   exit(101);
-// }
-
-// TODO: Edit and Write a JSON
-// $data['users']['app']['email'] = "bar@foo.com";
-// print_r($data['users']['app']);
-
-// $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
-// file_put_contents($configJson, $newJsonString);
 if (file_exists('config/config.json') && (file_exists('lang/lang_ko.json') || file_exists('lang/lang_en.json'))) {
   header('Location: dist_domestic.php');
 }

@@ -1,5 +1,12 @@
 <?php
-require_once('../config.php');
+if (!class_exists('i18n')) {
+    if (file_exists(__DIR__ .'/../config.php')) {
+        require_once(__DIR__ . '/../config.php');
+    }  
+    else if (file_exists(__DIR__ .'/../../config.php')) {
+        require_once(__DIR__ . '/../../config.php');
+    }  
+}
 global $root, $isDebugMode;
 
 $file_title=$_GET['title'];
@@ -10,12 +17,12 @@ if (isset($_SERVER['HTTP_REFERER'])) {
 }
 
 if ($isDebugMode) {
-    $output = shell_exec('./AppStoreUpload.sh -d -p ios -f ' . escapeshellarg($file_title)) . ' -r ' . escapeshellarg($root);
-    echo 'INPUT => ./AppStoreUpload.sh -d -p ios -f ' . escapeshellarg($file_title) . ' -r ' . escapeshellarg($root) .'<BR /><BR />' . $_SERVER['HTTP_REFERER'];
+    $output = shell_exec(__DIR__ .'/AppStoreUpload.sh -d -p ios -f ' . escapeshellarg($file_title)) . ' -r ' . escapeshellarg($root);
+    echo 'INPUT => '. __DIR__ .'/AppStoreUpload.sh -d -p ios -f ' . escapeshellarg($file_title) . ' -r ' . escapeshellarg($root) .'<BR /><BR />' . $_SERVER['HTTP_REFERER'];
     exit("<BR /><BR /><pre>$output</pre><BR />iOS upload to App Store .... [ DEBUG ]<br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
 } else {
-    $output = shell_exec('./AppStoreUpload.sh -p ios -f ' . escapeshellarg($file_title)) . ' -r ' . escapeshellarg($root);
-    echo 'INPUT => ./AppStoreUpload.sh -p ios -f ' . escapeshellarg($file_title) . ' -r ' . escapeshellarg($root) .'<BR /><BR />' . $_SERVER['HTTP_REFERER'];
+    $output = shell_exec(__DIR__ .'/AppStoreUpload.sh -p ios -f ' . escapeshellarg($file_title)) . ' -r ' . escapeshellarg($root);
+    echo 'INPUT => '. __DIR__ .'/AppStoreUpload.sh -p ios -f ' . escapeshellarg($file_title) . ' -r ' . escapeshellarg($root) .'<BR /><BR />' . $_SERVER['HTTP_REFERER'];
     // exit("<META http-equiv='REFRESH' content='1;url=$referrer'>$output<BR />iOS upload to App Store  [ DONE ]<br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
     exit("<BR /><BR /><pre>$output</pre><BR />iOS upload to App Store  [ DONE ]<br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
 }

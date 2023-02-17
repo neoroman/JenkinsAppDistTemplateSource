@@ -1,7 +1,14 @@
 <?php
 // session_start();
 
-require_once(__DIR__ . '/../config.php');
+if (!class_exists('i18n')) {
+  if (file_exists(__DIR__ .'/../config.php')) {
+    require_once(__DIR__ . '/../config.php');
+  }  
+  else if (file_exists(__DIR__ .'/../../config.php')) {
+    require_once(__DIR__ . '/../../config.php');
+  }  
+}
 // global $usingLogin, $topPath;
 
   // if ($usingLogin && !isset($_SESSION['internal_id'])) {
