@@ -221,6 +221,7 @@ function readJsonAndSetVariables() {
     urlPrefix=$(cat $JSON_FILE | $JQ '.urlPrefix' | tr -d '"' | sed -e "s/${frontEndProtocol}/${outBoundProtocol}/g" | sed -e "s/${frontEndPoint}/${outBoundPoint}/g")
     jenkinsBuildNumber=$(cat $JSON_FILE | $JQ '.buildNumber' | tr -d '"')
     releaseType=$(cat $JSON_FILE | $JQ '.releaseType' | tr -d '"')
+    DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"')
     #####################
     FILE[0]=$(cat $JSON_FILE | $JQ -c '.files[0]')
     FILE[1]=$(cat $JSON_FILE | $JQ -c '.files[1]')
@@ -300,7 +301,7 @@ function sendingEmail() {
       --data-urlencode "subject2=version ${appVersion}.${buildVersion}" \
       --data-urlencode "html_header=${HTML_HEADER}" \
       --data-urlencode "message_header=<br />${messageHeader}<br /><br /><H2><b>배포 파일 정보</b></H2>$DOWNLOAD_URLS" \
-      --data-urlencode "message_description=<pre>${DEV_ENV}</pre><br />" \
+      --data-urlencode "message_description=<pre>${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}</pre><br />" \
       --data-urlencode "message_html=${DevEnvPrefix}${gitLastLog}${DevEnvSuffix}" \
       ${mailApp}
   fi
@@ -343,7 +344,7 @@ function handlingSendMailOrNot() {
   if [[ "$INPUT_OS" != "both" ]]; then
     sendingEmail
   else
-    BothDevEnv="${BothDevEnv}${BothDevEnvPrefix}<B>${OS_NAME}</B><BR />${DEV_ENV}<BR /><BR />"
+    BothDevEnv="${BothDevEnv}${BothDevEnvPrefix}<B>${OS_NAME}</B><BR />${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}<BR /><BR />"
     BothDevEnv="${BothDevEnv}${BothDevEnvSuffix}"
   fi
 }
@@ -368,7 +369,7 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
-  if [ -f ${jsonConfig} ]; then
+  if [ -f ${jsonConfig} -a -z $DEV_ENV ]; then
     WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
     AOS_APPPATH=$(cat ${jsonConfig} | $JQ '.android.appPath' | tr -d '"')
     AOS_APPPATH=${AOS_APPPATH%"app"}
@@ -379,7 +380,6 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
       DEV_ENV="$(cd $WORKSPACE && $BUILD_COMMAND --version)"
     fi
     DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
-    DEV_ENV="${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}"
     ##
   fi
 
@@ -442,18 +442,19 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
   ##
-  getDevToolInfo
-  if command -v xcodebuild >/dev/null 2>&1 ; then
-    DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
-    if [ -f $(which sw_vers) ]; then
-      DEV_ENV="$DEV_ENV <BR />Hostname: $(hostname)<BR />$(sw_vers)"
+  if [ -z $DEV_ENV ]; then
+    getDevToolInfo
+    if command -v xcodebuild >/dev/null 2>&1 ; then
+      DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
+      if [ -f $(which sw_vers) ]; then
+        DEV_ENV="$DEV_ENV <BR />Hostname: $(hostname)<BR />$(sw_vers)"
+      fi
+    else
+      DEV_ENV="No Xcode.app installed...!"
     fi
-  else
-    DEV_ENV="No Xcode.app installed...!"
-  fi
 
-  DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
-  DEV_ENV="${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}"
+    DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
+  fi
   ##
   if [ $IS_RESEND -eq 1 ]; then
     handlingSendMailOrNot
