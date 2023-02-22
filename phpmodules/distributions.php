@@ -53,7 +53,7 @@ else if (isset($_POST["resending"])) {
 }
 
 $org_os = $input_os;
-if ($_SERVER['SERVER_NAME'] == $outBoundPoint) {
+if (!$isDebugMode && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
   exit("고객사 배포는 사내망에서만 가능합니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='2;url=/$topPath/$org_os/dist_$org_os.php'>");
 }
 
