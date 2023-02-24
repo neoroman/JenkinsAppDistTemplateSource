@@ -318,6 +318,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             }
                             if (!startsWith($plistUrl, "http")) {
                                 $plistUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $plistUrl;
+                            } else {
+                                $plistUrl = str_replace($frontEndProtocol, $outBoundProtocol, $plistUrl);
+                                $plistUrl = str_replace($frontEndPoint, $outBoundPoint, $plistUrl);
                             }
                             $downUrl = "itms-services://?action=download-manifest&url=" . $plistUrl;
                         }
