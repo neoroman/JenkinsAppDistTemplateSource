@@ -291,11 +291,7 @@ function sendingEmail() {
       subjectText="[${APP_NAME} ${APP_VERSION} > ${OS_NAME}] '$DESCRIPTION' ${DEVELOP_KEY} ${APP_NAME} 배포 -"
       messageHeader="${OS_NAME} ${DEVELOP_KEY} ${APP_NAME} v${appVersion} 전달합니다.<br /></br />${DETAIL_DESC}"
     fi
-    if [ $DEBUGGING -eq 1 ]; then
-      mailApp="$FRONTEND_POINT/${TOP_PATH}/.test/testmail_release.php"
-    else
-      mailApp="$FRONTEND_POINT/${TOP_PATH}/phpmodules/sendmail_release.php"
-    fi
+    mailApp="$FRONTEND_POINT/${TOP_PATH}/phpmodules/sendmail_release.php"
     ##
     $CURL -k --data-urlencode "subject1=${subjectText}" \
       --data-urlencode "subject2=version ${appVersion}.${buildVersion}" \
@@ -370,14 +366,14 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
   if test -z $DEV_ENV; then
+    getDevToolInfo
     if [ -f ${jsonConfig} ]; then
       WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
       AOS_APPPATH=$(cat ${jsonConfig} | $JQ '.android.appPath' | tr -d '"')
       AOS_APPPATH=${AOS_APPPATH%"app"}
+      DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
     fi
     ##
-    getDevToolInfo
-    DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
     if [ -z $(echo $DEV_ENV | xargs) ]; then
       DEV_ENV="$(cd $WORKSPACE && $BUILD_COMMAND --version)"
     fi
@@ -509,6 +505,7 @@ if [[ "$INPUT_OS" == "both" ]]; then
 fi
 ##
 # Push distribution result to git repository
+git config --global --add safe.directory ${my_dir}/../../
 if [[ "$(git fetch --all)" == "Fetching origin" ]]; then
   git add .
   git commit -a -m "[release] $INPUT_FILE"

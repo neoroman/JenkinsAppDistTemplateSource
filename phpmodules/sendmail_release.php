@@ -8,6 +8,7 @@ if (!class_exists('i18n')) {
   }  
 }
 global $documentRootPath, $frontEndProtocol, $frontEndPoint, $topPath;
+global $isDebugMode;
 
 if (isset($_GET["email"])) {
   $to=$_GET["email"];
@@ -111,6 +112,9 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
           $mail->addAddress($to);               // Name is optional
         }
       }
+      else if ($isDebugMode && L::mail_debug_to) {
+        $mail->addAddress(L::mail_debug_to, L::mail_debug_to_name);
+      }   
       else if (count(explode('|', L::mail_to)) > 0) {
         $r_emails = explode('|', L::mail_to);
         $r_name = explode('|', L::mail_to_name);
@@ -125,14 +129,16 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
       }
       $mail->addReplyTo(L::mail_reply_to, L::copywrite_company . L::mail_reply_to_name);
 
-      if (count(explode('|', L::mail_cc)) > 0) {
-        $r_emails = explode('|', L::mail_cc);
-        $r_name = explode('|', L::mail_cc_name);
-        for($i=0; $i<count($r_emails); $i++) {
-          $mail->addCC($r_emails[$i], $r_name[$i]);
-        }
-      } else {
-        $mail->addCC(L::company_email, L::company_name .' '. L::company_team);
+      if (!$isDebugMode) {
+        if (count(explode('|', L::mail_cc)) > 0) {
+          $r_emails = explode('|', L::mail_cc);
+          $r_name = explode('|', L::mail_cc_name);
+          for($i=0; $i<count($r_emails); $i++) {
+            $mail->addCC($r_emails[$i], $r_name[$i]);
+          }
+        } else {
+          $mail->addCC(L::company_email, L::company_name .' '. L::company_team);
+        }  
       }
 
       //Attachments
