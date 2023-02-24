@@ -369,10 +369,12 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
-  if [ -f ${jsonConfig} -a -z $DEV_ENV ]; then
-    WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
-    AOS_APPPATH=$(cat ${jsonConfig} | $JQ '.android.appPath' | tr -d '"')
-    AOS_APPPATH=${AOS_APPPATH%"app"}
+  if test -z $DEV_ENV; then
+    if [ -f ${jsonConfig} ]; then
+      WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
+      AOS_APPPATH=$(cat ${jsonConfig} | $JQ '.android.appPath' | tr -d '"')
+      AOS_APPPATH=${AOS_APPPATH%"app"}
+    fi
     ##
     getDevToolInfo
     DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
@@ -442,7 +444,7 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
   ##
-  if [ -z $DEV_ENV ]; then
+  if test -z $DEV_ENV; then
     getDevToolInfo
     if command -v xcodebuild >/dev/null 2>&1 ; then
       DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"

@@ -104,7 +104,7 @@ $usingPreviousVersion = $config->{'usingPreviousVersion'};
 $topPathPreviousVersion = $config->{'topPathPreviousVersion'};
 // ----------------------------------------------------------
 $topPaths=explode("/", $topPath);
-$lastTopPath=count($topPaths) > 1 ? $topPath[1] : $topPath[0];
+$lastTopPath=count($topPaths) > 1 ? $topPaths[1] : $topPaths[0];
 $testTopPath="test/$lastTopPath";
 //    strpos($_SERVER['HTTP_HOST'], $frontEndPoint) !== false &&
 if (isset($_SERVER['HTTP_HOST']) &&
