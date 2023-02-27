@@ -304,11 +304,12 @@ function sendingEmail() {
       ${mailApp}
   fi
 
-  ##
+  #####
   # Sync files to Neo2UA (Synology NAS)
   # if [ -f ./syncToNasNeo2UA.sh ]; then
   #   ./syncToNasNeo2UA.sh
   # fi
+  #####
 } # function sendingEmail
 
 function getDevToolInfo() {
@@ -379,7 +380,7 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
     ##
   fi
 
-  if [ $IS_RESEND -eq 1 -a -d ${WORKSPACE} ]; then
+  if [ $IS_RESEND -eq 1 ]; then
     handlingSendMailOrNot
   else
     if [ $USING_HTML -eq 1 ]; then
@@ -420,9 +421,7 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
         echo "File not found => $FILE_PATH"
       fi
     else
-      if [ -d ${WORKSPACE} ]; then
-        handlingSendMailOrNot
-      fi
+      handlingSendMailOrNot
     fi # html snippet exist
   fi # is_resending
 fi # Android
