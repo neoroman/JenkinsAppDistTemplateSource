@@ -402,6 +402,12 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                         // Android download AAB Bundle and apk
                         if ($os == "android" && $finalJson->{'releaseType'} == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
                             $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
+                            if (count($pathArray) < 2) {
+                                $tempTopPath = explode('/', $topPath);
+                                if (count($tempTopPath) > 1) {
+                                    $pathArray = explode($tempTopPath[1], $finalJson->{'urlPrefix'});
+                                }
+                            }
                             $bundleFilename = str_replace('apk', 'aab', $anItem->{'file'});
                             $bundleFilePath = ".." . $pathArray[1] . $bundleFilename;
 
