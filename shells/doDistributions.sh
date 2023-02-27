@@ -223,7 +223,7 @@ function readJsonAndSetVariables() {
     urlPrefix=$(cat $JSON_FILE | $JQ '.urlPrefix' | tr -d '"' | sed -e "s/${frontEndProtocol}/${outBoundProtocol}/g" | sed -e "s/${frontEndPoint}/${outBoundPoint}/g")
     jenkinsBuildNumber=$(cat $JSON_FILE | $JQ '.buildNumber' | tr -d '"')
     releaseType=$(cat $JSON_FILE | $JQ '.releaseType' | tr -d '"')
-    DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"\\n\\t' | sed -e 's/\\t//g' | sed -e 's/\\n/<BR \/>/g' | sed -e 's/<BR \/><BR \/>/<BR \/>/g')
+    DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"' | sed -e 's/\\t//g' | sed -e 's/\\n/<BR \/>/g' | sed -e 's/<BR \/><BR \/>/<BR \/>/g')
     #####################
     FILE[0]=$(cat $JSON_FILE | $JQ -c '.files[0]')
     FILE[1]=$(cat $JSON_FILE | $JQ -c '.files[1]')
