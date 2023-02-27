@@ -1,8 +1,10 @@
 #!/bin/sh
 ##
 jsonConfig="../config/config.json"
+defaultLanguagePath="../lang"
 if [ ! -f $jsonConfig ]; then
   jsonConfig="../../config/config.json"
+  defaultLanguagePath="../../lang"
 fi
 configPath="../config.php"
 if [ ! -f $configPath ]; then
@@ -115,9 +117,9 @@ frontEndProtocol=$(echo $FRONTEND_POINT | sed -e 's/^\(.*\):\/\/.*/\1/g')
 XCODE=`which xcodebuild`
 POD="/usr/local/bin/pod"
 #####
-if [ -f "lang/default.json" ]; then
-  language=$(cat "lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="lang/lang_${language}.json"
+if [ -f "$defaultLanguagePath/default.json" ]; then
+  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+  lang_file="$defaultLanguagePath/lang_${language}.json"
   APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   APP_VERSION=$(cat $lang_file | $JQ '.app.version' | tr -d '"')
   RELEASE_KEY=$(cat $lang_file | $JQ '.mail.releaseKeyword' | tr -d '"')
@@ -377,10 +379,8 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
     ##
   fi
 
-  if [ $IS_RESEND -eq 1 ]; then
-    if [ -d ${WORKSPACE} ]; then
-      handlingSendMailOrNot
-    fi
+  if [ $IS_RESEND -eq 1 -a -d ${WORKSPACE} ]; then
+    handlingSendMailOrNot
   else
     if [ $USING_HTML -eq 1 ]; then
       if [[ "$releaseType" == "release" ]]; then

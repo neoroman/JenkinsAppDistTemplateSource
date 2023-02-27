@@ -62,16 +62,16 @@ $basename = basename($input_file);
 $basenameWithoutExt = basename($input_file, '.html');
 $incFilename = $basenameWithoutExt . ".inc.php";
 $incFile = "$path/$incFilename";
-if ($input_os == "ios") {
+if ($org_os == "ios") {
   $iOS_incFile = $incFile;
   $iOS_path = $path;
   $Android_incFile = str_replace('ios_distributions', 'android_distributions', $incFile);
   $Android_path = str_replace('ios_distributions', 'android_distributions', $path);
-} elseif ($input_os == "android") {
+} elseif ($org_os == "android") {
   $iOS_incFile = str_replace('android_distributions', 'ios_distributions', $incFile);
   $iOS_path = str_replace('android_distributions', 'ios_distributions', $path);
   $Android_incFile = $incFile;
-  $Android_path = $path;
+  $Android_path = $path;  
 }
 if (isset($is_reseding) && $is_reseding && file_exists($incFile)) {
   require_once($incFile);
@@ -89,7 +89,7 @@ if (isset($_POST['deliver'])) {
   if (file_exists("$path/$basename")) {
     $newFilename = renameInputFile();
     executeShellScript($newFilename, isset($_POST['resend']));
-    updateVersionTag();    
+    updateVersionTag($_POST['version_target'], $_POST['version_details']);    
   }
   else {
     printError();
@@ -282,14 +282,14 @@ function printError() {
   exit("$debugDesc<br /> 고객사 배포 실패 <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
 }
 
-function updateVersionTag() {
+function updateVersionTag($verTarget, $verDetail) {
   global $input_os, $incFile, $iOS_incFile, $Android_incFile;
 
-  if (isset($_POST['version_target']) && strlen($_POST['version_target'])>0) {
-    $aVersionTarget = $_POST['version_target'];
+  if (isset($verTarget) && strlen($verTarget)>0) {
+    $aVersionTarget = $verTarget;
     $aVersionDetails = "";
-    if (isset($_POST['version_details'])) {
-      $aVersionDetails = $_POST['version_details'];
+    if (isset($verDetail)) {
+      $aVersionDetails = $verDetail;
     }
 
     $content = "<?php\n"
