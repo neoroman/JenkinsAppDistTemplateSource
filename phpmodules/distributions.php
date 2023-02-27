@@ -298,25 +298,25 @@ function updateVersionTag($verTarget, $verDetail) {
     ."?>\n";
 
     if ($input_os != 'both') {
-      if (file_exists($incFile)) {
-        unlink($incFile);
-      }
+      // if (file_exists($incFile)) {
+      //   unlink($incFile);
+      // }
       file_put_contents($incFile, $content);
     } else {
-      if (file_exists($iOS_incFile)) {
-        unlink($iOS_incFile);
-      }
+      // if (file_exists($iOS_incFile)) {
+      //   unlink($iOS_incFile);
+      // }
       file_put_contents($iOS_incFile, $content);
-      if (file_exists($Android_incFile)) {
-        unlink($Android_incFile);
-      }
+      // if (file_exists($Android_incFile)) {
+      //   unlink($Android_incFile);
+      // }
       file_put_contents($Android_incFile, $content);
     }
   }
 }
 function renameInputFile() {
   global $path, $basename;
-  global $input_os, $incFile, $iOS_path, $Android_path;
+  global $input_os, $iOS_path, $Android_path;
 
   if (startsWith($basename, "zzz_") && file_exists("$path/$basename")) {
     $newFilename = substr(basename($basename), 4);
