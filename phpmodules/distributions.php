@@ -301,7 +301,7 @@ function updateVersionTag() {
       if (file_exists($incFile)) {
         unlink($incFile);
       }
-        file_put_contents($incFile, $content);
+      file_put_contents($incFile, $content);
     } else {
       if (file_exists($iOS_incFile)) {
         unlink($iOS_incFile);

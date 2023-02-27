@@ -354,10 +354,6 @@ BothDevEnvSuffix=""
 
 if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   ##
-  ANDROID_PATH="android"
-  INPUT_ANDROID="${ANDROID_PATH}/dist_android.html"
-  OUTPUT_ANDROID="${ANDROID_PATH}/index.html"
-  ##
   APP_ROOT_SUFFIX="android_distributions"
   OS_NAME="Android"
   ##
@@ -365,7 +361,7 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
-  if test -z $DEV_ENV; then
+  if test -z "$DEV_ENV"; then
     getDevToolInfo
     if [ -f ${jsonConfig} ]; then
       WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
@@ -386,12 +382,17 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
       handlingSendMailOrNot
     fi
   else
-    if [[ "$releaseType" == "release" ]]; then
-      tempFilename="temp_release.html"
-    else
-      tempFilename="temp.html"
-    fi
     if [ $USING_HTML -eq 1 ]; then
+      if [[ "$releaseType" == "release" ]]; then
+        tempFilename="temp_release.html"
+      else
+        tempFilename="temp.html"
+      fi
+      ANDROID_PATH="android"
+      INPUT_ANDROID="${ANDROID_PATH}/dist_android.html"
+      OUTPUT_ANDROID="${ANDROID_PATH}/index.html"
+      ##
+
       if [ -f $OUTPUT_ANDROID ]; then
           cp -f $OUTPUT_ANDROID $OUTPUT_ANDROID.bak
       fi
@@ -429,10 +430,6 @@ fi # Android
 
 if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   ##
-  IOS_PATH="ios"
-  INPUT_IOS="${IOS_PATH}/dist_ios.html"
-  OUTPUT_IOS="${IOS_PATH}/index.html"
-  ##
   APP_ROOT_SUFFIX="ios_distributions"
   OS_NAME="iOS"
   ##
@@ -440,7 +437,7 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   readJsonAndSetVariables
   BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
   ##
-  if test -z $DEV_ENV; then
+  if test -z "$DEV_ENV"; then
     getDevToolInfo
     if command -v xcodebuild >/dev/null 2>&1 ; then
       DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
@@ -458,12 +455,16 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
     handlingSendMailOrNot
   else
     #####
-    if [[ "$releaseType" == "release" ]]; then
-      tempFilename="temp_release.html"
-    else
-      tempFilename="temp.html"
-    fi
     if [ $USING_HTML -eq 1 ]; then
+      if [[ "$releaseType" == "release" ]]; then
+        tempFilename="temp_release.html"
+      else
+        tempFilename="temp.html"
+      fi
+      IOS_PATH="ios"
+      INPUT_IOS="${IOS_PATH}/dist_ios.html"
+      OUTPUT_IOS="${IOS_PATH}/index.html"
+      ##
       if [ -f $OUTPUT_IOS ]; then
           cp -f $OUTPUT_IOS $OUTPUT_IOS.bak
       fi
