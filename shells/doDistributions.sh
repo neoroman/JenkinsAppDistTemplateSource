@@ -505,7 +505,7 @@ if [[ "$INPUT_OS" == "both" ]]; then
 fi
 ##
 # Push distribution result to git repository
-git config --global --add safe.directory ${my_dir}/../../
+git config core.sharedRepository all
 if [[ "$(git fetch --all)" == "Fetching origin" ]]; then
   git add .
   git commit -a -m "[release] $INPUT_FILE"
