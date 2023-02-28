@@ -3,7 +3,7 @@
 # Written by EungShik Kim, 2021.10.08
 #
 #####
-jsonConfig="../config/config.json"
+jsonConfig="../../config/config.json"
 SCRIPT_NAME=$(basename $0)
 DEBUGGING=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
@@ -78,6 +78,8 @@ for jsonFile in $LIST; do
     htmlFile="${fileBasename}.html"
     timeToBe=$(cat ${jsonFile} | jq '.buildTime' | tr -d '". :')
     realHtml=$(find "${fileDirname}" -name "*${htmlFile}*")
-    echo "touch -t ${timeToBe} ${realHtml}"
-    touch -t ${timeToBe} "${realHtml}"
+    for x in $realHtml; do
+      echo "touch -t ${timeToBe} ${realHtml}"
+      touch -t ${timeToBe} "${realHtml}"
+    done
 done

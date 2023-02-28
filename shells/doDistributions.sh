@@ -6,13 +6,19 @@ if [ ! -f $jsonConfig ]; then
   jsonConfig="../../config/config.json"
   defaultLanguagePath="../../lang"
 fi
-configPath="../config.php"
+configPath="../phpmodules/config.php"
 if [ ! -f $configPath ]; then
-  configPath="../../config.pnp"
+  configPath="../../phpmodules/config.pnp"
 fi
-my_dir="$(dirname "$0")"
-if [ -f $my_dir/sshFunctions.sh ]; then
-    . $my_dir/sshFunctions.sh #> /dev/null 2>&1
+SCRIPT_PATH="$(dirname "$0")"
+if [ -f $SCRIPT_PATH/sshFunctions.sh ]; then
+    . $SCRIPT_PATH/sshFunctions.sh #> /dev/null 2>&1
+fi
+if [ -f $jsonConfig ]; then
+  jsonConfig=$SCRIPT_PATH/$jsonConfig
+fi
+if [ -d $defaultLanguagePath ]; then
+  defaultLanguagePath=$SCRIPT_PATH/$defaultLanguagePath
 fi
 SCRIPT_NAME=$(basename $0)
 DEBUGGING=0
@@ -158,7 +164,7 @@ DevEnvSuffix="</div>"
 
 function readJsonAndSetVariables() {
   APP_ROOT="${DOC_ROOT}/${TOP_PATH}/${APP_ROOT_SUFFIX}"
-  FILE_PATH=$(find ${WORKING_PATH}/${PROCESS_OS}* -name "$INPUT_FILE")
+  FILE_PATH=$(find ${WORKING_PATH}/${APP_ROOT_SUFFIX} -name "*$INPUT_FILE")
   if [ $USING_SCP -eq 1 ]; then
     remoteFilePath=${TOP_PATH}${FILE_PATH#"${WORKING_PATH}"}
     remotePath=$(dirname ${remoteFilePath})
@@ -179,7 +185,7 @@ function readJsonAndSetVariables() {
   INPUT_FILENAME_ONLY="$(basename $INPUT_FILE .html)"
   INPUT_FILENAME_ONLY="${INPUT_FILENAME_ONLY#"zzz_"}"
   incPhpFile="${INPUT_FILENAME_ONLY}.inc.php"
-  incPhpFilePath=$(find ${WORKING_PATH}/${PROCESS_OS}* -name "${incPhpFile}")
+  incPhpFilePath=$(find ${WORKING_PATH}/${APP_ROOT_SUFFIX}* -name "${incPhpFile}")
   if [ -f $incPhpFilePath ]; then
     if [ $USING_SCP -eq 1 ]; then
       remoteIncPhpFilePath=${TOP_PATH}${incPhpFilePath#"${WORKING_PATH}"}
@@ -223,7 +229,7 @@ function readJsonAndSetVariables() {
     urlPrefix=$(cat $JSON_FILE | $JQ '.urlPrefix' | tr -d '"' | sed -e "s/${frontEndProtocol}/${outBoundProtocol}/g" | sed -e "s/${frontEndPoint}/${outBoundPoint}/g")
     jenkinsBuildNumber=$(cat $JSON_FILE | $JQ '.buildNumber' | tr -d '"')
     releaseType=$(cat $JSON_FILE | $JQ '.releaseType' | tr -d '"')
-    DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"' | sed -e 's/\\t//g' | sed -e 's/\\n/<BR \/>/g' | sed -e 's/<BR \/><BR \/>/<BR \/>/g')
+    DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"' | sed -e 's/\\t//g' | sed -e 's/\\n/<BR \/>/g' | sed -e 's/<BR \/><BR \/>/<BR \/>/g' | sed -e 's/^null$//g')
     #####################
     FILE[0]=$(cat $JSON_FILE | $JQ -c '.files[0]')
     FILE[1]=$(cat $JSON_FILE | $JQ -c '.files[1]')
@@ -350,7 +356,7 @@ function handlingSendMailOrNot() {
 
 ## for iOS / Android both
 BothDevEnv=""
-BohtDownloadURLs=""
+BothDownloadURLs=""
 BothDevEnvPrefix=""
 BothDevEnvSuffix=""
 ##
@@ -359,21 +365,25 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   ##
   APP_ROOT_SUFFIX="android_distributions"
   OS_NAME="Android"
-  ##
-  PROCESS_OS="android"
   readJsonAndSetVariables
-  BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
+  ##
+  BothDownloadURLs="${BothDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
+  DEV_ENV=$(echo "$DEV_ENV" | tr -d ' ')
   if test -z "$DEV_ENV"; then
     getDevToolInfo
     if [ -f ${jsonConfig} ]; then
       WORKSPACE=$(cat ${jsonConfig} | $JQ '.android.jenkinsWorkspace' | tr -d '"')
       AOS_APPPATH=$(cat ${jsonConfig} | $JQ '.android.appPath' | tr -d '"')
       AOS_APPPATH=${AOS_APPPATH%"app"}
-      DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
+      if [ -f ${WORKSPACE}/${BUILD_COMMAND} ]; then
+        DEV_ENV=$(${WORKSPACE}/${BUILD_COMMAND} --version)
+      elif [ -f ${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} ]; then
+        DEV_ENV=$(${WORKSPACE}/${AOS_APPPATH}/${BUILD_COMMAND} --version)
+      fi
     fi
     ##
-    if [ -z $(echo $DEV_ENV | xargs) ]; then
+    if test -z "$DEV_ENV"; then
       DEV_ENV="$(cd $WORKSPACE && $BUILD_COMMAND --version)"
     fi
     DEV_ENV="${OTHER_BUILD_ENV}<BR />${DEV_ENV}"
@@ -431,17 +441,16 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   ##
   APP_ROOT_SUFFIX="ios_distributions"
   OS_NAME="iOS"
-  ##
-  PROCESS_OS="ios"
   readJsonAndSetVariables
-  BohtDownloadURLs="${BohtDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
+  ##
+  BothDownloadURLs="${BothDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
   ##
   if test -z "$DEV_ENV"; then
     getDevToolInfo
     if command -v xcodebuild >/dev/null 2>&1 ; then
       DEV_ENV="$($XCODE -version)<BR />CocoaPod $($POD --version)"
       if [ -f $(which sw_vers) ]; then
-        DEV_ENV="$DEV_ENV <BR />Hostname: $(hostname)<BR />$(sw_vers)"
+        DEV_ENV="$DEV_ENV <BR /><BR />Hostname: $(hostname)<BR />$(sw_vers)"
       fi
     else
       DEV_ENV="No Xcode.app installed...!"
@@ -500,7 +509,7 @@ if [[ "$INPUT_OS" == "both" ]]; then
     OS_NAME="iOS+Android"
   fi
   DEV_ENV="${BothDevEnv}"
-  DOWNLOAD_URLS="${BohtDownloadURLs}"
+  DOWNLOAD_URLS="${BothDownloadURLs}"
   sendingEmail
 fi
 ##

@@ -4,6 +4,17 @@
 #
 HOSTNAME=$(hostname)
 jsonConfig="../config/config.json"
+SITE_TOP_PATH=".."
+if [ ! -f $jsonConfig ]; then
+  jsonConfig="../../config/config.json"
+fi
+if [ ! -d "$SITE_TOP_PATH/ios_distributions" ]; then
+  SITE_TOP_PATH="../.."
+  if [ ! -d "$SITE_TOP_PATH/ios_distributions" ]; then
+    echo "$HOSTNAME > Error: no $SITE_TOP_PATH/ios_distributions directory"
+    exit 1
+  fi
+fi
 if [ ! -f $jsonConfig ]; then
   echo "$HOSTNAME > Error: no config.json in $jsonConfig"
   exit 1
@@ -92,7 +103,7 @@ APPSTORE_AGENT_EMAIL=$(cat $jsonConfig | $JQ '.ios.AppStore.uploadApp.agentEmail
 APPSTORE_AGENT_PASSWORD=$(cat $jsonConfig | $JQ '.ios.AppStore.uploadApp.agentAppSpecificPassword' | tr -d '"')
 ############################
 if test -z $INPUT_FILE; then
-    echo "$HOSTNAME > Error: 1차 난독화 버전 파일명(확장자 제외) 없음"
+    echo "$HOSTNAME > Error: App Store upload 파일명(확장자 제외) 없음"
     exit
 fi
 #####
@@ -113,8 +124,8 @@ TOP_PATH=$(echo $config | $JQ '.topPath' | tr -d '"')
 FRONTEND_POINT="${frontEndProtocol}://${frontEndPoint}"
 #####
 URL_PATH="${TOP_PATH}"
-if [[ "${DOC_ROOT}" == "" ]]; then
-  APP_ROOT=".."
+if test -z "${DOC_ROOT}"; then
+  APP_ROOT="$SITE_TOP_PATH"
 else
   APP_ROOT="${DOC_ROOT}/${URL_PATH}"
 fi
@@ -122,10 +133,10 @@ fi
 UPLOAD_IPA_FILE_SUFFIX="$(cat $jsonConfig | $JQ '.ios.AppStore.fileSuffix' | tr -d '"').ipa"
 if [[ "${INPUT_FILE}" == *"${UPLOAD_IPA_FILE_SUFFIX}" ]]; then
   UPLOAD_IPA_FILE="${INPUT_FILE}"
-  APP_VERSION=$(find ../ios_distributions -name "${INPUT_FILE%%$UPLOAD_IPA_FILE_SUFFIX}.json" | xargs dirname $1 |  sed -e 's/.*\/\(.*\)$/\1/')
+  APP_VERSION=$(find $SITE_TOP_PATH/ios_distributions -name "${INPUT_FILE%%$UPLOAD_IPA_FILE_SUFFIX}.json" | xargs dirname $1 |  sed -e 's/.*\/\(.*\)$/\1/')
 else
   UPLOAD_IPA_FILE="${INPUT_FILE}${UPLOAD_IPA_FILE_SUFFIX}"
-  APP_VERSION=$(find ../ios_distributions -name "$INPUT_FILE.json" | xargs dirname $1 |  sed -e 's/.*\/\(.*\)$/\1/')
+  APP_VERSION=$(find $SITE_TOP_PATH/ios_distributions -name "$INPUT_FILE.json" | xargs dirname $1 |  sed -e 's/.*\/\(.*\)$/\1/')
 fi
 APP_FOLDER="ios_distributions/${APP_VERSION}"
 OUTPUT_FOLDER="${APP_ROOT}/${APP_FOLDER}"
@@ -136,9 +147,9 @@ if [ $DEBUGGING -eq 1 ]; then
   USING_SLACK=0
   USING_TEAMS_WEBHOOK=0
 fi
-if [ -f "../lang/default.json" ]; then
-  language=$(cat "../lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="../lang/lang_${language}.json"
+if [ -f "$SITE_TOP_PATH/lang/default.json" ]; then
+  language=$(cat "$SITE_TOP_PATH/lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+  lang_file="$SITE_TOP_PATH/lang/lang_${language}.json"
   CLIENT_NAME=$(cat $lang_file | $JQ '.client.full_name' | tr -d '"')
 fi
 #####
@@ -166,9 +177,9 @@ fi
 ######################################################
 
 
-if [ -f "../lang/default.json" ]; then
-  language=$(cat "../lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="../lang/lang_${language}.json"
+if [ -f "$SITE_TOP_PATH/lang/default.json" ]; then
+  language=$(cat "$SITE_TOP_PATH/lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+  lang_file="$SITE_TOP_PATH/lang/lang_${language}.json"
   APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   SITE_URL=$(cat $lang_file | $JQ '.client.short_url' | tr -d '"')
   SITE_ID=$(cat $jsonConfig | $JQ '.users.app.userId' | tr -d '"')

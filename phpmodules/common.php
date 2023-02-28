@@ -179,11 +179,18 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
             if ($os == "ios") {
                 $osName = L::os_ios;
-            } else {
+            } else if ($os == "android") {
                 $osName = L::os_android;
+            } else {
+                $osName = 'unknown';
             }
+            $jsonReleaseType = "Debug";
+            if (isset($finalJson->{'releaseType'})) {
+                $jsonReleaseType = $finalJson->{'releaseType'};
+            }
+
             if ($typeKey != "_del") {
-                if ($finalJson->{'releaseType'} == 'release') {
+                if ($jsonReleaseType == 'release') {
                     if (startsWith(basename($file), "zzz_")) {
                         $typeKey = "3";
                     } else {
@@ -201,7 +208,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 }
             }
 
-            $distMode=$finalJson->{'releaseType'};
+            $distMode=$jsonReleaseType;
 
             $php_module_prefix = "../phpmodules";
             if (!file_exists($php_module_prefix)) {
@@ -275,7 +282,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                         $binTitle = $anItem->{'title'};
                         if (!$isDomesticQA) {
                             if ($os == "ios") {
-                                if ($finalJson->{'releaseType'} == 'release') {
+                                if ($jsonReleaseType == 'release') {
                                     if ($json->{$os}->{'AppStore'}->{'title'} == $binTitle) {
                                         if ($json->{$os}->{'AppStore'}->{'showToClient'} != true) continue;
                                     }
@@ -287,7 +294,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                                     if ($json->{$os}->{'Enterprise'}->{'showToClient'} != true) continue;
                                 }
                             } else if ($os == "android") {
-                                if ($finalJson->{'releaseType'} == 'release') {
+                                if ($jsonReleaseType == 'release') {
                                     if ($json->{$os}->{'GoogleStore'}->{'title'} == $binTitle) {
                                         if ($json->{$os}->{'GoogleStore'}->{'showToClient'} != true) continue;
                                     }
@@ -388,7 +395,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                         $itemClassForAppStoreDesc = "";
                         $appStoreUploadLink = "";
                         // iOS Upload to App Store
-                        if ($os == "ios" && $finalJson->{'releaseType'} == 'release' && 
+                        if ($os == "ios" && $jsonReleaseType == 'release' && 
                             $json->{$os}->{'AppStore'}->{'uploadApp'}->{'enabled'} && 
                             $json->{$os}->{'AppStore'}->{'title'} == $binTitle) {
                             $itemClassForAppStore = "class=\"item_type2\"";
@@ -400,7 +407,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             // https://appstoreconnect.apple.com/apps/1542294610/testflight/ios
                         }
                         // Android download AAB Bundle and apk
-                        if ($os == "android" && $finalJson->{'releaseType'} == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
+                        if ($os == "android" && $jsonReleaseType == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
                             $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
                             if (count($pathArray) < 2) {
                                 $tempTopPath = explode('/', $topPath);
@@ -486,7 +493,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
         if ($isSearch) {
             if ($searchPattern == L::title_tab_qc_version && $typeKey >= 3 &&
-                $typeKey != "_del" && $finalJson->{'releaseType'} == 'release') {
+                $typeKey != "_del" && $jsonReleaseType == 'release') {
                     $content = $finalSnippet;
                     $finalContents = $finalContents . $content;    
             }

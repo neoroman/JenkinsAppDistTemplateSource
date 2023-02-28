@@ -60,7 +60,10 @@ if (!$isDebugMode && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
 $path = pathinfo($input_file, PATHINFO_DIRNAME);
 $basename = basename($input_file);
 $basenameWithoutExt = basename($input_file, '.html');
-$incFilename = $basenameWithoutExt . ".inc.php";
+if (startsWith($basenameWithoutExt, "zzz_")) {
+  $pureBasenameWithoutExt = substr($basenameWithoutExt, 4);
+}
+$incFilename = $pureBasenameWithoutExt . ".inc.php";
 $incFile = "$path/$incFilename";
 if ($org_os == "ios") {
   $iOS_incFile = $incFile;
@@ -87,9 +90,9 @@ if (isset($_POST['deliver'])) {
     $input_os = 'both';
   }
   if (file_exists("$path/$basename")) {
+    updateVersionTag($_POST['version_target'], $_POST['version_details']);    
     $newFilename = renameInputFile();
     executeShellScript($newFilename, isset($_POST['resend']));
-    updateVersionTag($_POST['version_target'], $_POST['version_details']);    
   }
   else {
     printError();

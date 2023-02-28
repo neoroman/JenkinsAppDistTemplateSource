@@ -1,6 +1,8 @@
 <?php
 if (file_exists('config/config.json') && (file_exists('lang/lang_ko.json') || file_exists('lang/lang_en.json'))) {
   header('Location: dist_domestic.php');
+} else if (file_exists('../config/config.json') && (file_exists('../lang/lang_ko.json') || file_exists('../lang/lang_en.json'))) {
+  header('Location: dist_domestic.php');
 }
 ?>
 <!DOCTYPE html>

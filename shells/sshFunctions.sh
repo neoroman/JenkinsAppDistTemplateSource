@@ -3,10 +3,10 @@
 # Written by EungShik Kim, 2021.08.01
 #
 ################################################################################
-if [ -f "../config/config.json" ]; then
+if [ -f "../../config/config.json" ]; then
+  jsonConfig="../../config/config.json"
+elif [ -f "../config/config.json" ]; then
   jsonConfig="../config/config.json"
-elif [ -f "config/config.json" ]; then
-  jsonConfig="config/config.json"
 fi
 if [[ "$JQ" == "" ]]; then
   if [ -f "/usr/local/bin/jq" ]; then

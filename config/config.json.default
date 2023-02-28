@@ -159,7 +159,7 @@
         "keyStoreFile": "company.keystore",
         "keyStorePassword": "your_keystore_password_here",
         "keyStoreAlias": "<your_company_name_for_key_alias>",
-        "obfuscationInputFile": "Obfuscation_File.png",
+        "obfuscationInputFile": "custom/Obfuscation_File.png",
         "usingObfuscation": false,
         "outputSignedPrefix": "signed_",
         "outputUnsignedPrefix": "unsigned_",

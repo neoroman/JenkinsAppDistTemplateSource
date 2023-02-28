@@ -1,30 +1,23 @@
 <?php
-$localTopDir = __DIR__;
-require(__DIR__ . '/phpmodules/utils/json.php');
-if (file_exists(__DIR__ . "/../lang/default.json")) {
-    $defaultLang = __DIR__ . "/../lang/default.json";
-    $langPath = __DIR__ . "/../lang";
-} else if (file_exists(__DIR__ . "/lang/default.json")) {
-    $defaultLang = __DIR__ . "/lang/default.json";
-    $langPath = __DIR__ . "/lang";
-} else {
-    exit(101);
+$src_top_path = __DIR__;
+require($src_top_path . '/phpmodules/utils/json.php');
+$defaultLang = $src_top_path . "/../lang/default.json";
+if (!file_exists($defaultLang)) {
+    copy($src_top_path . "/lang/default.json", $defaultLang);
+    chmod($defaultLang, 0777);
 }
 if (file_exists($defaultLang)) {
     $jsonStr = file_get_contents($defaultLang);
     $json = json_validate2($jsonStr, false);
     $lang = $json->{'LANGUAGE'};
-    $langFile = $langPath . '/lang_'. $lang . '.json';
+    $langFilename = 'lang_'. $lang . '.json';
+    $langFile = $src_top_path . '/../lang/'. $langFilename;
     if (!file_exists($langFile)) {
-        header('Location: setup.php');
-        exit(101);
+        copy($src_top_path . '/lang/'. $langFilename . '.default', $langFile);
+        chmod($langFile, 0777);
     }
-    $class_i18n_path = __DIR__ . '/phpmodules/utils/i18n.class.php';
-    $langCachePath = __DIR__ . '/langcache';
-    if (!file_exists($class_i18n_path)) {
-        $class_i18n_path = __DIR__ . '/../phpmodules/utils/i18n.class.php'; 
-        $langCachePath = __DIR__ . '/../langcache';
-    }
+    $class_i18n_path = $src_top_path . '/phpmodules/utils/i18n.class.php';
+    $langCachePath = $src_top_path . '/langcache';
     if (file_exists($class_i18n_path)) {
         require_once $class_i18n_path;
         $i18n = new i18n();
@@ -40,12 +33,27 @@ if (file_exists($defaultLang)) {
     }
 }
 // ----------------------------------------------------------
-if (file_exists(__DIR__ . "/../config/config.json")) {
-    $jsonStr = file_get_contents(__DIR__ . "/../config/config.json");
+$jsonConfig = $src_top_path . "/../config/config.json";
+if (file_exists($jsonConfig)) {
+    $jsonStr = file_get_contents($jsonConfig);
     $json = json_validate2($jsonStr, false);
-} else if (file_exists(__DIR__ . "/config/config.json")) {
-    $jsonStr = file_get_contents(__DIR__ . "/config/config.json");
+} else if (file_exists($src_top_path . "/config/config.json.default")) {
+    copy($src_top_path . "/config/config.json.default", $jsonConfig);
+    $jsonStr = file_get_contents($jsonConfig);
     $json = json_validate2($jsonStr, false);
+
+    // TODO: need to find out apache, httpd.conf, and DocumentRoot
+    $command = 'apachectl';
+    $output = shell_exec('which ' . escapeshellarg($command) . ' 2>&1');
+    if (strpos($output, 'not found') === false) {
+        // echo 'The command ' . $command . ' exists at ' . trim($output);
+        $apache_path = shell_exec("$command -V | grep SERVER_CONFIG_FILE | sed -e 's/.*=\"\(.*\)\"/\1/'" . ' 2>&1');
+        if (file_exists($apache_path)) {
+            $keyword = "DocumentRoot";
+            $documentRootFromHttpConf = shell_exec("grep -R $keyword ". $apache_path . "| grep $apache_path: $keyword". ' | sed -e "s/^.*\"\(.*\)\"$/\1/" | awk "{print $2}" | tr -d "\""' . ' 2>&1');
+        }
+    }
+
 } else {
     header('Location: setup.php');
     exit(101);
@@ -82,12 +90,17 @@ if (isset($_SERVER['CONTEXT_DOCUMENT_ROOT'])) {
     $documentRootPath = $_SERVER['CONTEXT_DOCUMENT_ROOT'];
 } else if (isset($_SERVER['DOCUMENT_ROOT'])) {
     $documentRootPath = $_SERVER['DOCUMENT_ROOT'];
+} else if (isset($documentRootFromHttpConf)) {
+    $documentRootPath = $documentRootFromHttpConf;
 }
 $frontEndProtocol = $config->{'frontEndProtocol'};
 $frontEndPoint = $config->{'frontEndPoint'};
 $outBoundProtocol = $config->{'outBoundProtocol'};
 $outBoundPoint = $config->{'outBoundPoint'};
-$boanEndPoint = $config->{'urlLoginRemoteAPI'};
+$boanEndPoint = "https://boan.company.com:4000";
+if (isset($config->{'urlLoginRemoteAPI'})) {
+    $boanEndPoint = $config->{'urlLoginRemoteAPI'};
+}
 // ----------------------------------------------------------
 $topPath = $config->{'topPath'};
 $outputPrefix = $config->{'outputPrefix'};
@@ -106,7 +119,6 @@ $topPathPreviousVersion = $config->{'topPathPreviousVersion'};
 $topPaths=explode("/", $topPath);
 $lastTopPath=count($topPaths) > 1 ? $topPaths[1] : $topPaths[0];
 $testTopPath="test/$lastTopPath";
-//    strpos($_SERVER['HTTP_HOST'], $frontEndPoint) !== false &&
 if (isset($_SERVER['HTTP_HOST']) &&
     isset($_SERVER['REQUEST_URI']) &&
     strpos($_SERVER['REQUEST_URI'], $testTopPath) !== false) {
@@ -115,12 +127,17 @@ if (isset($_SERVER['HTTP_HOST']) &&
     $topPath = $testTopPath;
     $outBoundProtocol = $frontEndProtocol;
     $outBoundPoint = $frontEndPoint;
-    $boanEndPoint = $json->{'development'}->{'urlLoginRemoteAPI'};
+    if (isset($json->{'development'}->{'urlLoginRemoteAPI'})) {
+        $boanEndPoint = $json->{'development'}->{'urlLoginRemoteAPI'};
+    }
 }
 elseif (isset($_SERVER['SERVER_NAME']) &&
         strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
     $dirArray = explode('/', getcwd());
     $topPath = implode('/', array_slice($dirArray,-2,2,false));
+    if (strpos($output, 'src/phpmodules') !== false) {
+        $topPath = implode('/', array_slice($dirArray,-4,2,false));
+    }
     $documentRootPath = str_replace($topPath, '', $documentRootPath);
 }
 

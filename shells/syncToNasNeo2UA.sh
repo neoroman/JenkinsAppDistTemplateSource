@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT_PATH=$(dirname $0)
-jsonConfig="${SCRIPT_PATH}/config/config.json"
+jsonConfig="${SCRIPT_PATH}/../../config/config.json"
 ####### DEBUG or Not #######
 if [[ "$JQ" == "" ]]; then
   if [ -f "/usr/local/bin/jq" ]; then
