@@ -4,11 +4,25 @@
 # Modified by Henry Kim on 2021.08.05
 # Normalized by Henry Kim on 2021.09.01
 #
+SCRIPT_PATH="$(dirname "$0")"
 HOSTNAME=$(hostname)
 jsonConfig="../config/config.json"
+defaultLanguagePath="../lang"
+prefixOsDir="..";
+if [ ! -f $jsonConfig ]; then
+  jsonConfig="../../config/config.json"
+  prefixOsDir="../..";
+  defaultLanguagePath="../../lang"
+fi
+if [ -f $jsonConfig ]; then
+  jsonConfig=$SCRIPT_PATH/$jsonConfig
+fi
 if [ ! -f $jsonConfig ]; then
   echo "$HOSTNAME > Error: no config.json in $jsonConfig"
   exit 1
+fi
+if [ -d $defaultLanguagePath ]; then
+  defaultLanguagePath=$SCRIPT_PATH/$defaultLanguagePath
 fi
 DEBUGGING=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
@@ -68,8 +82,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 ####### DEBUG or Not #######
-if [[ "$JQ" == "" ]]; then
-  if [ -f "/usr/local/bin/jq" ]; then
+if test -z "$JQ"; then
+  if command -v jq >/dev/null; then
+    JQ=$(command -v jq)
+  elif [ -f "/usr/local/bin/jq" ]; then
     JQ="/usr/local/bin/jq"
   elif [ -f "/usr/bin/jq" ]; then
     JQ="/usr/bin/jq"
@@ -87,7 +103,9 @@ USING_MAIL=$(test $(cat $jsonConfig | $JQ '.mail.domesticEnabled') = true && ech
 USING_SLACK=$(test $(cat $jsonConfig | $JQ '.slack.enabled') = true && echo 1 || echo 0)
 USING_HTML=$(test $(echo $config | $JQ '.usingHTML') = true && echo 1 || echo 0)
 USING_JSON=1
-JAR_SIGNER=`which jarsigner` #"/usr/bin/jarsigner"
+if command -v jarsigner >/dev/null; then
+  JAR_SIGNER=$(command -v jarsigner) #"/usr/bin/jarsigner"
+fi
 if test -z $JAR_SIGNER; then
   JAR_SIGNER="/usr/local/opt/openjdk@8/bin/jarsigner"
 fi
@@ -96,7 +114,12 @@ USING_TEAMS_WEBHOOK=$(test $(cat $jsonConfig | $JQ '.teams.enabled') = true && e
 TEAMS_WEBHOOK=$(cat $jsonConfig | $JQ '.teams.webhook' | tr -d '"')
 ############################
 USING_APKSIGNING=1   # 1 이면 사용, 0 이면 미사용
-ANDROID_HOME=$(cat $jsonConfig | $JQ '.android.androidHome' | tr -d '"')
+if command -v android >/dev/null; then
+    AOS_EXEC=$(command -v android)
+    ANDROID_HOME="$(dirname ${AOS_EXEC%android})"
+else
+    ANDROID_HOME=$(cat $jsonConfig | $JQ '.android.androidHome' | tr -d '"')
+fi
 OUTPUT_PREFIX=$(echo $config | $JQ '.outputPrefix' | tr -d '"')
 ANDROID_BUILDTOOLS="${ANDROID_HOME}/build-tools"
 if [ -d $ANDROID_BUILDTOOLS ]; then
@@ -128,14 +151,14 @@ if test -z $INPUT_FILE; then
 fi
 #####
 if [ $USING_SLACK -eq 1 ]; then
-  SLACK="/usr/local/bin/slack"
+  SLACK=$(command -v slack) #"/usr/local/bin/slack"
   if [ ! -f $SLACK ]; then
     USING_SLACK=0
   else
     SLACK_CHANNEL=$(cat $jsonConfig | $JQ '.slack.channel' | tr -d '"')
   fi
 fi
-CURL="/usr/bin/curl"
+CURL=$(command -v curl) #"/usr/bin/curl"
 ####
 ##### from config.php
 frontEndProtocol=$(echo $config | $JQ '.frontEndProtocol' | tr -d '"')
@@ -149,7 +172,7 @@ if [[ "${DOC_ROOT}" == "" ]]; then
 else
   APP_ROOT="${DOC_ROOT}/${URL_PATH}"
 fi
-APP_VERSION=$(find ../android_distributions -name "$INPUT_FILE.json" | xargs dirname $1  | tail -1 |  sed -e 's/.*\/\(.*\)$/\1/')
+APP_VERSION=$(find $prefixOsDir/android_distributions -name "$INPUT_FILE.json" | xargs dirname $1  | tail -1 |  sed -e 's/.*\/\(.*\)$/\1/')
 APP_FOLDER="android_distributions/${APP_VERSION}"
 OUTPUT_FOLDER="${APP_ROOT}/${APP_FOLDER}"
 HTTPS_PREFIX="${FRONTEND_POINT}/${URL_PATH}/${APP_FOLDER}/"
@@ -170,13 +193,14 @@ fi
 #####
 STOREPASS=$(cat $jsonConfig | $JQ '.android.keyStorePassword' | tr -d '"')
 KEYSTORE_FILE=$(cat $jsonConfig | $JQ '.android.keyStoreFile' | tr -d '"')
+KEYSTORE_ALIAS=$(cat $jsonConfig | $JQ '.android.keyStoreAlias' | tr -d '"')
 if [ ! -f $KEYSTORE_FILE ]; then
   echo "$HOSTNAME > Error: cannot find keystore file in $KEYSTORE_FILE"
   exit 1
 fi
-if [ -f "../lang/default.json" ]; then
-  language=$(cat "../lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="../lang/lang_${language}.json"
+if [ -f "$defaultLanguagePath/default.json" ]; then
+  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+  lang_file="$defaultLanguagePath/lang_$language.json"
   CLIENT_NAME=$(cat $lang_file | $JQ '.client.full_name' | tr -d '"')
   TITLE_GOOGLE_STORE=$(cat $lang_file | $JQ '.title.distribution_2nd_signing_google_store' | tr -d '"')
   TITLE_ONE_STORE=$(cat $lang_file | $JQ '.title.distribution_2nd_signing_one_store' | tr -d '"')
@@ -196,8 +220,8 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE ]; then
     $JAR_SIGNER -sigalg SHA1withRSA \
                 -digestalg SHA1 \
                 -keystore $KEYSTORE_FILE \
-                -storepass "${STOREPASS}" \
-                $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE "${CLIENT_NAME}" \
+                -storepass "$STOREPASS" \
+                $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE "$KEYSTORE_ALIAS" \
                 -signedjar $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE
 
     $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
@@ -224,8 +248,8 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE ]; then
     $JAR_SIGNER -sigalg SHA1withRSA \
                 -digestalg SHA1 \
                 -keystore $KEYSTORE_FILE \
-                -storepass "${STOREPASS}" \
-                $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE "${CLIENT_NAME}" \
+                -storepass "$STOREPASS" \
+                $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE "KEYSTORE_ALIAS" \
                 -signedjar $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE
 
     $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
@@ -253,8 +277,8 @@ if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
         $JAR_SIGNER -sigalg SHA1withRSA \
                     -digestalg SHA1 \
                     -keystore $KEYSTORE_FILE \
-                    -storepass "${STOREPASS}" \
-                    $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE "${CLIENT_NAME}" \
+                    -storepass "$STOREPASS" \
+                    $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE "$KEYSTORE_ALIAS" \
                     -signedjar $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE
     fi
 fi
@@ -442,9 +466,9 @@ if [ $USING_JSON -eq 1 ]; then
 fi
 
 
-if [ -f "../lang/default.json" ]; then
-  language=$(cat "../lang/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="../lang/lang_${language}.json"
+if [ -f "$defaultLanguagePath/default.json" ]; then
+  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+  lang_file="$defaultLanguagePath/lang_$language.json"
   APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   SITE_URL=$(cat $lang_file | $JQ '.client.short_url' | tr -d '"')
   SITE_ID=$(cat $jsonConfig | $JQ '.users.app.userId' | tr -d '"')

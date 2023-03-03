@@ -2,8 +2,10 @@
 SCRIPT_PATH=$(dirname $0)
 jsonConfig="${SCRIPT_PATH}/../../config/config.json"
 ####### DEBUG or Not #######
-if [[ "$JQ" == "" ]]; then
-  if [ -f "/usr/local/bin/jq" ]; then
+if test -z "$JQ"; then
+  if command -v jq >/dev/null; then
+    JQ=$(command -v jq)
+  elif [ -f "/usr/local/bin/jq" ]; then
     JQ="/usr/local/bin/jq"
   elif [ -f "/usr/bin/jq" ]; then
     JQ="/usr/bin/jq"

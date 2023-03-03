@@ -1,5 +1,6 @@
 #!/bin/sh
 ##
+SCRIPT_PATH="$(dirname "$0")"
 jsonConfig="../config/config.json"
 defaultLanguagePath="../lang"
 if [ ! -f $jsonConfig ]; then
@@ -10,7 +11,6 @@ configPath="../phpmodules/config.php"
 if [ ! -f $configPath ]; then
   configPath="../../phpmodules/config.pnp"
 fi
-SCRIPT_PATH="$(dirname "$0")"
 if [ -f $SCRIPT_PATH/sshFunctions.sh ]; then
     . $SCRIPT_PATH/sshFunctions.sh #> /dev/null 2>&1
 fi
@@ -125,7 +125,7 @@ POD="/usr/local/bin/pod"
 #####
 if [ -f "$defaultLanguagePath/default.json" ]; then
   language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="$defaultLanguagePath/lang_${language}.json"
+  lang_file="$defaultLanguagePath/lang_$language.json"
   APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   APP_VERSION=$(cat $lang_file | $JQ '.app.version' | tr -d '"')
   RELEASE_KEY=$(cat $lang_file | $JQ '.mail.releaseKeyword' | tr -d '"')

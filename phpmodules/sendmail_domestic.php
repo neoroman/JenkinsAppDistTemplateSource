@@ -1,11 +1,11 @@
 <?php
 if (!class_exists('i18n')) {
   if (file_exists(__DIR__ .'/../config.php')) {
-    require_once(__DIR__ . '/../config.php');
-  }  
+      require_once(__DIR__ . '/../config.php');
+  }
   else if (file_exists(__DIR__ .'/../../config.php')) {
-    require_once(__DIR__ . '/../../config.php');
-  }  
+      require_once(__DIR__ . '/../../config.php');
+  }
 }
 global $documentRootPath, $frontEndProtocol, $frontEndPoint, $topPath;
 global $isDebugMode;

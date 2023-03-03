@@ -1,11 +1,11 @@
 <?php
-$prefix_os_dir = "../";
+$prefix_os_dir = "..";
 if (file_exists('../phpmodules/common.php')) {
   require('../phpmodules/common.php');
-  $prefix_os_dir = "../../";
+  $prefix_os_dir = "../..";
 } else if (file_exists('common.php')) {
   require('common.php');
-  $prefix_os_dir = "../../";
+  $prefix_os_dir = "../..";
 }
 global $root, $inUrl;
 
@@ -26,9 +26,9 @@ if (strpos($prevPage, '?') !== false) {
 if (endsWith($referrer, "php")) {
   $osDir = $file_os;
   if ($file_os == "ios") {
-    $osDir = $prefix_os_dir . "ios_distributions";
+    $osDir = $prefix_os_dir . "/ios_distributions";
   } elseif ($file_os == "android") {
-    $osDir = $prefix_os_dir . "android_distributions";
+    $osDir = $prefix_os_dir . "/android_distributions";
   }
 
   if ($file_name) {

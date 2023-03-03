@@ -1,11 +1,11 @@
 <?php
 if (!class_exists('i18n')) {
   if (file_exists(__DIR__ .'/../config.php')) {
-    require_once(__DIR__ . '/../config.php');
-  }  
+      require_once(__DIR__ . '/../config.php');
+  }
   else if (file_exists(__DIR__ .'/../../config.php')) {
-    require_once(__DIR__ . '/../../config.php');
-  }  
+      require_once(__DIR__ . '/../../config.php');
+  }
 }
 global $topPath, $root;
 global $inUrl, $outUrl, $isDebugMode;
@@ -62,6 +62,8 @@ $basename = basename($input_file);
 $basenameWithoutExt = basename($input_file, '.html');
 if (startsWith($basenameWithoutExt, "zzz_")) {
   $pureBasenameWithoutExt = substr($basenameWithoutExt, 4);
+} else {
+  $pureBasenameWithoutExt = $basenameWithoutExt;
 }
 $incFilename = $pureBasenameWithoutExt . ".inc.php";
 $incFile = "$path/$incFilename";

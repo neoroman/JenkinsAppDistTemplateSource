@@ -3,7 +3,14 @@
 # Written by EungShik Kim, 2021.10.08
 #
 #####
-jsonConfig="../../config/config.json"
+SCRIPT_PATH="$(dirname "$0")"
+jsonConfig="../config/config.json"
+if [ ! -f $jsonConfig ]; then
+  jsonConfig="../../config/config.json"
+fi
+if [ -f $jsonConfig ]; then
+  jsonConfig=$SCRIPT_PATH/$jsonConfig
+fi
 SCRIPT_NAME=$(basename $0)
 DEBUGGING=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
@@ -41,8 +48,10 @@ if test -z $INPUT_OS; then
 fi
 #####
 JQ=$(which jq)
-if [[ "$JQ" == "" ]]; then
-  if [ -f "/usr/local/bin/jq" ]; then
+if test -z "$JQ"; then
+  if command -v jq >/dev/null; then
+    JQ=$(command -v jq)
+  elif [ -f "/usr/local/bin/jq" ]; then
     JQ="/usr/local/bin/jq"
   elif [ -f "/usr/bin/jq" ]; then
     JQ="/usr/bin/jq"

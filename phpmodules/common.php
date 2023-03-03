@@ -2,15 +2,15 @@
 if (!class_exists('i18n')) {
     if (file_exists(__DIR__ .'/../config.php')) {
         require_once(__DIR__ . '/../config.php');
-    }  
+    }
     else if (file_exists(__DIR__ .'/../../config.php')) {
         require_once(__DIR__ . '/../../config.php');
-    }  
+    }
 }
 require(__DIR__ . '/utils/string.php');
 
 function getPaginationSnippets($os, $isDomesticQA)
-{
+{    
     $pageContents = "";
 
     if ($isDomesticQA) { // QA 전용 페이지

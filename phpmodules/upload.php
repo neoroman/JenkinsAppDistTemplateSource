@@ -3,11 +3,11 @@ session_start();
 
 if (!class_exists('i18n')) {
   if (file_exists(__DIR__ .'/../config.php')) {
-    require_once(__DIR__ . '/../config.php');
-  }  
+      require_once(__DIR__ . '/../config.php');
+  }
   else if (file_exists(__DIR__ .'/../../config.php')) {
-    require_once(__DIR__ . '/../../config.php');
-  }  
+      require_once(__DIR__ . '/../../config.php');
+  }
 }
 global $usingLogin, $topPath;
 global $outBoundPoint;
@@ -31,9 +31,14 @@ if ($_GET["file"]) {
 else {
   $input_file=$_POST["file"];
 }
-// Form submitted
+// Display informations
 if (strlen($input_file) > 0) {
-  $files = glob("../android_distributions/[1-9].*/$input_file.*");
+  $findingPath = realpath(__DIR__ . "/../android_distributions");
+  if (!$findingPath) {
+      $findingPath = realpath(__DIR__ . "/../../android_distributions");
+  }
+  $files = glob($findingPath . "/[1-9].*/$input_file.*");
+
   foreach($files as $file) {
       $base_dir = pathinfo($file, PATHINFO_DIRNAME);
       break;
@@ -51,6 +56,8 @@ if (strlen($input_file) > 0) {
   }
   $target_one = $base_dir ."/". $json->{'android'}->{'outputUnsignedPrefix'} . $input_file . $suffix;
 }
+// URL of upload_ok.php
+$upload_ok_uri = "/" . $topPath . "/phpmodules/upload_ok.php";
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -81,6 +88,9 @@ if (strlen($input_file) > 0) {
         }
         document.getElementById('deliver').submit()
     }
+    function FormSubmit(oForm) {
+      window.uploadingAnimation( 'loadingAni' );
+    }
   </script>
 </head>
 
@@ -98,7 +108,7 @@ if (strlen($input_file) > 0) {
     <h2 class="stit"><?php echo L::company_name ." ". L::app_name ." ".  L::title_register_2nd_apksigning; ?></h2>
     <p class="txt"><span class="ico"></span><?php echo L::description_notice7_signing; ?></p>
 
-    <form action="upload_ok.php" method="POST" id="deliver" name="deliver" enctype="multipart/form-data">
+    <form action="<?php echo $upload_ok_uri ?>" method="POST" id="deliver" name="deliver" enctype="multipart/form-data" onsubmit="FormSubmit(this);">
       <input type="hidden" name="deliver" value="findIt" />
       <input type="hidden" name="input_filename" value="<?php echo $input_file; ?>" />
   		<fieldset class="register_form">
@@ -113,16 +123,18 @@ if (strlen($input_file) > 0) {
               }?>
           </div>
         </div>
+        <?php if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'}) { ?>
         <div class="item box_type4" style="width:600px !important;">
           <div class="cont">
               <label for="rasisterA" class="txt_label"><?php echo L::title_register_googlestore_aab; ?></label>
-              <?php if (file_exists($bundle_google)) {
+              <?php if (isset($bundle_google) && file_exists($bundle_google)) {
                 echo "<label class=\"txt_label\">". L::title_register_finished ."</label>";
               } else {
                 echo "<input type=\"file\" name=\"bundle_google\" id=\"bundle_google\" style=\"width:90% !important;\">";
               }?>
           </div>
         </div>
+        <?php } ?>
         <div class="item box_type4" style="width:600px !important;">
           <div class="cont">
     				<label for="rasisterA" class="txt_label"><?php echo L::title_register_onestore_apk; ?></label>
@@ -155,12 +167,21 @@ if (strlen($input_file) > 0) {
 </div>
 <!-- //footer -->
 
+<!-- loading :220127추가 -->
+<div class="loading_dimm" style="visibility: hidden;">
+  <span class="animation" id="loadingAni"></span>
+</div>
+<!-- //loading : 220127추가 -->
+
 <!-- jquery JS -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <!-- select JS -->
 <script src="../js/jquery.nice-select.min.js"></script>
 <!-- placeholder JS : For ie9 -->
 <script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
+<!-- loading -->
+<script src="../plugin/lottie.js"></script>
+<script src="../js/loading.js"></script> <!-- 220127추가 -->
 <!-- common JS -->
 <script src="../js/common.js"></script>
 <!-- app dist common for client JS -->

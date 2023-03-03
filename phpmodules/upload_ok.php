@@ -2,21 +2,26 @@
 if (!class_exists('i18n')) {
     if (file_exists(__DIR__ .'/../config.php')) {
         require_once(__DIR__ . '/../config.php');
-    }  
+    }
     else if (file_exists(__DIR__ .'/../../config.php')) {
         require_once(__DIR__ . '/../../config.php');
-    }  
+    }
 }
 global $topPath;
 
-if ($_GET["input_filename"]) {
+if (isset($_GET["input_filename"])) {
     $in_file=$_GET["input_filename"];
 }
-else {
+else if (isset($_POST["input_filename"])) {
     $in_file=$_POST["input_filename"];
 }
 if (isset($in_file)) {
-    $files = glob("../android_distributions/[1-9].*/$in_file.*");
+    $findingPath = realpath(__DIR__ . "/../android_distributions");
+    if (!$findingPath) {
+        $findingPath = realpath(__DIR__ . "/../../android_distributions");
+    }
+    $files = glob($findingPath . "/[1-9].*/$in_file.*");  
+    
     foreach($files as $file) {
         $base_dir = pathinfo($file, PATHINFO_DIRNAME);
         break;
@@ -47,7 +52,7 @@ echo "input: ". $in_file . "<br />";
 echo "upload to: ". $uploads_dir . "<br />";
 
 // 변수 정리
-if (!file_exists($target_google)) {
+if ($json->{'android'}->{'GoogleStore'}->{'enabled'} && !file_exists($target_google)) {
     $error1 = $_FILES['file_google']['error'];
     $name1 = $_FILES['file_google']['name'];
     $ext1 = array_pop(explode('.', $name1));
@@ -125,14 +130,14 @@ if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'} && !file_exists($bun
 }
 
 
-if (!file_exists($target_one)) {
+if ($json->{'android'}->{'OneStore'}->{'enabled'} && !file_exists($target_one)) {
     $error2 = $_FILES['file_one']['error'];
     $name2 = $_FILES['file_one']['name'];
     $ext2 = array_pop(explode('.', $name2));
      
     // 오류 확인
     if( $error2 != UPLOAD_ERR_OK ) {
-        switch( $error ) {
+        switch( $error2 ) {
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
                 echo L::description_notice9_file_is_too_big ." ($error2)";
