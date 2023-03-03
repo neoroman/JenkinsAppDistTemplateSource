@@ -125,8 +125,12 @@ if (isset($_SERVER['HTTP_HOST']) &&
     $isDebugMode = true;
     $debugMailRecipient = $userGIT->{'email'};
     $topPath = $testTopPath;
-    $outBoundProtocol = $frontEndProtocol;
-    $outBoundPoint = $frontEndPoint;
+    if (isset($json->{'development'}->{'outBoundProtocol'}) && $json->{'development'}->{'outBoundProtocol'} == 'http') {
+        $outBoundProtocol = $frontEndProtocol;
+    }
+    if (isset($json->{'development'}->{'outBoundPoint'}) && $json->{'development'}->{'outBoundProtocol'} == 'localhost') {
+        $outBoundPoint = $frontEndPoint;
+    }
     if (isset($json->{'development'}->{'urlLoginRemoteAPI'})) {
         $boanEndPoint = $json->{'development'}->{'urlLoginRemoteAPI'};
     }
