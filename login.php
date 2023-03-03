@@ -148,7 +148,9 @@ if (isset($_POST['login'])) {
 <?php
 $loginType = "<input type=\"hidden\" name=\"login_type\" value=\"1\" />";
 $login_desc = "* 본인의 ". L::app_name ." ID/PW로 로그인 하세요.";
-$reset_password = '<BR />[ <a href="password_find.php">비밀번호 찾기</a> ]';
+if (file_exists('password_find.php')) {
+  $reset_password = '<BR />[ <a href="password_find.php">비밀번호 찾기</a> ]';
+}
 echo "<!-- wrap -->";
 //<!-- (외부로그인)login_type1, (내부로그인)login_type2 -->
 if (isset($_GET['redirect'])) {
