@@ -350,7 +350,11 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             }
                             $downUrl = str_replace($exEndPoint, $outBoundPoint, $downUrl);
                         } else if (!startsWith($downUrl, "itms-services")) {
-                            $downUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $downUrl;
+                            if (strpos($downUrl, 'android_signing.php') !== false && strpos($downUrl, 'android/') === false) {
+                                $downUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/android/' . $downUrl;
+                            } else {
+                                $downUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $downUrl;
+                            }
                         }
 
                         if (strpos($downUrl, 'android_signing.php') !== false) {
