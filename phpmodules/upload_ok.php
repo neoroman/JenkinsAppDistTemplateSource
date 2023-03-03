@@ -55,27 +55,29 @@ echo "upload to: ". $uploads_dir . "<br />";
 if ($json->{'android'}->{'GoogleStore'}->{'enabled'} && !file_exists($target_google)) {
     $error1 = $_FILES['file_google']['error'];
     $name1 = $_FILES['file_google']['name'];
-    $ext1 = array_pop(explode('.', $name1));
+    $last1 = & explode('.', $name1);
+    $ext1 = array_pop($last1);
      
     // 오류 확인
     if( $error1 != UPLOAD_ERR_OK ) {
+        $msg = "$target_google ";
         switch( $error1 ) {
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                echo L::description_notice9_file_is_too_big ." ($error1)";
+                $msg .= L::description_notice9_file_is_too_big ." ($error1)";
                 break;
             case UPLOAD_ERR_NO_FILE:
-                echo L::description_notice10_file_not_selected ." ($error1)";
+                $msg .= L::description_notice10_file_not_selected ." ($error1)";
                 break;
             default:
-                echo L::description_notice11_file_not_uploaded ." ($error1)";
+                $msg .= L::description_notice11_file_not_uploaded ." ($error1)";
         }
-        exit;
+        echo "$msg";
     }
     // 확장자 확인
     if( !in_array($ext1, $allowed_ext) ) {
         echo L::description_notice12_not_permitted_extention ." ($ext1) of $name1";
-        exit;
+        // exit;
     } 
 
     // 파일 이동
@@ -93,27 +95,29 @@ if ($json->{'android'}->{'GoogleStore'}->{'enabled'} && !file_exists($target_goo
 if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'} && !file_exists($bundle_google)) {
     $error1 = $_FILES['bundle_google']['error'];
     $name1 = $_FILES['bundle_google']['name'];
-    $ext1 = array_pop(explode('.', $name1));
-     
+    $last1 = & explode('.', $name1);
+    $ext1 = array_pop($last1);
+
     // 오류 확인
     if( $error1 != UPLOAD_ERR_OK ) {
+        $msg = "$bundle_google ";
         switch( $error1 ) {
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                echo L::description_notice9_file_is_too_big ." ($error1)";
+                $msg .= L::description_notice9_file_is_too_big ." ($error1)";
                 break;
             case UPLOAD_ERR_NO_FILE:
-                echo L::description_notice10_file_not_selected ." ($error1)";
+                $msg .= L::description_notice10_file_not_selected ." ($error1)";
                 break;
             default:
-                echo L::description_notice11_file_not_uploaded ." ($error1)";
+                $msg .= L::description_notice11_file_not_uploaded ." ($error1)";
         }
-        exit;
+        echo "$msg";
     }
     // 확장자 확인
     if( !in_array($ext1, $allowed_ext) ) {
         echo L::description_notice12_not_permitted_extention ." ($ext1) of $name1";
-        exit;
+        // exit;
     } 
 
     // 파일 이동
@@ -133,27 +137,29 @@ if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'} && !file_exists($bun
 if ($json->{'android'}->{'OneStore'}->{'enabled'} && !file_exists($target_one)) {
     $error2 = $_FILES['file_one']['error'];
     $name2 = $_FILES['file_one']['name'];
-    $ext2 = array_pop(explode('.', $name2));
-     
+    $last2 = & explode('.', $name2);
+    $ext2 = array_pop($last1);
+
     // 오류 확인
     if( $error2 != UPLOAD_ERR_OK ) {
+        $msg = "$target_one ";
         switch( $error2 ) {
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                echo L::description_notice9_file_is_too_big ." ($error2)";
+                $msg .= L::description_notice9_file_is_too_big ." ($error2)";
                 break;
             case UPLOAD_ERR_NO_FILE:
-                echo L::description_notice10_file_not_selected ." ($error2)";
+                $msg .= L::description_notice10_file_not_selected ." ($error2)";
                 break;
             default:
-                echo L::description_notice11_file_not_uploaded ." ($error2)";
+                $msg .= L::description_notice11_file_not_uploaded ." ($error2)";
         }
-        exit;
+        echo "$msg";
     }
     // 확장자 확인
     if( !in_array($ext2, $allowed_ext) ) {
         echo L::description_notice12_not_permitted_extention ." ($ext2) of $name2";
-        exit;
+        // exit;
     } 
 
     // 파일 이동
@@ -169,5 +175,5 @@ if ($json->{'android'}->{'OneStore'}->{'enabled'} && !file_exists($target_one)) 
     echo "</ul>";
 }
 
-echo "<br /><a href='/$topPath/android/dist_android.php'>". L::title_back ."</a>";
+echo "<BR /><BR /><a href='/$topPath/android/dist_android.php'>". L::title_back ."</a>";
 ?>

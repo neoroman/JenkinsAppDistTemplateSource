@@ -188,7 +188,7 @@ function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOne
 		return;
 	}
 	if (!unsignedOneStore) {
-		const result = confirm("unsigned_" + file + "-OneStore-release.apk 파일이 업로드되지 않았습니다.\n\n업로드 사이트로 이동하시겠습니까?");
+		const result = confirm("unsigned_" + file + "-OneStore-release.apk 파일이 업로드되지 않았습니다.\n\n업로드 사이트로 이동하시겠습니까?\n\n\n'취소(Cancel)'을 누르시면 signing을 진행합니다.");
 		if (result == true) {
 			window.location.href = newPathname + "../phpmodules/upload.php?file=" + file;
 		} else {
