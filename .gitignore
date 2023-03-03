@@ -16,7 +16,7 @@ config/config.json
 **/*.xcarchive
 ios_distribution/ExportOptions.plist
 #[ia][on][sd]*_distributions/[0-9]*/*.html*
-[ia][on][sd]*/*.html
+#[ia][on][sd]*/*.html
 #####
 # PNG
 *_file.png

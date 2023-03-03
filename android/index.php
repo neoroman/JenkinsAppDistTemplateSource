@@ -47,6 +47,11 @@ $selectedPattern = "";
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
   <link rel="stylesheet" href="../css/common.css?v4">
+  <?php
+    if (file_exists('../../custom/user.css')) {
+      echo "<link rel=\"stylesheet\" href=\"../custom/user.css\">";
+    }
+  ?>
 </head>
 
 <body>
