@@ -8,10 +8,8 @@ SCRIPT_PATH="$(dirname "$0")"
 HOSTNAME=$(hostname)
 jsonConfig="../config/config.json"
 defaultLanguagePath="../lang"
-prefixOsDir="..";
 if [ ! -f $jsonConfig ]; then
   jsonConfig="../../config/config.json"
-  prefixOsDir="../..";
   defaultLanguagePath="../../lang"
 fi
 if [ -f $jsonConfig ]; then
@@ -172,7 +170,11 @@ if [[ "${DOC_ROOT}" == "" ]]; then
 else
   APP_ROOT="${DOC_ROOT}/${URL_PATH}"
 fi
-APP_VERSION=$(find $prefixOsDir/android_distributions -name "$INPUT_FILE.json" | xargs dirname $1  | tail -1 |  sed -e 's/.*\/\(.*\)$/\1/')
+AOS_DIR="../android_distributions"
+if [ ! -d $AOS_DIR ]; then
+  AOS_DIR="../../android_distributions"
+fi
+APP_VERSION=$(find $AOS_DIR -name "$INPUT_FILE.json" | xargs dirname $1  | tail -1 |  sed -e 's/.*\/\(.*\)$/\1/')
 APP_FOLDER="android_distributions/${APP_VERSION}"
 OUTPUT_FOLDER="${APP_ROOT}/${APP_FOLDER}"
 HTTPS_PREFIX="${FRONTEND_POINT}/${URL_PATH}/${APP_FOLDER}/"
@@ -191,10 +193,11 @@ if [ $DEBUGGING -eq 1 ]; then
   USING_JSON=1
 fi
 #####
+JENKINS_WORKSPACE=$(cat $jsonConfig | $JQ '.android.jenkinsWorkspace' | tr -d '"')
 STOREPASS=$(cat $jsonConfig | $JQ '.android.keyStorePassword' | tr -d '"')
 KEYSTORE_FILE=$(cat $jsonConfig | $JQ '.android.keyStoreFile' | tr -d '"')
 KEYSTORE_ALIAS=$(cat $jsonConfig | $JQ '.android.keyStoreAlias' | tr -d '"')
-if [ ! -f $KEYSTORE_FILE ]; then
+if [ ! -f $JENKINS_WORKSPACE/$KEYSTORE_FILE ]; then
   echo "$HOSTNAME > Error: cannot find keystore file in $KEYSTORE_FILE"
   exit 1
 fi
