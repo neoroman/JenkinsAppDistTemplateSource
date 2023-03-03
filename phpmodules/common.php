@@ -379,10 +379,10 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             if (file_exists($lastApkSigner)) {
                                 $anArray = explode('/', $lastApkSigner);
                                 $apkSignerVersion = $anArray[count($anArray) - 2];
-                                $finalURL = "javascript:androidSigning('$finalURL', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, $outBoundPoint);";
+                                $finalURL = "javascript:androidSigning('$finalURL', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, '$outBoundPoint');";
                             } else {
                                 $apkSignerVersion = '0';
-                                $finalURL = "javascript:androidSigning('$apkSignerPath', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, $outBoundPoint);";
+                                $finalURL = "javascript:androidSigning('$apkSignerPath', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, '$outBoundPoint');";
                             }
                         } else {
                             $finalURL = "javascript:appDownloader('$downUrl');";
