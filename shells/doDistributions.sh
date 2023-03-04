@@ -39,6 +39,11 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
+    -po|--platformOrigin)
+      ORIGIN_OS="$2"
+      shift # past argument
+      shift # past value
+      ;;
     -f|--file)
       INPUT_FILE="$2"
       shift # past argument
@@ -502,14 +507,35 @@ if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
 fi
 
 if [[ "$INPUT_OS" == "both" ]]; then
-  if [[ "$INPUT_FILE" == *"android"* ]]; then
-    OS_NAME="Android+iOS"
-  else  
-    OS_NAME="iOS+Android"
+  if test -n $ORIGIN_OS; then
+    if [[ "$ORIGIN_OS" == "android" ]]; then
+      OS_NAME="Android+iOS"
+    elif [[ "$ORIGIN_OS" == "ios" ]]; then
+      OS_NAME="iOS+Android"
+    else
+      OS_NAME="all"
+    fi
+  else
+    OS_NAME="all"
   fi
   DEV_ENV="${BothDevEnv}"
   DOWNLOAD_URLS="${BothDownloadURLs}"
   sendingEmail
+fi
+#####
+# Setup git environment
+if test -z $(git config user.email); then
+  gitUserEmail=$(cat $jsonConfig | $JQ '.users.git.email' | tr -d '"')
+  git config user.email "$gitUserEmail"
+fi
+if test -z $(git config user.name); then
+  gitUserName=$(cat $jsonConfig | $JQ '.users.git.name' | tr -d '"')
+  if [[ "$gitUserName" != "null" ]]; then
+    git config user.name "$gitUserName"
+  else
+    gitUserName=$(echo $gitUserEmail | sed -e 's/^\(.*\)@.*$/\1/')
+    git config user.name "$gitUserName"
+  fi
 fi
 #####
 # Push distribution result to git repository
@@ -527,10 +553,11 @@ fi
 #####
 # Reorder file time refer to jenkins buildTime of json file
 if [[ "$INPUT_OS" == "both" ]]; then
-  if [[ "$INPUT_FILE" == *"android"* ]]; then
-    $SCRIPT_PATH/reorderFileTime.sh -p android >/dev/null 2>&1
+  if test -n $ORIGIN_OS; then
+      $SCRIPT_PATH/reorderFileTime.sh -p $ORIGIN_OS >/dev/null 2>&1
   else
-    $SCRIPT_PATH/reorderFileTime.sh -p ios >/dev/null 2>&1
+      $SCRIPT_PATH/reorderFileTime.sh -p android >/dev/null 2>&1
+      $SCRIPT_PATH/reorderFileTime.sh -p ios >/dev/null 2>&1
   fi
 else
   $SCRIPT_PATH/reorderFileTime.sh -p $INPUT_OS >/dev/null 2>&1

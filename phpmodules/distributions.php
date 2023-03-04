@@ -264,11 +264,30 @@ function executeShellScript($newFilename, $isResend) {
     $resendArg = "";
   }
   if ($isDebugMode) {
-    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '. $resendArg .' -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
-    echo 'INPUT => ' .__DIR__. '/../shells/doDistributions.sh '. $resendArg .' -d -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) . ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl) .'<BR />\n\n';
+    $input_command = __DIR__ . '/../shells/doDistributions.sh '
+    . $resendArg .' -d '
+    . ' -p ' . escapeshellarg($input_os) 
+    . ' -po ' . escapeshellarg($org_os) 
+    . ' -f ' . escapeshellarg($newFilename) 
+    . ' -m ' . escapeshellarg($isSendingEmail) 
+    . ' -r ' . escapeshellarg($root) 
+    . ' -tp ' . escapeshellarg($topPath) 
+    . ' -iu ' . escapeshellarg($inUrl) 
+    . ' -ou ' . escapeshellarg($outUrl);
+    $output = shell_exec($input_command);
+    echo 'INPUT => ' . $input_command .'<BR />\n\n';
     exit("$output<BR />고객사 배포가 완료되었습니다. <br /><script type=\"text/javascript\">window.stopAnimation();</script><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
   } else {
-    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '. $resendArg .' -p ' . escapeshellarg($input_os) . ' -f ' . escapeshellarg($newFilename) . ' -m ' . escapeshellarg($isSendingEmail) . ' -r ' . escapeshellarg($root) .  ' -tp ' . escapeshellarg($topPath) . ' -iu ' . escapeshellarg($inUrl) . ' -ou ' . escapeshellarg($outUrl));
+    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '
+    . $resendArg 
+    .' -p ' . escapeshellarg($input_os) 
+    . ' -po ' . escapeshellarg($org_os) 
+    . ' -f ' . escapeshellarg($newFilename) 
+    . ' -m ' . escapeshellarg($isSendingEmail) 
+    . ' -r ' . escapeshellarg($root) 
+    .  ' -tp ' . escapeshellarg($topPath) 
+    . ' -iu ' . escapeshellarg($inUrl) 
+    . ' -ou ' . escapeshellarg($outUrl));
     if ($input_os == 'both') {
       $goBackUrl = "/$topPath/$org_os/dist_$org_os.php";
     } else {
