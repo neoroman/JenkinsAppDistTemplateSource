@@ -520,6 +520,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
     return $finalContents;
 }
+
 function httpPost($url, $headers, $data, $isBianry)
 {
     $curl = curl_init($url);
@@ -538,6 +539,7 @@ function httpPost($url, $headers, $data, $isBianry)
     curl_close($curl);
     return $response;
 }
+
 function httpGet($url)
 {
     $curl = curl_init($url);
@@ -547,4 +549,85 @@ function httpGet($url)
     curl_close($curl);
     return $response;
 }
+
+function getLastJson($os) {
+    $fileKey = "html";
+  
+    if ($os == "android") {
+        $findingPath = realpath(__DIR__ . "/../android_distributions");
+        if (!$findingPath) {
+            $findingPath = realpath(__DIR__ . "/../../android_distributions");
+        }
+        $files = glob($findingPath ."/?.*/*.$fileKey");
+    }
+    else if ($os == "ios") {
+        $findingPath = realpath(__DIR__ . "/../ios_distributions");
+        if (!$findingPath) {
+            $findingPath = realpath(__DIR__ . "/../../ios_distributions");
+        }
+        $files = glob($findingPath ."/?.*/*.$fileKey");
+    }
+  
+    usort($files, function($a, $b) {
+      return filemtime($a) < filemtime($b);
+    });
+  
+    foreach($files as $file) {
+        // $content = file_get_contents($file);
+        $path = pathinfo($file, PATHINFO_DIRNAME);
+        // $basename = basename($file);
+        $basenameWithoutExt = basename($file, '.html');
+  
+        // 외부(고객사) 배포 페이지 //////////////////////////////////////////////////////////
+        if (startsWith(basename($file), "zzz_")) {
+            // 아직 배포되지 않은 페이지
+            continue;
+        }
+        // START: Fetch JSON data
+        if (startsWith($basenameWithoutExt, "zzz_")) {
+            // $tmpOut = explode("zzz_", $basenameWithoutExt);
+            // $basenameWithoutExt = $tmpOut[1];
+            $basenameWithoutExt = substr($basenameWithoutExt, 4);
+    
+            //echo "<H1><font color=pink>JSON FILE:::$basenameWithoutExt</font></H1>";
+        }
+        $jsonfile = $basenameWithoutExt . ".json";
+    
+        if (file_exists("$path/$jsonfile")) {
+            $jsonStr = file_get_contents("$path/$jsonfile");
+            $finalJson = json_validate($jsonStr);
+    
+            $param["appVersion"] = $finalJson->{'appVersion'};
+            $param["buildVersion"] = $finalJson->{'buildVersion'};
+            $param["buildNumber"] = $finalJson->{'buildNumber'};
+            $param["buildTime"] = $finalJson->{'buildTime'};
+            if (is_array($finalJson->{'files'})) {
+            for ($i=0; $i < count($finalJson->{'files'}); $i++) {
+                $anItem = $finalJson->{'files'}[$i];
+    
+                if (rtrim($anItem->{'file'}) != "") {
+                $downUrl = $anItem->{'file'};
+                if (!startsWith($downUrl, "http")) {
+                    $downUrl = $finalJson->{'urlPrefix'} . $downUrl;
+                }
+                if (rtrim($anItem->{'plist'}) != "") {
+                    $plistUrl = rtrim($anItem->{'plist'});
+                    if (!startsWith($plistUrl, "http")) {
+                    $plistUrl = $finalJson->{'urlPrefix'} . $plistUrl;
+                    }
+                    $downUrl = "itms-services://?action=download-manifest&url=". $anItem->{'plist'};
+                }
+                if (rtrim($downUrl) != "") {
+                    $param["downUrl"] = $downUrl;
+                    break;
+                }
+                }
+            }
+            }
+            //echo "DEBUG:::" . var_dump($param);
+            return $param;
+        }
+    }
+}
+  
 ?>
