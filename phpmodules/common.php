@@ -379,8 +379,10 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             }
                             $apkSignerPath = $json->{'android'}->{'androidHome'} . "/build-tools";
                             $apksignerCandidates = glob($apkSignerPath . "/*/apksigner");
-                            $lastApkSigner = end($apksignerCandidates);
-                            if (file_exists($lastApkSigner)) {
+                            if (is_array($apksignerCandidates)) {
+                                $lastApkSigner = end($apksignerCandidates);
+                            }
+                            if (isset($lastApkSigner) && file_exists($lastApkSigner)) {
                                 $anArray = explode('/', $lastApkSigner);
                                 $apkSignerVersion = $anArray[count($anArray) - 2];
                                 $finalURL = "javascript:androidSigning('$finalURL', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, '$outBoundPoint');";
