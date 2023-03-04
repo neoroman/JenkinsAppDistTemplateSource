@@ -369,7 +369,6 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   ##
   BothDownloadURLs="${BothDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
 
-  DEV_ENV=$(echo "$DEV_ENV" | tr -d ' ')
   if test -z "$DEV_ENV"; then
     getDevToolInfo
     if [ -f ${jsonConfig} ]; then
