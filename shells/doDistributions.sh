@@ -512,7 +512,7 @@ if [[ "$INPUT_OS" == "both" ]]; then
   DOWNLOAD_URLS="${BothDownloadURLs}"
   sendingEmail
 fi
-##
+#####
 # Push distribution result to git repository
 git config core.sharedRepository all
 if [[ "$(git fetch --all)" == "Fetching origin" ]]; then
@@ -524,4 +524,15 @@ else
   git commit -a -m "[release] $INPUT_FILE"
   git pull
   git push
+fi
+#####
+# Reorder file time refer to jenkins buildTime of json file
+if [[ "$INPUT_OS" == "both" ]]; then
+  if [[ "$INPUT_FILE" == *"android"* ]]; then
+    $SCRIPT_PATH/reorderFileTime.sh -p android >/dev/null 2>&1
+  else
+    $SCRIPT_PATH/reorderFileTime.sh -p ios >/dev/null 2>&1
+  fi
+else
+  $SCRIPT_PATH/reorderFileTime.sh -p $INPUT_OS >/dev/null 2>&1
 fi

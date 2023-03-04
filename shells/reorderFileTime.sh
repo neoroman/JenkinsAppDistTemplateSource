@@ -65,10 +65,18 @@ if [[ "${INPUT_OS}" == "ios" ]]; then
     if [ ! -d $TARGET ]; then
         TARGET="./ios_distributions"
     fi
+    if test ! -d $TARGET && command -v realpath >/dev/null; then
+        TARGET="$(realpath $SCRIPT_PATH)/../../ios_distributions"
+        TARGET=$(realpath $TARGET)
+    fi
 elif [[ "${INPUT_OS}" == "android" ]]; then
     TARGET="../android_distributions"
     if [ ! -d $TARGET ]; then
         TARGET="./android_distributions"
+    fi
+    if test ! -d $TARGET && command -v realpath >/dev/null; then
+        TARGET="$(realpath $SCRIPT_PATH)/../../android_distributions"
+        TARGET=$(realpath $TARGET)
     fi
 fi
 if [ -f $jsonConfig ]; then
