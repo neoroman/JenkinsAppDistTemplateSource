@@ -15,11 +15,11 @@ global $outBoundPoint;
 $icon = $json->{'icon'};
 
 if ($usingLogin && !isset($_SESSION['id'])) {
-  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
-    // Do nothing for remote API login on app.company.com
-  } else {
+  // if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+  //   // Do nothing for remote API login on app.company.com
+  // } else {
     header('Location: /'. $topPath .'/login.php?redirect='. $_SERVER['PHP_SELF']);
-  }
+  // }
 }
 
 if (file_exists('../phpmodules/common.php')) {

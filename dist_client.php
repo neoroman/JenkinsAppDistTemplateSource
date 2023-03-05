@@ -11,11 +11,11 @@ $recommandEnabled = $config->{'usingRecommandLink'};
 $icon = $json->{'icon'};
 
 if ($usingLogin && !isset($_SESSION['id'])) {
-    if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
-        // Do nothing for remote API login on app.company.com
-    } else {
-        header('Location: login.php');  
-    }
+    // if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    //     // Do nothing for remote API login on app.company.com
+    // } else {
+        header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
+    // }
 }
 ?>
 <!DOCTYPE html>
