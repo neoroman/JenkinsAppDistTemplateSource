@@ -2,7 +2,7 @@
 session_start();
 
 require_once('config.php');
-global $conn, $topPath, $usingMySQL, $userDict;
+global $conn, $topPath, $usingMySQL, $userDict, $usingLoginRemoteAPI;
 
 require('phpmodules/common.php');
 global $inUrl, $outUrl;

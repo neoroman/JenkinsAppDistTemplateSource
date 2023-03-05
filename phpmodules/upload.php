@@ -11,14 +11,18 @@ if (!class_exists('i18n')) {
 }
 global $usingLogin, $topPath;
 global $outBoundPoint;
+global $topPath, $boanEndPoint;
 
-if ($usingLogin && !isset($_SESSION['internal_id'])) {
-  // if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
-  //   // Do nothing for remote API login on app.company.com
-  // } else {
+if ($usingLogin && !isset($_SESSION['id'])) {
+  if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+    // Do nothing for remote API login on app.company.com
+    $redirectUrl = str_replace("4000", "8080", $boanEndPoint);
+    header('Location: ' . $redirectUrl .'/'. $topPath . '/login.php?redirect='. $_SERVER['PHP_SELF']);
+  } else {
     header('Location: /'. $topPath .'/login.php?redirect='. $_SERVER['PHP_SELF']);
-  // }
+  }
 }
+
 if (file_exists('../phpmodules/common.php')) {
   require('../phpmodules/common.php');
 } else if (file_exists('common.php')) {

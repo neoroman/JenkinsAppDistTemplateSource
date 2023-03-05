@@ -6,16 +6,19 @@ global $config;
 global $usingLogin;
 global $userQC;
 global $outBoundPoint;
+global $topPath, $boanEndPoint;
 
 $recommandEnabled = $config->{'usingRecommandLink'};
 $icon = $json->{'icon'};
 
 if ($usingLogin && !isset($_SESSION['id'])) {
-    // if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
-    //     // Do nothing for remote API login on app.company.com
-    // } else {
+    if ($usingLoginRemoteAPI && $_SERVER['SERVER_NAME'] == $outBoundPoint) {
+        // Do nothing for remote API login on app.company.com
+        $redirectUrl = str_replace("4000", "8080", $boanEndPoint);
+        header('Location: ' . $redirectUrl .'/'. $topPath . '/login.php?redirect='. $_SERVER['PHP_SELF']);
+    } else {
         header('Location: login.php?redirect='. $_SERVER['PHP_SELF']);
-    // }
+    }
 }
 ?>
 <!DOCTYPE html>
