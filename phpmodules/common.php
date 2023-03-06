@@ -78,13 +78,12 @@ function getPaginationSnippets($os, $isDomesticQA)
 function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files): string
 {
     global $json;
-    global $config;
     global $frontEndProtocol;
     global $frontEndPoint;
     global $outBoundProtocol;
     global $outBoundPoint;
     global $topPath;
-    global $isDebugMode;
+    // global $isDebugMode;
 
     $finalContents = "";
 
@@ -461,11 +460,16 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
       <ul class=\"list\">\n";
 
             $input = $finalJson->{'gitLastLog'};
-            // $ab = htmlentities($input);
-            // $input = unescape_unicode($input);
-            // $input = preg_replace('//', ' ', $input);
-            // $input = preg_replace('/\\\\/', '', $input);
-            // $input = preg_replace('/li>n/', 'li>', $input);
+            /* TODO: change old git url in html into new-url
+            if (isset($json)) {
+                if ($os == "ios") {
+                    $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
+                } else if ($os == "android") {
+                    $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
+                }
+                $input = preg_replace('/href=([^\s>]+)/i', 'href="'. $gitBrowseUrl .'/"', $input);
+            }
+             */
             $tmpList = explode('|', $input);
             for ($i = 0; $i < count($tmpList); $i++) {
                 $tmpItem = explode('▶︎', $tmpList[$i]);
@@ -480,7 +484,6 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     $finalSnippet .= "\t\t<li><span class=\"tit\">+</span><p class=\"txt\">$commitId</p></li>\n";
                 }
             }
-
 
             $finalSnippet .= "\n</ul>
       </div>
