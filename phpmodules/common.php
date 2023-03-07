@@ -459,33 +459,37 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
       <button type=\"button\" class=\"btn\">History</button>
       <ul class=\"list\">\n";
 
-            $input = $finalJson->{'gitLastLog'};
-            /* TODO: change old git url in html into new-url
-            if (isset($json)) {
+            if (isset($finalJson->{'gitLastLogs'})) {
                 if ($os == "ios") {
                     $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
                 } else if ($os == "android") {
                     $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
                 }
-                $input = preg_replace('/href=([^\s>]+)/i', 'href="'. $gitBrowseUrl .'/"', $input);
-            }
-             */
-            $tmpList = explode('|', $input);
-            for ($i = 0; $i < count($tmpList); $i++) {
-                $tmpItem = explode('▶︎', $tmpList[$i]);
-                $commitId = preg_replace('//', ' ', $tmpItem[0]);
-                if (count($tmpItem) > 1) {
-                    $comment  = preg_replace('//', ' ', $tmpItem[1]);
-                    if (strlen($comment) <= 0) {
-                        $comment  = $commitId;
+                $input = $finalJson->{'gitLastLogs'};
+                for ($i = 0; $i < count($input); $i++) {
+                    $gitItem = $input[$i];
+                    $gitHash = $gitItem->{'hash'};
+                    $gitDate = $gitItem->{'date'};
+                    $gitComment = $gitItem->{'comment'};
+                    $gitComment = str_replace('-', ' ', $gitComment);
+                    if (isset($gitItem->{'commiter'})) {
+                        $gitCommiter = " by ". $gitItem->{'commiter'};
+                    } else if (isset($gitItem->{'committer'})) {
+                        $gitCommiter = " by ". $gitItem->{'committer'};
+                    } else {
+                        $gitCommiter = "";
                     }
-                    $finalSnippet .= "\t\t<li><span class=\"tit\">$commitId</span><p class=\"txt\">$comment</p></li>\n";
-                } else {
-                    $finalSnippet .= "\t\t<li><span class=\"tit\">+</span><p class=\"txt\">$commitId</p></li>\n";
+                    $commitId = $gitHash;
+                    if ($jsonReleaseType == 'release') {
+                        $commitId = $gitDate;
+                    }
+                    $finalSnippet .= "\t\t<li><span class=\"tit\"><a href=\"$gitBrowseUrl/$gitHash\">$commitId</a></span><p class=\"txt\">$gitComment$gitCommiter</p></li>\n";
                 }
+            } else {
+                $input = $finalJson->{'gitLastLog'};
+                $finalSnippet .= "\t\t$input\n";
             }
-
-            $finalSnippet .= "\n</ul>
+        $finalSnippet .= "\n</ul>
       </div>
       <!-- //히스토리 : 펼침 접힘 토글 -->
       </div>
