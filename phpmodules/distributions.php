@@ -327,13 +327,7 @@ function updateVersionTag($verTarget, $verDetail) {
       // }
       file_put_contents($incFile, $content);
     } else {
-      // if (file_exists($iOS_incFile)) {
-      //   unlink($iOS_incFile);
-      // }
       file_put_contents($iOS_incFile, $content);
-      // if (file_exists($Android_incFile)) {
-      //   unlink($Android_incFile);
-      // }
       file_put_contents($Android_incFile, $content);
     }
   }

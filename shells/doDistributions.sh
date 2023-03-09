@@ -229,6 +229,7 @@ function readJsonAndSetVariables() {
     #####################
     appVersion=$(cat $JSON_FILE | $JQ '.appVersion ' | tr -d '"')
     buildVersion=$(cat $JSON_FILE | $JQ '.buildVersion ' | tr -d '"')
+    # TODO: add ``both`` platforms gitLastLogs and make JSON(gitLastLogs) to pretty HTML
     gitLastLog=$(cat $JSON_FILE | $JQ '.gitLastLog' | tr -d '"' | sed -e 's/\\n//g')
     buildTime=$(cat $JSON_FILE | $JQ '.buildTime' | tr -d '"')
     urlPrefix=$(cat $JSON_FILE | $JQ '.urlPrefix' | tr -d '"' | sed -e "s/${frontEndProtocol}/${outBoundProtocol}/g" | sed -e "s/${frontEndPoint}/${outBoundPoint}/g")

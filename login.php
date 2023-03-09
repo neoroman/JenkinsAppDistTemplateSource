@@ -147,8 +147,10 @@ if (isset($_POST['login'])) {
 <body>
 <?php
 $loginType = "<input type=\"hidden\" name=\"login_type\" value=\"1\" />";
-$login_desc = "* 본인의 ". L::app_name ." ID/PW로 로그인 하세요.";
-if (file_exists('password_find.php')) {
+if (glob(('../*_organization_flat.php'))) {
+  $login_desc = "* 본인의 ". L::app_name ." ID/PW로 로그인 하세요.";
+}
+if (file_exists('../password_find.php')) {
   $reset_password = '<BR />[ <a href="password_find.php">비밀번호 찾기</a> ]';
 }
 echo "<!-- wrap -->";
