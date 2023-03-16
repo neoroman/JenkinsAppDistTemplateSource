@@ -471,7 +471,6 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     $gitHash = $gitItem->{'hash'};
                     $gitDate = $gitItem->{'date'};
                     $gitComment = $gitItem->{'comment'};
-                    $gitComment = str_replace('-', ' ', $gitComment);
                     if (isset($gitItem->{'commiter'})) {
                         $gitCommiter = " by ". $gitItem->{'commiter'};
                     } else if (isset($gitItem->{'committer'})) {

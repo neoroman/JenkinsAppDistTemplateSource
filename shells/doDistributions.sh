@@ -167,6 +167,44 @@ cd $WORKING_PATH
 DevEnvPrefix="<div style=\"background: ghostwhite; font-size: 12px; padding: 10px; border: 1px solid lightgray; margin: 10px;\">"
 DevEnvSuffix="</div>"
 
+function readGitLogs() {
+  gitLastLog=$(cat $JSON_FILE | $JQ '.gitLastLog' | tr -d '"' | sed -e 's/\\n//g')
+
+  gitLastLogsCount=$(cat $JSON_FILE | $JQ '.gitLastLogs | length')
+  if [ $gitLastLogsCount -gt 0 ]; then
+    if [ -f $jsonConfig ]; then
+      if [[ "$ORGINAL_OS" == "ios" ]]; then
+        gitBrowseUrl=$(cat $jsonConfig | $JQ '.ios.gitBrowseUrl' | tr -d '"')
+      elif [[ "$ORGINAL_OS" == "android" ]]; then
+        gitBrowseUrl=$(cat $jsonConfig | $JQ '.android.gitBrowseUrl' | tr -d '"')
+      fi
+      if [ ${gitBrowseUrl%"/"} == ${gitBrowseUrl} ]; then
+        gitBrowseUrl="${gitBrowseUrl}/"
+      fi
+    fi
+    gitLastLog=""
+    INDEX=0
+    gitLogItem=$(cat $JSON_FILE | $JQ --arg i "${INDEX}" '.gitLastLogs[$i|fromjson]')
+    gitLastLog="${gitLastLog}<ul style=\"padding-bottom:15px;\">"
+    while [[ "$gitLogItem" != "null" ]]; do
+      gitHash=$(echo "${gitLogItem}" | $JQ '.hash' | tr -d '"')
+      gitDate=$(echo "${gitLogItem}" | $JQ '.date' | tr -d '"')
+      gitComment=$(echo "${gitLogItem}" | $JQ '.comment' | tr -d '"')
+      gitCommitter=" by $(echo "${gitLogItem}" | $JQ '.committer' | tr -d '"')"
+      hashTitle=$gitHash
+      if [[ "$jsonReleaseType" == "release" ]]; then
+          hashTitle=$gitDate;
+      fi
+      gitLastLog="${gitLastLog}<li style=\"white-space:nowrap;\"><p style=\"font-size:14px;line-height:16px;color:rgba(0, 0, 0, 0.87);\">"
+      gitLastLog="${gitLastLog}<span><a href=\"$gitBrowseUrl/$gitHash\" style=\"color:#258BDB;\">$hashTitle</a></span>"
+      gitLastLog="${gitLastLog}&nbsp;&nbsp;&nbsp;$gitComment$gitCommitter&nbsp;&nbsp;($gitDate)</p></li>"
+      INDEX=$((INDEX+1))
+      gitLogItem=$(cat $JSON_FILE | $JQ --arg i "${INDEX}" '.gitLastLogs[$i|fromjson]')
+    done
+    gitLastLog="${gitLastLog}</ul>"
+  fi
+} #function readGitLogs
+
 function readJsonAndSetVariables() {
   APP_ROOT="${DOC_ROOT}/${TOP_PATH}/${APP_ROOT_SUFFIX}"
   FILE_PATH=$(find ${WORKING_PATH}/${APP_ROOT_SUFFIX} -name "*$INPUT_FILE")
@@ -229,13 +267,12 @@ function readJsonAndSetVariables() {
     #####################
     appVersion=$(cat $JSON_FILE | $JQ '.appVersion ' | tr -d '"')
     buildVersion=$(cat $JSON_FILE | $JQ '.buildVersion ' | tr -d '"')
-    # TODO: add ``both`` platforms gitLastLogs and make JSON(gitLastLogs) to pretty HTML
-    gitLastLog=$(cat $JSON_FILE | $JQ '.gitLastLog' | tr -d '"' | sed -e 's/\\n//g')
     buildTime=$(cat $JSON_FILE | $JQ '.buildTime' | tr -d '"')
     urlPrefix=$(cat $JSON_FILE | $JQ '.urlPrefix' | tr -d '"' | sed -e "s/${frontEndProtocol}/${outBoundProtocol}/g" | sed -e "s/${frontEndPoint}/${outBoundPoint}/g")
     jenkinsBuildNumber=$(cat $JSON_FILE | $JQ '.buildNumber' | tr -d '"')
     releaseType=$(cat $JSON_FILE | $JQ '.releaseType' | tr -d '"')
     DEV_ENV=$(cat $JSON_FILE | $JQ '.buildEnv' | tr -d '"' | sed -e 's/\\t//g' | sed -e 's/\\n/<BR \/>/g' | sed -e 's/<BR \/><BR \/>/<BR \/>/g' | sed -e 's/^null$//g')
+    readGitLogs
     #####################
     FILE[0]=$(cat $JSON_FILE | $JQ -c '.files[0]')
     FILE[1]=$(cat $JSON_FILE | $JQ -c '.files[1]')
@@ -357,20 +394,29 @@ function handlingSendMailOrNot() {
   else
     BothDevEnv="${BothDevEnv}${BothDevEnvPrefix}<B>${OS_NAME}</B><BR />${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}<BR /><BR />"
     BothDevEnv="${BothDevEnv}${BothDevEnvSuffix}"
+
+    BothGitLastLogs="${BothGitLastLogs}${BothDevEnvPrefix}<B>${OS_NAME}</B><BR />${DevEnvPrefix}${gitLastLog}${DevEnvSuffix}<BR /><BR />"
+    BothGitLastLogs="${BothGitLastLogs}${BothDevEnvSuffix}"
   fi
 }
 
 ## for iOS / Android both
+ORGINAL_OS=""
 BothDevEnv=""
 BothDownloadURLs=""
 BothDevEnvPrefix=""
 BothDevEnvSuffix=""
+BothGitLastLogs=""
 ##
 
+###############################################################################
+## Android
+###############################################################################
 if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   ##
   APP_ROOT_SUFFIX="android_distributions"
   OS_NAME="Android"
+  ORGINAL_OS="android"
   readJsonAndSetVariables
   ##
   BothDownloadURLs="${BothDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
@@ -441,11 +487,14 @@ if [[ "$INPUT_OS" == "android" || "$INPUT_OS" == "both" ]]; then
   fi # is_resending
 fi # Android
 
-
+###############################################################################
+## iOS
+###############################################################################
 if [[ "$INPUT_OS" == "ios" || "$INPUT_OS" == "both" ]]; then
   ##
   APP_ROOT_SUFFIX="ios_distributions"
   OS_NAME="iOS"
+  ORGINAL_OS="ios"
   readJsonAndSetVariables
   ##
   BothDownloadURLs="${BothDownloadURLs}<B>${OS_NAME}</B><BR />${DOWNLOAD_URLS}<BR />"
@@ -521,6 +570,7 @@ if [[ "$INPUT_OS" == "both" ]]; then
   fi
   DEV_ENV="${BothDevEnv}"
   DOWNLOAD_URLS="${BothDownloadURLs}"
+  gitLastLog="${BothGitLastLogs}"
   sendingEmail
 fi
 #####

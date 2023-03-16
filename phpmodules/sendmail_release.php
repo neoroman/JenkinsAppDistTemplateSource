@@ -181,10 +181,10 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
         $mail->Body   .= '<div style="background: ghostwhite; font-size: 12px; padding: 10px; border: 1px solid lightgray; margin: 10px;">';
         $mail->Body   .= '<a href='. L::client_short_url .'>'. L::client_short_url .'</a>&nbsp;(ID/PW: '. $siteUser .'/'. $sitePass .')';
         $mail->Body   .= '</div>';
-        $mail->Body   .= '※'. L::description_notice18;
+        $mail->Body   .= '<div style="font-size: 10px; padding: 10px; margin: 10px"> ※'. L::description_notice18;
+        $mail->Body   .= '</div>';
         $mail->Body   .= '<br /><br />';
         $mail->Body   .= '<H2><b>수정 및 반영사항</b></H2>';
-        $mail->Body   .= '항목:&nbsp;<br />';
         $mail->Body   .= '<div>'. isset($message_html) ? $message_html : "" .'</div>';
         $mail->Body   .= '<br /><br /><br />';
         $mail->Body   .= '<H2><b>빌드 환경</b></H2><br />';
