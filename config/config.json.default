@@ -112,6 +112,7 @@
         "podFile": "ProjectName/Podfile",
         "jenkinsWorkspace": "/Users/dist_account/.jenkins/workspace/CompanyProject/FooBar-iOS",
         "gitBrowseUrl": "http://bitbucket.company.com/projects/TGV/repos/app-ios/commits",
+        "clientGitUrl": "https://gitlab.company.com/group/project-ios/-/commit",
         "jenkinsUser": "appdistaccount",
         "sudoPassword": "qwer1234",
         "InfoPlist": "Info.plist"
@@ -165,7 +166,8 @@
         "outputUnsignedPrefix": "unsigned_",
         "outputGoogleStoreSuffix": "-GoogleStore-release.apk",
         "outputOneStoreSuffix": "-OneStore-release.apk",
-        "gitBrowseUrl": "http://bitbucket.company.com/projects/TGV/repos/app-android/commits"
+        "gitBrowseUrl": "http://bitbucket.company.com/projects/TGV/repos/app-android/commits",
+        "clientGitUrl": "https://gitlab.company.com/group/project-android/-/commit"
     },
     "development": {
         "frontEndProtocol": "http",
@@ -174,6 +176,7 @@
         "outBoundPoint": "localhost",
         "topPath": "CompanyProject/FooBar",
         "outputPrefix": "Company_FooBar_",
+        "hideGitCommitter": false,
         "usingLogin": false,
         "usingLoginRemoteAPI": false,
         "usingMySQL": false,
@@ -190,6 +193,7 @@
         "outBoundPoint": "dist.company.com",
         "topPath": "CompanyProject/FooBar",
         "outputPrefix": "Company_FooBar_",
+        "hideGitCommitter": false,
         "usingLogin": false,
         "usingLoginRemoteAPI": false,
         "urlLoginRemoteAPI": "https://boan.company.com:4000",

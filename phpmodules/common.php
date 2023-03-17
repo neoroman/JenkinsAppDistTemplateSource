@@ -464,12 +464,29 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 if (isset($config->{'hideGitCommitter'})) {
                     $hideGitCommitter = $config->{'hideGitCommitter'};
                 }
-                        
-                if ($os == "ios") {
-                    $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
-                } else if ($os == "android") {
-                    $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
+            
+                if (!$isDomesticQA) { // 고객사용
+                    if ($os == "ios") {
+                        if (isset($json->{'ios'}->{'clientGitUrl'})) {
+                            $gitBrowseUrl = $json->{'ios'}->{'clientGitUrl'};
+                        } else {
+                            $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
+                        }
+                    } else if ($os == "android") {
+                        if (isset($json->{'android'}->{'clientGitUrl'})) {
+                            $gitBrowseUrl = $json->{'android'}->{'clientGitUrl'};
+                        } else {
+                            $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
+                        }
+                    }
+                } else { // 회사 내부용
+                    if ($os == "ios") {
+                        $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
+                    } else if ($os == "android") {
+                        $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
+                    }                    
                 }
+
                 $input = $finalJson->{'gitLastLogs'};
                 for ($i = 0; $i < count($input); $i++) {
                     $gitItem = $input[$i];

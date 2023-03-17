@@ -176,9 +176,17 @@ function readGitLogs() {
     hideGitCommitter=0
     if [ -f $jsonConfig ]; then
       if [[ "$ORGINAL_OS" == "ios" ]]; then
-        gitBrowseUrl=$(cat $jsonConfig | $JQ '.ios.gitBrowseUrl' | tr -d '"')
+        if [[ "$(cat $jsonConfig | $JQ '.ios.clientGitUrl' | tr -d '"')" != "null" ]]; then
+          gitBrowseUrl=$(cat $jsonConfig | $JQ '.ios.clientGitUrl' | tr -d '"')
+        else
+          gitBrowseUrl=$(cat $jsonConfig | $JQ '.ios.gitBrowseUrl' | tr -d '"')
+        fi
       elif [[ "$ORGINAL_OS" == "android" ]]; then
-        gitBrowseUrl=$(cat $jsonConfig | $JQ '.android.gitBrowseUrl' | tr -d '"')
+        if [[ "$(cat $jsonConfig | $JQ '.android.clientGitUrl' | tr -d '"')" != "null" ]]; then
+          gitBrowseUrl=$(cat $jsonConfig | $JQ '.android.clientGitUrl' | tr -d '"')
+        else
+          gitBrowseUrl=$(cat $jsonConfig | $JQ '.android.gitBrowseUrl' | tr -d '"')
+        fi
       fi
       if [ ${gitBrowseUrl%"/"} == ${gitBrowseUrl} ]; then
         gitBrowseUrl="${gitBrowseUrl}/"
