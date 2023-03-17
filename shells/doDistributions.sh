@@ -135,6 +135,7 @@ if [ -f "$defaultLanguagePath/default.json" ]; then
   APP_VERSION=$(cat $lang_file | $JQ '.app.version' | tr -d '"')
   RELEASE_KEY=$(cat $lang_file | $JQ '.mail.releaseKeyword' | tr -d '"')
   DEVELOP_KEY=$(cat $lang_file | $JQ '.mail.developKeyword' | tr -d '"')
+  CompanyName=$(cat $lang_file | $JQ '.company.name' | tr -d '"')
 fi
 ##### from config php
 NEO2UA_POINT="${OUT_URL}"
@@ -172,6 +173,7 @@ function readGitLogs() {
 
   gitLastLogsCount=$(cat $JSON_FILE | $JQ '.gitLastLogs | length')
   if [ $gitLastLogsCount -gt 0 ]; then
+    hideGitCommitter=0
     if [ -f $jsonConfig ]; then
       if [[ "$ORGINAL_OS" == "ios" ]]; then
         gitBrowseUrl=$(cat $jsonConfig | $JQ '.ios.gitBrowseUrl' | tr -d '"')
@@ -180,6 +182,9 @@ function readGitLogs() {
       fi
       if [ ${gitBrowseUrl%"/"} == ${gitBrowseUrl} ]; then
         gitBrowseUrl="${gitBrowseUrl}/"
+      fi
+      if test -n $config; then
+        hideGitCommitter=$(test $(echo $config | $JQ '.hideGitCommitter') = true && echo 1 || echo 0)
       fi
     fi
     gitLastLog=""
@@ -190,7 +195,15 @@ function readGitLogs() {
       gitHash=$(echo "${gitLogItem}" | $JQ '.hash' | tr -d '"')
       gitDate=$(echo "${gitLogItem}" | $JQ '.date' | tr -d '"')
       gitComment=$(echo "${gitLogItem}" | $JQ '.comment' | tr -d '"')
-      gitCommitter=" by $(echo "${gitLogItem}" | $JQ '.committer' | tr -d '"')"
+      if [ $hideGitCommitter -eq 1 ]; then
+        if test -z $CompanyName; then
+          gitCommitter=""
+        else
+          gitCommitter=" by $CompanyName"
+        fi
+      else
+        gitCommitter=" by $(echo "${gitLogItem}" | $JQ '.committer' | tr -d '"')"
+      fi
       hashTitle=$gitHash
       if [[ "$jsonReleaseType" == "release" ]]; then
           hashTitle=$gitDate;

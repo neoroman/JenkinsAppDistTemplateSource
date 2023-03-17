@@ -77,7 +77,7 @@ function getPaginationSnippets($os, $isDomesticQA)
 
 function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files): string
 {
-    global $json;
+    global $json, $config;
     global $frontEndProtocol;
     global $frontEndPoint;
     global $outBoundProtocol;
@@ -460,6 +460,11 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
       <ul class=\"list\">\n";
 
             if (isset($finalJson->{'gitLastLogs'})) {
+                $hideGitCommitter = false;
+                if (isset($config->{'hideGitCommitter'})) {
+                    $hideGitCommitter = $config->{'hideGitCommitter'};
+                }
+                        
                 if ($os == "ios") {
                     $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
                 } else if ($os == "android") {
@@ -471,12 +476,16 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     $gitHash = $gitItem->{'hash'};
                     $gitDate = $gitItem->{'date'};
                     $gitComment = $gitItem->{'comment'};
-                    if (isset($gitItem->{'commiter'})) {
-                        $gitCommiter = " by ". $gitItem->{'commiter'};
-                    } else if (isset($gitItem->{'committer'})) {
-                        $gitCommiter = " by ". $gitItem->{'committer'};
+                    if ($hideGitCommitter) {
+                        $gitCommiter = " by ". L::company_name;
                     } else {
-                        $gitCommiter = "";
+                        if (isset($gitItem->{'commiter'})) {
+                            $gitCommiter = " by ". $gitItem->{'commiter'};
+                        } else if (isset($gitItem->{'committer'})) {
+                            $gitCommiter = " by ". $gitItem->{'committer'};
+                        } else {
+                            $gitCommiter = "";
+                        }    
                     }
                     $commitId = $gitHash;
                     if ($jsonReleaseType == 'release') {
