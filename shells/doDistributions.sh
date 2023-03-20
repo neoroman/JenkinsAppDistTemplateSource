@@ -97,12 +97,12 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-if test -z $INPUT_OS; then
+if test -z "$INPUT_OS"; then
   echo "Usage: $SCRIPT_NAME [-p {ios,android,both}] [-f input_file]"
   echo ""
   echo "Error: ios 또는 android 인자 없음"
   exit
-elif test -z $INPUT_FILE; then
+elif test -z "$INPUT_FILE"; then
   echo "Usage: $SCRIPT_NAME [-p {ios,android,both}] [-f input_file]"
   echo ""
   echo "Error: no input file"
@@ -139,7 +139,7 @@ if [ -f "$defaultLanguagePath/default.json" ]; then
 fi
 ##### from config php
 NEO2UA_POINT="${OUT_URL}"
-if test -z $NEO2UA_POINT; then
+if test -z "$NEO2UA_POINT"; then
   outBoundPoint=$(grep 'outBoundPoint' ${configPath} | tail -1  | sed -e 's/.*"\(.*\)";/\1/g')
   outBoundProtocol=$(grep 'outBoundProtocol' ${configPath} | tail -1  | sed -e 's/.*"\(.*\)";/\1/g')
   NEO2UA_POINT="${outBoundProtocol}://${outBoundPoint}"
@@ -191,9 +191,7 @@ function readGitLogs() {
       if [ ${gitBrowseUrl%"/"} == ${gitBrowseUrl} ]; then
         gitBrowseUrl="${gitBrowseUrl}/"
       fi
-      if test -n $config; then
-        hideGitCommitter=$(test $(echo $config | $JQ '.hideGitCommitter') = true && echo 1 || echo 0)
-      fi
+      hideGitCommitter=$(test $(echo $config | $JQ '.hideGitCommitter') = true && echo 1 || echo 0)
     fi
     gitLastLog=""
     INDEX=0
@@ -204,7 +202,7 @@ function readGitLogs() {
       gitDate=$(echo "${gitLogItem}" | $JQ '.date' | tr -d '"')
       gitComment=$(echo "${gitLogItem}" | $JQ '.comment' | tr -d '"')
       if [ $hideGitCommitter -eq 1 ]; then
-        if test -z $CompanyName; then
+        if test -z "$CompanyName"; then
           gitCommitter=""
         else
           gitCommitter=" by $CompanyName"
@@ -596,11 +594,11 @@ if [[ "$INPUT_OS" == "both" ]]; then
 fi
 #####
 # Setup git environment
-if test -z $(git config user.email); then
+if test -z "$(git config user.email)"; then
   gitUserEmail=$(cat $jsonConfig | $JQ '.users.git.email' | tr -d '"')
   git config user.email "$gitUserEmail"
 fi
-if test -z $(git config user.name); then
+if test -z "$(git config user.name)"; then
   gitUserName=$(cat $jsonConfig | $JQ '.users.git.name' | tr -d '"')
   if [[ "$gitUserName" != "null" ]]; then
     git config user.name "$gitUserName"

@@ -104,7 +104,7 @@ OUTPUT_PREFIX=$(echo $config | $JQ '.outputPrefix' | tr -d '"')
 APPSTORE_AGENT_EMAIL=$(cat $jsonConfig | $JQ '.ios.AppStore.uploadApp.agentEmail' | tr -d '"')
 APPSTORE_AGENT_PASSWORD=$(cat $jsonConfig | $JQ '.ios.AppStore.uploadApp.agentAppSpecificPassword' | tr -d '"')
 ############################
-if test -z $INPUT_FILE; then
+if test -z "$INPUT_FILE"; then
     echo "$HOSTNAME > Error: App Store upload 파일명(확장자 제외) 없음"
     exit
 fi

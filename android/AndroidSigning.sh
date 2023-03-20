@@ -104,7 +104,7 @@ USING_JSON=1
 if command -v jarsigner >/dev/null; then
   JAR_SIGNER=$(command -v jarsigner) #"/usr/bin/jarsigner"
 fi
-if test -z $JAR_SIGNER; then
+if test -z "$JAR_SIGNER"; then
   JAR_SIGNER="/usr/local/opt/openjdk@8/bin/jarsigner"
 fi
 ##### Using Teams or Not, 0=Not Using, 1=Using Teams
@@ -123,27 +123,27 @@ ANDROID_BUILDTOOLS="${ANDROID_HOME}/build-tools"
 if [ -d $ANDROID_BUILDTOOLS ]; then
   if [ $USING_APKSIGNING -eq 1 ]; then
     APKSIGNER="$(find ${ANDROID_BUILDTOOLS} -name 'apksigner' | sort -r | head -1 | sed -e 's/^\.\/\(.*\)$/\1/')"
-    if test -z $APKSIGNER; then
+    if test -z "$APKSIGNER"; then
         echo "$HOSTNAME > Error: no apksigner execute"
         exit 1
     fi
   fi
   ZIP_ALIGN="$(find ${ANDROID_BUILDTOOLS} -name 'zipalign' | sort -r | head -1 | sed -e 's/^\.\/\(.*\)$/\1/')"
-  if test -z $ZIP_ALIGN; then
+  if test -z "$ZIP_ALIGN"; then
       echo "$HOSTNAME > Error: no zipalign execute"
       exit 1
   fi
 fi
-if test -z $ZIP_ALIGN; then
+if test -z "$ZIP_ALIGN"; then
     echo "$HOSTNAME > Error: zipalign 명령어 없음 in $ZIP_ALIGN"
     exit
 fi
-if test -z $APKSIGNER; then
+if test -z "$APKSIGNER"; then
     echo "$HOSTNAME > Error: apksigner 명령어 없음 in $APKSIGNER"
     exit
 fi
 ############################
-if test -z $INPUT_FILE; then
+if test -z "$INPUT_FILE"; then
     echo "$HOSTNAME > Error: 1차 난독화 버전 파일명(확장자 제외) 없음"
     exit
 fi

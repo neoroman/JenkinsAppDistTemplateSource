@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-if test -z $INPUT_OS; then
+if test -z "$INPUT_OS"; then
   echo "Usage: $SCRIPT_NAME [-p {ios,android}] [-f input_file]"
   echo ""
   echo "Error: ios 또는 android 인자 없음"
