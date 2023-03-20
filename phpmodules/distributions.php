@@ -180,27 +180,32 @@ if (startsWith(basename($input_file), "zzz_")) {
             <label style="word-wrap:break-word" for="rasisterC" class="txt_label">
               <input type="checkbox" name="sendEmail" id="rasisterC" value="1" checked />
               <?php echo L::title_distribution_mail_usage; ?><span class="point_c1">(<?php echo L::title_optional; ?>)</span>
-            </label><?php if ($dist_mode != 'release') { ?>
-            <label for="rasisterD" class="txt_label">
-              <input type="checkbox" name="sendBothPlatform" id="rasisterD" value="1" <?php 
-                if ($input_os == 'ios') {
-                  $found_to_be = str_replace('ios', 'android', $input_file);
-                  if (startsWith($found_to_be, "../")) {
-                    $found_to_be = substr($found_to_be, 3);
-                  }
-                  if (file_exists("$found_to_be")) {
-                    echo "checked";
-                  }
-                } else if ($input_os == 'android') {
-                  $found_to_be = str_replace('android', 'ios', $input_file);
-                  if (startsWith($found_to_be, "../")) {
-                    $found_to_be = substr($found_to_be, 3);
-                  }
-                  if (file_exists("$found_to_be")) {
-                    echo "checked";
-                  }                  
+            </label>
+            <?php /* if ($dist_mode != 'release') { */ 
+              $isOtherPlatformExist = false;
+              if ($input_os == 'ios') {
+                $found_to_be = str_replace('ios', 'android', $input_file);
+                if (startsWith($found_to_be, "../")) {
+                  $found_to_be = substr($found_to_be, 3);
                 }
-              ?> />
+                if (file_exists("$found_to_be")) {
+                  //echo "checked";
+                  $isOtherPlatformExist = true;
+                }
+              } else if ($input_os == 'android') {
+                $found_to_be = str_replace('android', 'ios', $input_file);
+                if (startsWith($found_to_be, "../")) {
+                  $found_to_be = substr($found_to_be, 3);
+                }
+                if (file_exists("$found_to_be")) {
+                  // echo "checked";
+                  $isOtherPlatformExist = true;
+                }                  
+              }
+              if ($isOtherPlatformExist) {
+            ?>
+            <label for="rasisterD" class="txt_label">
+              <input type="checkbox" name="sendBothPlatform" id="rasisterD" value="1" checked />
               <?php echo L::title_distribution_mail_both_platform; ?><span class="point_c1">(<?php echo L::title_optional; ?>)</span>
             </label>
             <?php } ?>
