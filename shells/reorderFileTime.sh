@@ -97,6 +97,13 @@ for jsonFile in $LIST; do
     realHtml=$(find "${fileDirname}" -name "*${htmlFile}*")
     for x in $realHtml; do
       echo "touch -t ${timeToBe} ${realHtml}"
-      touch -t ${timeToBe} "${realHtml}"
+      if [ -f ${realHtml} ]; then
+        touch -t ${timeToBe} "${realHtml}"
+      fi
+      realJson="${realHtml%.html}.json"
+      realJson="${realJson/zzz_/}"
+      if [ -f ${realJson} ]; then
+        touch -t ${timeToBe} "${realJson}"
+      fi
     done
 done
