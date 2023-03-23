@@ -164,20 +164,19 @@ frontEndPoint=$(echo $config | $JQ '.frontEndPoint' | tr -d '"')
 TOP_PATH=$(echo $config | $JQ '.topPath' | tr -d '"')
 FRONTEND_POINT="${frontEndProtocol}://${frontEndPoint}"
 #####
-URL_PATH="${TOP_PATH}"
-if [[ "${DOC_ROOT}" == "" ]]; then
-  APP_ROOT=".."
+if test -z "$DOC_ROOT"; then
+  APP_ROOT="../.."
 else
-  APP_ROOT="${DOC_ROOT}/${URL_PATH}"
+  APP_ROOT="${DOC_ROOT}/${TOP_PATH}"
 fi
 AOS_DIR="../android_distributions"
-if [ ! -d $AOS_DIR ]; then
+if [ ! -d $SCRIPT_PATH/$AOS_DIR ]; then
   AOS_DIR="../../android_distributions"
 fi
 APP_VERSION=$(find $AOS_DIR -name "$INPUT_FILE.json" | xargs dirname $1  | tail -1 |  sed -e 's/.*\/\(.*\)$/\1/')
 APP_FOLDER="android_distributions/${APP_VERSION}"
 OUTPUT_FOLDER="${APP_ROOT}/${APP_FOLDER}"
-HTTPS_PREFIX="${FRONTEND_POINT}/${URL_PATH}/${APP_FOLDER}/"
+HTTPS_PREFIX="${FRONTEND_POINT}/${TOP_PATH}/${APP_FOLDER}/"
 #####
 APK_GOOGLESTORE="${INPUT_FILE}$(cat $jsonConfig | $JQ '.android.outputGoogleStoreSuffix' | tr -d '"')"
 USING_BUNDLE_GOOGLESTORE=$(test $(cat $jsonConfig | $JQ '.android.GoogleStore.usingBundleAAB') = true && echo 1 || echo 0)
@@ -200,6 +199,8 @@ KEYSTORE_ALIAS=$(cat $jsonConfig | $JQ '.android.keyStoreAlias' | tr -d '"')
 if [ ! -f $JENKINS_WORKSPACE/$KEYSTORE_FILE ]; then
   echo "$HOSTNAME > Error: cannot find keystore file in $KEYSTORE_FILE"
   exit 1
+else 
+  KEYSTORE_FILE="$JENKINS_WORKSPACE/$KEYSTORE_FILE"
 fi
 if [ -f "$defaultLanguagePath/default.json" ]; then
   language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
@@ -252,7 +253,7 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE ]; then
                 -digestalg SHA1 \
                 -keystore $KEYSTORE_FILE \
                 -storepass "$STOREPASS" \
-                $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE "KEYSTORE_ALIAS" \
+                $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE "$KEYSTORE_ALIAS" \
                 -signedjar $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE
 
     $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE

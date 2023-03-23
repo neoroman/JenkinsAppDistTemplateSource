@@ -138,7 +138,7 @@ if ($json->{'android'}->{'OneStore'}->{'enabled'} && !file_exists($target_one)) 
     $error2 = $_FILES['file_one']['error'];
     $name2 = $_FILES['file_one']['name'];
     $last2 = & explode('.', $name2);
-    $ext2 = array_pop($last1);
+    $ext2 = array_pop($last2);
 
     // 오류 확인
     if( $error2 != UPLOAD_ERR_OK ) {
