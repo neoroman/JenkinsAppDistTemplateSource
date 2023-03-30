@@ -467,13 +467,13 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             
                 if (!$isDomesticQA) { // 고객사용
                     if ($os == "ios") {
-                        if (isset($json->{'ios'}->{'clientGitUrl'})) {
+                        if (isset($json->{'ios'}->{'clientGitUrl'}) && strlen($json->{'ios'}->{'clientGitUrl'}) > 6) {
                             $gitBrowseUrl = $json->{'ios'}->{'clientGitUrl'};
                         } else {
                             $gitBrowseUrl = $json->{'ios'}->{'gitBrowseUrl'};
                         }
                     } else if ($os == "android") {
-                        if (isset($json->{'android'}->{'clientGitUrl'})) {
+                        if (isset($json->{'android'}->{'clientGitUrl'}) && strlen($json->{'android'}->{'clientGitUrl'}) > 6) {
                             $gitBrowseUrl = $json->{'android'}->{'clientGitUrl'};
                         } else {
                             $gitBrowseUrl = $json->{'android'}->{'gitBrowseUrl'};
