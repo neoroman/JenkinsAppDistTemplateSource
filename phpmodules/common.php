@@ -585,6 +585,11 @@ function httpGet($url)
 }
 
 function getLastJson($os) {
+    global $frontEndProtocol;
+    global $frontEndPoint;
+    global $outBoundProtocol;
+    global $outBoundPoint;
+
     $fileKey = "html";
   
     if ($os == "android") {
@@ -636,27 +641,34 @@ function getLastJson($os) {
             $param["buildNumber"] = $finalJson->{'buildNumber'};
             $param["buildTime"] = $finalJson->{'buildTime'};
             if (is_array($finalJson->{'files'})) {
-            for ($i=0; $i < count($finalJson->{'files'}); $i++) {
-                $anItem = $finalJson->{'files'}[$i];
-    
-                if (rtrim($anItem->{'file'}) != "") {
-                $downUrl = $anItem->{'file'};
-                if (!startsWith($downUrl, "http")) {
-                    $downUrl = $finalJson->{'urlPrefix'} . $downUrl;
-                }
-                if (rtrim($anItem->{'plist'}) != "") {
-                    $plistUrl = rtrim($anItem->{'plist'});
-                    if (!startsWith($plistUrl, "http")) {
-                    $plistUrl = $finalJson->{'urlPrefix'} . $plistUrl;
+                for ($i=0; $i < count($finalJson->{'files'}); $i++) {
+                    $anItem = $finalJson->{'files'}[$i];
+        
+                    if (rtrim($anItem->{'file'}) != "") {
+                        $downUrl = $anItem->{'file'};
+                        if (!startsWith($downUrl, "http")) {
+                            $downUrl = $finalJson->{'urlPrefix'} . $downUrl;
+                        }
+                        if ($frontEndPoint != $outBoundPoint) {
+                            $downUrl = str_replace($frontEndProtocol, $outBoundProtocol, $downUrl);
+                            $downUrl = str_replace($frontEndPoint, $outBoundPoint, $downUrl);
+                        }
+                        if ($os == "android" && endsWith($downUrl, "aab")) {
+                            $downUrl = str_replace('aab', 'apk', $downUrl);
+                        }
+                        if (rtrim($anItem->{'plist'}) != "") {
+                            $plistUrl = rtrim($anItem->{'plist'});
+                            if (!startsWith($plistUrl, "http")) {
+                                $plistUrl = $finalJson->{'urlPrefix'} . $plistUrl;
+                            }
+                            $downUrl = "itms-services://?action=download-manifest&url=". $anItem->{'plist'};
+                        }
+                        if (rtrim($downUrl) != "") {
+                            $param["downUrl"] = $downUrl;
+                            break;
+                        }
                     }
-                    $downUrl = "itms-services://?action=download-manifest&url=". $anItem->{'plist'};
                 }
-                if (rtrim($downUrl) != "") {
-                    $param["downUrl"] = $downUrl;
-                    break;
-                }
-                }
-            }
             }
             //echo "DEBUG:::" . var_dump($param);
             return $param;
