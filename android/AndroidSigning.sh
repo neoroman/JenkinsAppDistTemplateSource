@@ -7,10 +7,8 @@
 SCRIPT_PATH="$(dirname "$0")"
 HOSTNAME=$(hostname)
 jsonConfig="../config/config.json"
-defaultLanguagePath="../lang"
 if [ ! -f $jsonConfig ]; then
   jsonConfig="../../config/config.json"
-  defaultLanguagePath="../../lang"
 fi
 if [ -f $jsonConfig ]; then
   jsonConfig=$SCRIPT_PATH/$jsonConfig
@@ -19,8 +17,29 @@ if [ ! -f $jsonConfig ]; then
   echo "$HOSTNAME > Error: no config.json in $jsonConfig"
   exit 1
 fi
+##############
+if test -z "$JQ"; then
+  if command -v jq >/dev/null; then
+    JQ=$(command -v jq)
+  elif [ -f "/usr/local/bin/jq" ]; then
+    JQ="/usr/local/bin/jq"
+  elif [ -f "/usr/bin/jq" ]; then
+    JQ="/usr/bin/jq"
+  else
+    JQ="/bin/jq"
+  fi
+fi
+##############
+defaultLanguagePath="../lang"
+if [ ! -d $defaultLanguagePath ]; then
+  defaultLanguagePath="../../lang"
+fi
 if [ -d $defaultLanguagePath ]; then
   defaultLanguagePath=$SCRIPT_PATH/$defaultLanguagePath
+  if [ -f "$defaultLanguagePath/default.json" ]; then
+    language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+    lang_file="$defaultLanguagePath/lang_$language.json"
+  fi
 fi
 DEBUGGING=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
@@ -80,17 +99,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 ####### DEBUG or Not #######
-if test -z "$JQ"; then
-  if command -v jq >/dev/null; then
-    JQ=$(command -v jq)
-  elif [ -f "/usr/local/bin/jq" ]; then
-    JQ="/usr/local/bin/jq"
-  elif [ -f "/usr/bin/jq" ]; then
-    JQ="/usr/bin/jq"
-  else
-    JQ="/bin/jq"
-  fi
-fi
 if [ $DEBUGGING -eq 1 ]; then
   config=$(cat $jsonConfig | $JQ '.development')
 else
@@ -101,22 +109,37 @@ USING_MAIL=$(test $(cat $jsonConfig | $JQ '.mail.domesticEnabled') = true && ech
 USING_SLACK=$(test $(cat $jsonConfig | $JQ '.slack.enabled') = true && echo 1 || echo 0)
 USING_HTML=$(test $(echo $config | $JQ '.usingHTML') = true && echo 1 || echo 0)
 USING_JSON=1
-if command -v jarsigner >/dev/null; then
-  JAR_SIGNER=$(command -v jarsigner) #"/usr/bin/jarsigner"
+if test -z "$JAR_SIGNER"; then
+  JAVA_HOME=$(cat $jsonConfig | $JQ '.android.javaHome' | tr -d '"')
+  if test -n "$JAVA_HOME"; then
+    JAR_SIGNER="$JAVA_HOME/bin/jarsigner"
+  else
+    JAR_SIGNER="/usr/local/opt/openjdk@8/bin/jarsigner"
+  fi
 fi
 if test -z "$JAR_SIGNER"; then
-  JAR_SIGNER="/usr/local/opt/openjdk@8/bin/jarsigner"
+  if command -v jarsigner >/dev/null; then
+    JAR_SIGNER=$(command -v jarsigner) #"/usr/bin/jarsigner"
+  fi
+fi
+if test -z "$JAR_SIGNER"; then
+    echo "$HOSTNAME > Error: jarsigner 명령어 없음 in $JAR_SIGNER"
+    exit
+elif [ ! -f "$JAR_SIGNER" ]; then
+    echo "$HOSTNAME > Error: jarsigner 명령어 없음 in $JAR_SIGNER"
+    exit
 fi
 ##### Using Teams or Not, 0=Not Using, 1=Using Teams
 USING_TEAMS_WEBHOOK=$(test $(cat $jsonConfig | $JQ '.teams.enabled') = true && echo 1 || echo 0)
 TEAMS_WEBHOOK=$(cat $jsonConfig | $JQ '.teams.webhook' | tr -d '"')
 ############################
 USING_APKSIGNING=1   # 1 이면 사용, 0 이면 미사용
-if command -v android >/dev/null; then
-    AOS_EXEC=$(command -v android)
-    ANDROID_HOME="$(dirname ${AOS_EXEC%android})"
-else
-    ANDROID_HOME=$(cat $jsonConfig | $JQ '.android.androidHome' | tr -d '"')
+ANDROID_HOME=$(cat $jsonConfig | $JQ '.android.androidHome' | tr -d '"')
+if test -z $ANDROID_HOME; then
+  if command -v android >/dev/null; then
+      AOS_EXEC=$(command -v android)
+      ANDROID_HOME="$(dirname ${AOS_EXEC%android})"
+  fi
 fi
 OUTPUT_PREFIX=$(echo $config | $JQ '.outputPrefix' | tr -d '"')
 ANDROID_BUILDTOOLS="${ANDROID_HOME}/build-tools"
@@ -202,12 +225,15 @@ if [ ! -f $JENKINS_WORKSPACE/$KEYSTORE_FILE ]; then
 else 
   KEYSTORE_FILE="$JENKINS_WORKSPACE/$KEYSTORE_FILE"
 fi
-if [ -f "$defaultLanguagePath/default.json" ]; then
-  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="$defaultLanguagePath/lang_$language.json"
+if [ -f "$lang_file" ]; then
   CLIENT_NAME=$(cat $lang_file | $JQ '.client.full_name' | tr -d '"')
   TITLE_GOOGLE_STORE=$(cat $lang_file | $JQ '.title.distribution_2nd_signing_google_store' | tr -d '"')
   TITLE_ONE_STORE=$(cat $lang_file | $JQ '.title.distribution_2nd_signing_one_store' | tr -d '"')
+  APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
+  SITE_URL=$(cat $lang_file | $JQ '.client.short_url' | tr -d '"')
+  SITE_ID=$(cat $jsonConfig | $JQ '.users.app.userId' | tr -d '"')
+  SITE_PW=$(cat $jsonConfig | $JQ '.users.app.password' | tr -d '"')
+  SITE_ID_PW="${SITE_ID}/${SITE_PW}"
 fi
 #####
 outputUnsignedPrefix=$(cat $jsonConfig | $JQ '.android.outputUnsignedPrefix' | tr -d '"')
@@ -228,13 +254,18 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE ]; then
                 $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE "$KEYSTORE_ALIAS" \
                 -signedjar $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE
 
-    $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
     if [ -f $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE ]; then
-        rm -f $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE
-    fi
-    if [ $USING_APKSIGNING -eq 1 ]; then
-      echo "${STOREPASS}" | $APKSIGNER sign -ks $KEYSTORE_FILE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
-      $APKSIGNER verify --verbose $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
+      $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
+      if [ -f $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE ]; then
+          rm -f $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE
+      fi
+      if [ $USING_APKSIGNING -eq 1 ]; then
+        echo "${STOREPASS}" | $APKSIGNER sign -ks $KEYSTORE_FILE $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
+        $APKSIGNER verify --verbose $OUTPUT_FOLDER/$SIGNED_FILE_GOOGLESTORE
+      fi
+    else
+      echo "$HOSTNAME > Error: $JAR_SIGNER 에러 발생하여 $OUTPUT_FOLDER/$UNZIPALIGNED_GOOGLESTORE 생성 불가, 1차 난독화 파일($UNSIGNED_GOOGLE_FILE)이 올바르지 않음!"
+      exit
     fi
 else
     echo "$HOSTNAME > Error: 1차 난독화 버전 파일($OUTPUT_FOLDER/$UNSIGNED_GOOGLE_FILE) 없음"
@@ -256,13 +287,17 @@ if [ -f $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE ]; then
                 $OUTPUT_FOLDER/$UNSIGNED_ONE_FILE "$KEYSTORE_ALIAS" \
                 -signedjar $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE
 
-    $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
     if [ -f $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE ]; then
-        rm -f $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE
-    fi
-    if [ $USING_APKSIGNING -eq 1 ]; then
-      echo "${STOREPASS}" | $APKSIGNER sign -ks $KEYSTORE_FILE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
-      $APKSIGNER verify --verbose $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
+      $ZIP_ALIGN -p -f -v 4 $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
+      if [ -f $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE ]; then
+          rm -f $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE
+      fi
+      if [ $USING_APKSIGNING -eq 1 ]; then
+        echo "${STOREPASS}" | $APKSIGNER sign -ks $KEYSTORE_FILE $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
+        $APKSIGNER verify --verbose $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE
+      fi
+    else
+      echo "$HOSTNAME > Error: $JAR_SIGNER 에러 발생하여 $OUTPUT_FOLDER/$UNZIPALIGNED_ONESTORE 생성 불가, 1차 난독화 파일($UNSIGNED_ONE_FILE)이 올바르지 않음!"
     fi
 else
     echo "$HOSTNAME > Error: 1차 난독화 버전 파일($OUTPUT_FOLDER/$UNSIGNED_ONE_FILE) 없음"
@@ -273,7 +308,6 @@ fi
 if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
     UNSIGNED_GOOGLE_BUNDLE="${outputUnsignedPrefix}${AAB_GOOGLESTORE}"
     if [ -f $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE ]; then
-        UNZIPALIGNED_GOOGLESTORE="unzipaligned_$AAB_GOOGLESTORE"
         SIGNED_BUNDLE_GOOGLESTORE="${outputSignedPrefix}${AAB_GOOGLESTORE}"
         if [ -f $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE ]; then
             rm -f $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE
@@ -284,6 +318,10 @@ if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
                     -storepass "$STOREPASS" \
                     $OUTPUT_FOLDER/$UNSIGNED_GOOGLE_BUNDLE "$KEYSTORE_ALIAS" \
                     -signedjar $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE
+
+        if [ ! -f $OUTPUT_FOLDER/$SIGNED_BUNDLE_GOOGLESTORE ]; then
+          echo "$HOSTNAME > Error: $JAR_SIGNER 에러 발생, 1차 난독화 파일($SIGNED_BUNDLE_GOOGLESTORE)이 올바르지 않음!"
+        fi
     fi
 fi
 
@@ -348,9 +386,10 @@ if [ $USING_MAIL -eq 1 ]; then
     APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   fi
   $CURL -k --data-urlencode "subject1=[${APP_NAME} > ${HOSTNAME}] Android 자동 2차 난독화 -" \
-  --data-urlencode "subject2=Google Playstore, OneStore 등록용 버전 생성 알림" \
-  --data-urlencode "message_header=안드로이드 2차 난독화 signing 버전 전달합니다.<br /><br /><br />첨부파일: <br /><br />구글Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}</a><br />원Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}</a><br />" \
-  --data-urlencode "message_description=${SHORT_GIT_LOG}<br /><br /><br />" \
+      --data-urlencode "subject2=Google Playstore, OneStore 등록용 버전 생성 알림" \
+      --data-urlencode "message_header=안드로이드 2차 난독화 signing 버전 전달합니다.<br /><br /><br />첨부파일: <br /><br />구글Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_GOOGLESTORE}</a><br />원Store - <a href=${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}>${HTTPS_PREFIX}${SIGNED_FILE_ONESTORE}</a><br />" \
+      --data-urlencode "message_description=${SHORT_GIT_LOG}<br /><br /><br />" \
+      --data-urlencode "message_html=<br />" \
   ${FRONTEND_POINT}/${TOP_PATH}/phpmodules/sendmail_domestic.php
 fi
 
@@ -470,15 +509,6 @@ if [ $USING_JSON -eq 1 ]; then
 fi
 
 
-if [ -f "$defaultLanguagePath/default.json" ]; then
-  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="$defaultLanguagePath/lang_$language.json"
-  APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
-  SITE_URL=$(cat $lang_file | $JQ '.client.short_url' | tr -d '"')
-  SITE_ID=$(cat $jsonConfig | $JQ '.users.app.userId' | tr -d '"')
-  SITE_PW=$(cat $jsonConfig | $JQ '.users.app.password' | tr -d '"')
-  SITE_ID_PW="${SITE_ID}/${SITE_PW}"
-fi
 if [ $USING_TEAMS_WEBHOOK -eq 1 ]; then
     ########
     BINARY_TITLE="Android 검증용"

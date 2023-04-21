@@ -361,7 +361,8 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                                 continue;
                             }
 
-                            $finalURL = str_replace($outBoundPoint, $frontEndPoint, $downUrl);
+                            $finalURL = str_replace($outBoundProtocol, $frontEndProtocol, $downUrl);
+                            $finalURL = str_replace($outBoundPoint, $frontEndPoint, $finalURL);
                             $array = explode('title=', $finalURL);
                             $apkFile = end($array);
                             $isGoogleExist = 0;
