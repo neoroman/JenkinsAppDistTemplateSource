@@ -5,6 +5,7 @@
 # Normalized by Henry Kim on 2021.09.01
 #
 SCRIPT_PATH="$(dirname "$0")"
+SCRIPT_NAME=$(basename $0)
 HOSTNAME=$(hostname)
 relativePathPrefix=".."
 jsonConfig="$relativePathPrefix/config/config.json"

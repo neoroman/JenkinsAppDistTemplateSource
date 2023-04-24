@@ -1,11 +1,13 @@
 #!/bin/sh
 ##
 SCRIPT_PATH="$(dirname "$0")"
-jsonConfig="../config/config.json"
-defaultLanguagePath="../lang"
+SCRIPT_NAME=$(basename $0)
+
+relativePathPrefix=".."
+jsonConfig="$relativePathPrefix/config/config.json"
 if [ ! -f $jsonConfig ]; then
-  jsonConfig="../../config/config.json"
-  defaultLanguagePath="../../lang"
+  relativePathPrefix="../.."
+  jsonConfig="$relativePathPrefix/config/config.json"
 fi
 configPath="../phpmodules/config.php"
 if [ ! -f $configPath ]; then
@@ -17,10 +19,27 @@ fi
 if [ -f $jsonConfig ]; then
   jsonConfig=$SCRIPT_PATH/$jsonConfig
 fi
+##############
+if test -z "$JQ"; then
+  if command -v jq >/dev/null; then
+    JQ=$(command -v jq)
+  elif [ -f "/usr/local/bin/jq" ]; then
+    JQ="/usr/local/bin/jq"
+  elif [ -f "/usr/bin/jq" ]; then
+    JQ="/usr/bin/jq"
+  else
+    JQ="/bin/jq"
+  fi
+fi
+##############
+defaultLanguagePath="$relativePathPrefix/lang"
 if [ -d $defaultLanguagePath ]; then
   defaultLanguagePath=$SCRIPT_PATH/$defaultLanguagePath
+  if [ -f "$defaultLanguagePath/default.json" ]; then
+    language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
+    lang_file="$defaultLanguagePath/lang_$language.json"
+  fi
 fi
-SCRIPT_NAME=$(basename $0)
 DEBUGGING=0
 INPUT_OS=""
 USING_MAIL=0
@@ -109,28 +128,19 @@ elif test -z "$INPUT_FILE"; then
   exit
 fi
 ###################
-CURL=$(which curl)
-JQ=$(which jq)
-if [[ -z "$JQ" ]]; then
-  if [ -f "/usr/local/bin/jq" ]; then
-    JQ="/usr/local/bin/jq"
-  elif [ -f "/usr/bin/jq" ]; then
-    JQ="/usr/bin/jq"
-  else
-    JQ="/bin/jq"
-  fi
-fi
+CURL=$(command -v curl)
 ###################
 ##### from config php
 FRONTEND_POINT="${IN_URL}"
 frontEndPoint=$(echo $FRONTEND_POINT | sed -e 's/^.*:\/\/\(.*\)/\1/g')
 frontEndProtocol=$(echo $FRONTEND_POINT | sed -e 's/^\(.*\):\/\/.*/\1/g')
-XCODE=`which xcodebuild`
-POD="/usr/local/bin/pod"
+XCODE=$(command -v xcodebuild)
+POD=$(command -v pod)
+if test ! -f "$POD"; then
+  POD="/usr/local/bin/pod"
+fi
 #####
-if [ -f "$defaultLanguagePath/default.json" ]; then
-  language=$(cat "$defaultLanguagePath/default.json" | $JQ '.LANGUAGE' | tr -d '"')
-  lang_file="$defaultLanguagePath/lang_$language.json"
+if [ -f "$lang_file" ]; then
   APP_NAME=$(cat $lang_file | $JQ '.app.name' | tr -d '"')
   APP_VERSION=$(cat $lang_file | $JQ '.app.version' | tr -d '"')
   RELEASE_KEY=$(cat $lang_file | $JQ '.mail.releaseKeyword' | tr -d '"')
@@ -358,7 +368,7 @@ function sendingEmail() {
   if [ $USING_MAIL -eq 1 ]; then
     if [[ "$releaseType" == "release" ]]; then
       subjectText="[${APP_NAME} ${APP_VERSION} > ${OS_NAME}] ${RELEASE_KEY} ${APP_NAME} 배포 -"
-      messageHeader="${OS_NAME} ${RELEASE_KEY} ${APP_NAME} v${appVersion} 전달합니다."
+      messageHeader="${OS_NAME} ${RELEASE_KEY} ${APP_NAME} v${appVersion} 전달합니다.<br /></br />(목적) ${DESCRIPTION}</br />${DETAIL_DESC}"
     else
       subjectText="[${APP_NAME} ${APP_VERSION} > ${OS_NAME}] '$DESCRIPTION' ${DEVELOP_KEY} ${APP_NAME} 배포 -"
       messageHeader="${OS_NAME} ${DEVELOP_KEY} ${APP_NAME} v${appVersion} 전달합니다.<br /></br />${DETAIL_DESC}"

@@ -280,7 +280,7 @@ function executeShellScript($newFilename, $isResend) {
     . ' -iu ' . escapeshellarg($inUrl) 
     . ' -ou ' . escapeshellarg($outUrl);
     $output = shell_exec($input_command);
-    echo 'INPUT => ' . $input_command .'<BR />\n\n';
+    echo 'INPUT => ' . $input_command .'<BR /><BR />\n\n';
     exit("$output<BR />고객사 배포가 완료되었습니다. <br /><script type=\"text/javascript\">window.stopAnimation();</script><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
   } else {
     $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '
