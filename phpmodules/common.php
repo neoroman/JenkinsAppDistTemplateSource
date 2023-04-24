@@ -423,6 +423,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             }
                             $bundleFilename = str_replace('apk', 'aab', $anItem->{'file'});
                             $bundleFilePath = ".." . $pathArray[1] . $bundleFilename;
+                            if (!file_exists($bundleFilePath)) {
+                                $bundleFilePath = "../.." . $pathArray[1] . $bundleFilename;
+                            }
 
                             if ($json->{$os}->{'GoogleStore'}->{'title'} == $binTitle) {
                                 // 출력 파일 자체가 *.aab임

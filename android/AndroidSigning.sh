@@ -6,9 +6,11 @@
 #
 SCRIPT_PATH="$(dirname "$0")"
 HOSTNAME=$(hostname)
-jsonConfig="../config/config.json"
+relativePathPrefix=".."
+jsonConfig="$relativePathPrefix/config/config.json"
 if [ ! -f $jsonConfig ]; then
-  jsonConfig="../../config/config.json"
+  relativePathPrefix="../.."
+  jsonConfig="$relativePathPrefix/config/config.json"
 fi
 if [ -f $jsonConfig ]; then
   jsonConfig=$SCRIPT_PATH/$jsonConfig
@@ -30,10 +32,7 @@ if test -z "$JQ"; then
   fi
 fi
 ##############
-defaultLanguagePath="../lang"
-if [ ! -d $defaultLanguagePath ]; then
-  defaultLanguagePath="../../lang"
-fi
+defaultLanguagePath="$relativePathPrefix/lang"
 if [ -d $defaultLanguagePath ]; then
   defaultLanguagePath=$SCRIPT_PATH/$defaultLanguagePath
   if [ -f "$defaultLanguagePath/default.json" ]; then
