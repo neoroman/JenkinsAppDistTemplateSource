@@ -589,6 +589,7 @@ function httpGet($url)
 }
 
 function getLastJson($os) {
+    global $topPath;
     global $frontEndProtocol;
     global $frontEndPoint;
     global $outBoundProtocol;
@@ -665,7 +666,13 @@ function getLastJson($os) {
                             if (!startsWith($plistUrl, "http")) {
                                 $plistUrl = $finalJson->{'urlPrefix'} . $plistUrl;
                             }
-                            $downUrl = "itms-services://?action=download-manifest&url=". $anItem->{'plist'};
+                            if (!startsWith($plistUrl, "http")) {
+                                $plistUrl = $outBoundProtocol . '://' . $outBoundPoint . '/' . $topPath . '/' . $plistUrl;
+                            } else {
+                                $plistUrl = str_replace($frontEndProtocol, $outBoundProtocol, $plistUrl);
+                                $plistUrl = str_replace($frontEndPoint, $outBoundPoint, $plistUrl);
+                            }
+                            $downUrl = "itms-services://?action=download-manifest&url=" . $plistUrl;
                         }
                         if (rtrim($downUrl) != "") {
                             $param["downUrl"] = $downUrl;
