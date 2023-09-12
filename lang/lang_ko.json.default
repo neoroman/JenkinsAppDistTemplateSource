@@ -33,7 +33,7 @@
 		"distribution_2nd_signing_google_store": "Google Playstore 등록용(2차 난독화)",
 		"distribution_2nd_signing_one_store": "One Store 등록용(2차 난독화)",
 		"distribution_mail_usage": "메일 발송 여부",
-		"distribution_mail_both_platform": "Android+iOS 동시 배포, 단 버전과 일자가 동일한 경우",
+		"distribution_mail_both_platform": "Android+iOS 동시 배포, 단 버전과 빌드(jenkins)일자가 동일한 경우",
 		"admin_password_guide": "관리자 비밀번호 가이드",
 		"alt_resend_mail": "수정 및 메일 재전송",
 		"register_2nd_apksigning": "2차 난독화 파일 등록",

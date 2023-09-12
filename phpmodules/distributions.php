@@ -208,6 +208,11 @@ if (startsWith(basename($input_file), "zzz_")) {
               <input type="checkbox" name="sendBothPlatform" id="rasisterD" value="1" checked />
               <?php echo L::title_distribution_mail_both_platform; ?><span class="point_c1">(<?php echo L::title_optional; ?>)</span>
             </label>
+            <?php } else { ?>
+            <label for="rasisterD" class="txt_label" style="color:#ccc!important">
+              <input type="checkbox" name="sendBothPlatform" id="rasisterD" value="1" disabled />
+              <?php echo L::title_distribution_mail_both_platform; ?><span class="point_c1" style="color:#ccc!important">(<?php echo L::title_optional; ?>)</span>
+            </label>
             <?php } ?>
           </p>
       </div>
