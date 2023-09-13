@@ -169,6 +169,10 @@
         "gitBrowseUrl": "http://bitbucket.company.com/projects/TGV/repos/app-android/commits",
         "clientGitUrl": ""
     },
+    "custom" : {
+        "enabled": false,
+        "executable": "../shell/cumstom_script.sh"
+    },
     "development": {
         "frontEndProtocol": "http",
         "frontEndPoint": "localhost",
