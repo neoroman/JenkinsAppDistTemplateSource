@@ -34,10 +34,17 @@ if (file_exists($defaultLang)) {
 }
 // ----------------------------------------------------------
 $jsonConfig = $src_top_path . "/../config/config.json";
+$originalJsonConfig = $src_top_path . "/config/config.json.default";
 if (file_exists($jsonConfig)) {
     $jsonStr = file_get_contents($jsonConfig);
-    $json = json_validate2($jsonStr, false);
-} else if (file_exists($src_top_path . "/config/config.json.default")) {
+    if (file_exists($originalJsonConfig)) {
+        $orgJsonStr = file_get_contents($originalJsonConfig);
+        $tempJson = json_encode(array_merge(json_validate2($orgJsonStr, true), json_validate2($jsonStr, true)));
+        $json = json_validate2($tempJson, false);
+    } else {
+        $json = json_validate2($jsonStr, false);
+    }
+} else if (file_exists($originalJsonConfig)) {
     copy($src_top_path . "/config/config.json.default", $jsonConfig);
     $jsonStr = file_get_contents($jsonConfig);
     $json = json_validate2($jsonStr, false);
