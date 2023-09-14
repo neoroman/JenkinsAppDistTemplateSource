@@ -34,6 +34,7 @@
 		"distribution_2nd_signing_one_store": "Signed APK for One Store 등록용(2nd)",
 		"distribution_mail_usage": "Send E-mail Notification",
 		"distribution_mail_both_platform": "Deliver Android+iOS at the same time, only if same version and date of build on jenkins",
+		"distribution_force_version_update": "Check if this version is updating forcefully",
 		"admin_password_guide": "Admin Password Guide",
 		"alt_resend_mail": "Modify and Resend Mail",
 		"register_2nd_apksigning": "Register 2nd APK signing",

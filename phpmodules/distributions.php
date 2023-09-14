@@ -7,7 +7,7 @@ if (!class_exists('i18n')) {
       require_once(__DIR__ . '/../../config.php');
   }
 }
-global $topPath, $root;
+global $topPath, $root, $json;
 global $inUrl, $outUrl, $isDebugMode;
 global $outBoundPoint;
 
@@ -94,7 +94,7 @@ if (isset($_POST['deliver'])) {
   if (file_exists("$path/$basename")) {
     updateVersionTag($_POST['version_target'], $_POST['version_details']);    
     $newFilename = renameInputFile();
-    executeShellScript($newFilename, isset($_POST['resend']));
+    executeShellScript($newFilename, isset($_POST['resend']), "$path/$pureBasenameWithoutExt.json");
   }
   else {
     printError();
@@ -213,7 +213,16 @@ if (startsWith(basename($input_file), "zzz_")) {
               <input type="checkbox" name="sendBothPlatform" id="rasisterD" value="1" disabled />
               <?php echo L::title_distribution_mail_both_platform; ?><span class="point_c1" style="color:#ccc!important">(<?php echo L::title_optional; ?>)</span>
             </label>
-            <?php } ?>
+            <?php }
+              if ($json && $json->{'custom'} && $json->{'custom'}->{'enabled'} && $json->{'custom'}->{'executable'}) {
+            ?>
+            <label for="rasisterE" class="txt_label">
+              <input type="checkbox" name="forceVersionUpdate" id="rasisterE" value="1" unchecked/>
+              <?php echo L::title_distribution_force_version_update; ?><span class="point_c1">(<?php echo L::title_optional; ?>)</span>
+            </label>            
+            <?php
+              }
+            ?>
           </p>
       </div>
   		</fieldset>
@@ -264,46 +273,92 @@ if (startsWith(basename($input_file), "zzz_")) {
 </html>
 
 <?php
-function executeShellScript($newFilename, $isResend) {
-  global $org_os, $input_os;
+function executeShellScript($newFilename, $isResend, $jsonPath) {
+  global $json, $org_os, $input_os;
   global $isSendingEmail, $root, $topPath, $inUrl, $outUrl;
   global $isDebugMode;
 
-  $resendArg = "resend";
-  if (!$isResend) {
-    $resendArg = "";
+  $resendArg = "";
+  if ($isResend) {
+    $resendArg = " --resend ";
+  }
+  $debugArg = "";
+  if ($isDebugMode) {
+    $debugArg = " -d ";
+  }
+  $customShellEnabled = $json && $json->{'custom'} && $json->{'custom'}->{'enabled'};
+  $forceUpdate = false;
+  $forceArg = "";
+  if ($customShellEnabled && isset($_POST['forceVersionUpdate']) && $_POST['forceVersionUpdate'] == "1") {
+    $forceUpdate = true;
+    $forceArg = " --forceUpdate ";
+  }
+
+  $input_command = __DIR__ . '/../shells/doDistributions.sh '
+  . $resendArg . $debugArg . $forceArg
+  . ' -p ' . escapeshellarg($input_os) 
+  . ' -po ' . escapeshellarg($org_os) 
+  . ' -f ' . escapeshellarg($newFilename) 
+  . ' -m ' . escapeshellarg($isSendingEmail) 
+  . ' -r ' . escapeshellarg($root) 
+  . ' -tp ' . escapeshellarg($topPath) 
+  . ' -iu ' . escapeshellarg($inUrl) 
+  . ' -ou ' . escapeshellarg($outUrl);
+  $output = shell_exec($input_command);
+
+  // App. Version Update processing
+  $customOutput = "";
+  if ($customShellEnabled && file_exists($jsonPath)) {
+    $jsonStr = file_get_contents($jsonPath);
+    $distJson = json_validate2($jsonStr, false);
+    if ($distJson->{'appVersion'} && $distJson->{'buildVersion'}) {
+      $appVersion = $distJson->{'appVersion'} . "." . $distJson->{'buildVersion'};
+      $customOutput = executeExtraCustomShellScript($appVersion, $forceUpdate);
+    }
   }
   if ($isDebugMode) {
-    $input_command = __DIR__ . '/../shells/doDistributions.sh '
-    . $resendArg .' -d '
-    . ' -p ' . escapeshellarg($input_os) 
-    . ' -po ' . escapeshellarg($org_os) 
-    . ' -f ' . escapeshellarg($newFilename) 
-    . ' -m ' . escapeshellarg($isSendingEmail) 
-    . ' -r ' . escapeshellarg($root) 
-    . ' -tp ' . escapeshellarg($topPath) 
-    . ' -iu ' . escapeshellarg($inUrl) 
-    . ' -ou ' . escapeshellarg($outUrl);
-    $output = shell_exec($input_command);
     echo 'INPUT => ' . $input_command .'<BR /><BR />\n\n';
-    exit("$output<BR />고객사 배포가 완료되었습니다. <br /><script type=\"text/javascript\">window.stopAnimation();</script><a href='javascript:window.history.go(-2);'>뒤로가기</a>");
+    exit("$output<BR />고객사 배포가 완료되었습니다. <br /><script type=\"text/javascript\">window.stopAnimation();</script><a href='javascript:window.history.go(-2);'>뒤로가기</a><BR />$customOutput");
   } else {
-    $output = shell_exec(__DIR__ . '/../shells/doDistributions.sh '
-    . $resendArg 
-    .' -p ' . escapeshellarg($input_os) 
-    . ' -po ' . escapeshellarg($org_os) 
-    . ' -f ' . escapeshellarg($newFilename) 
-    . ' -m ' . escapeshellarg($isSendingEmail) 
-    . ' -r ' . escapeshellarg($root) 
-    .  ' -tp ' . escapeshellarg($topPath) 
-    . ' -iu ' . escapeshellarg($inUrl) 
-    . ' -ou ' . escapeshellarg($outUrl));
     if ($input_os == 'both') {
       $goBackUrl = "/$topPath/$org_os/dist_$org_os.php";
     } else {
       $goBackUrl = "/$topPath/$input_os/dist_$input_os.php";
     }
     exit("고객사 배포가 완료되었습니다. <br /><a href='javascript:window.history.go(-2);'>뒤로가기</a><meta http-equiv='REFRESH' content='1;url=$goBackUrl'>");
+  }
+}
+function executeExtraCustomShellScript($version, $isForce) {
+  global $json;
+  global $input_os;
+  global $isDebugMode;
+  $debugArgs = "";
+  $osArgs = "";
+  $forceArgs = "";
+
+  $customShell = $json->{'custom'}->{'executable'};
+  $shell_file = __DIR__ . '/../' . $customShell;
+  if ($customShell && !file_exists($shell_file)) {
+    return;
+  }
+
+  if ($isDebugMode) {
+    $debugArgs = ' -d ';
+  }
+  if ($input_os != 'both') {
+    $osArgs = ' -p ' . escapeshellarg($input_os);
+  }
+  if ($isForce) {
+    $forceArgs = ' -f ';
+  }
+  $input_command = $shell_file . ' '
+  . $debugArgs . $osArgs . $forceArgs
+  . ' --version ' . escapeshellarg($version);
+
+  $output = shell_exec($input_command);
+  if ($isDebugMode) {
+    echo 'INPUT => ' . $input_command .'<BR /><BR />\n\n';
+    return "$output<BR />버전 업데이트 프로세스 완료";
   }
 }
 function printError() {

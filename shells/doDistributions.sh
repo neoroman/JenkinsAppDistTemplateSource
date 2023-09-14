@@ -45,12 +45,17 @@ INPUT_OS=""
 USING_MAIL=0
 IS_RESEND=0
 IS_SENDING_MAIL=0
+IS_FORCE=0
 ## Parsing arguments, https://stackoverflow.com/a/14203146
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
-    resend)
+    --resend)
       IS_RESEND=1
+      shift # past argument
+      ;;
+    -fu | --forceUpdate )
+      IS_FORCE=1
       shift # past argument
       ;;
     -p|--platform)
@@ -102,15 +107,17 @@ while [[ $# -gt 0 ]]; do
       echo "Usage: $SCRIPT_NAME [-p {ios,android}] [-f input_file] [-r document_root] [-iu inbound_url] [-ou outbound_url] [-tp top_path] [-d]"
       echo ""
       echo "optional arguments:"
-      echo "   -h, --help        show this help message and exit:"
-      echo "   -p {ios,android,both}, --platform {ios,android,both}"
-      echo "                     assign platform as iOS or Android to processing"
-      echo "   -f, --file        assign input_file"
-      echo "   -r, --root        assign document root of web server"
-      echo "   -iu, --inUrl      assign host url of web site for inbound"
-      echo "   -ou, --outUrl     assign host url of web site for outbound"
-      echo "   -tp, --topPath    assign host path of web site for distribution top folder"
-      echo "   -d, --debug       debugging mode"
+      echo "   -h, --help         show this help message and exit:"
+      echo "   -p {ios,android,both}, --platform {ios,android,both} (Mandatory)"
+      echo "                      assign platform as iOS or Android to processing"
+      echo "   --resend           just send email again"
+      echo "   -fu, --forceUpdate this version is updating forcefully"
+      echo "   -f, --file         assign input_file"
+      echo "   -r, --root         assign document root of web server"
+      echo "   -iu, --inUrl       assign host url of web site for inbound"
+      echo "   -ou, --outUrl      assign host url of web site for outbound"
+      echo "   -tp, --topPath     assign host path of web site for distribution top folder"
+      echo "   -d, --debug        debugging mode"
       echo ""
       exit
       ;;
@@ -366,17 +373,24 @@ function readJsonAndSetVariables() {
 
 function sendingEmail() {
   if [ $USING_MAIL -eq 1 ]; then
+    if [ $IS_FORCE -eq 1 ]; then
+      forceUpdateSubj=" (강제 업데이트 버전)"
+      forceUpdateDesc="<BR />   <b>** <font color=red>강제 업데이트 버전</font> **</b>"
+    else
+      forceUpdateSubj=""
+      forceUpdateDesc=""
+    fi
     if [[ "$releaseType" == "release" ]]; then
       subjectText="[${APP_NAME} ${APP_VERSION} > ${OS_NAME}] ${RELEASE_KEY} ${APP_NAME} 배포 -"
-      messageHeader="${OS_NAME} ${RELEASE_KEY} ${APP_NAME} v${appVersion} 전달합니다.<br /></br />(목적) ${DESCRIPTION}</br />${DETAIL_DESC}"
+      messageHeader="${OS_NAME} ${RELEASE_KEY} ${APP_NAME} v${appVersion} 전달합니다.${forceUpdateDesc}<br /></br />(목적) ${DESCRIPTION}</br />${DETAIL_DESC}"
     else
       subjectText="[${APP_NAME} ${APP_VERSION} > ${OS_NAME}] '$DESCRIPTION' ${DEVELOP_KEY} ${APP_NAME} 배포 -"
-      messageHeader="${OS_NAME} ${DEVELOP_KEY} ${APP_NAME} v${appVersion} 전달합니다.<br /></br />${DETAIL_DESC}"
+      messageHeader="${OS_NAME} ${DEVELOP_KEY} ${APP_NAME} v${appVersion} 전달합니다.${forceUpdateDesc}<br /></br />${DETAIL_DESC}"
     fi
     mailApp="$FRONTEND_POINT/${TOP_PATH}/phpmodules/sendmail_release.php"
     ##
     $CURL -k --data-urlencode "subject1=${subjectText}" \
-      --data-urlencode "subject2=version ${appVersion}.${buildVersion}" \
+      --data-urlencode "subject2=version ${appVersion}.${buildVersion}${forceUpdateSubj}" \
       --data-urlencode "html_header=${HTML_HEADER}" \
       --data-urlencode "message_header=<br />${messageHeader}<br /><br /><H2><b>배포 파일 정보</b></H2>$DOWNLOAD_URLS" \
       --data-urlencode "message_description=<pre>${DevEnvPrefix}${DEV_ENV}${DevEnvSuffix}</pre><br />" \
