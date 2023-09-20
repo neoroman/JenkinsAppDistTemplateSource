@@ -3,6 +3,7 @@ session_start();
 
 require_once('config.php');
 global $conn, $topPath, $usingMySQL, $userDict, $usingLoginRemoteAPI;
+global $boanEndPoint;
 
 require('phpmodules/common.php');
 global $inUrl, $outUrl;
@@ -99,15 +100,15 @@ if (isset($_POST['login'])) {
           header('Location: '. $redirUrl);
         }
         else {
-            $error_message = 'Your account is not active yet.';
+            $error_message .= 'Your account is not active yet.';
         }
     }
     else {
-        $error_message = 'Incorrect email or password.';
+        $error_message .= 'Incorrect ID(email) or password.';
     }
   } 
   else {
-      $error_message = 'Please enter email and password.';
+      $error_message .= 'Please enter ID(email) and password.';
   }
 
   if (isset($error_message) && strlen($error_message) > 0) {
