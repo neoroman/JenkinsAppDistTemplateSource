@@ -110,6 +110,7 @@
         },
         "projectName": "ProjectName/AppScheme",
         "podFile": "ProjectName/Podfile",
+        "rubyGemPath": "/System/Library/Frameworks/Ruby.framework/Versions/2.6/usr/lib/ruby/gems/2.6.0",
         "jenkinsWorkspace": "/Users/dist_account/.jenkins/workspace/CompanyProject/FooBar-iOS",
         "gitBrowseUrl": "http://bitbucket.company.com/projects/TGV/repos/app-ios/commits",
         "clientGitUrl": "",
