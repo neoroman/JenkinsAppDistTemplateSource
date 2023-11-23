@@ -382,8 +382,8 @@ function updateVersionTag($verTarget, $verDetail) {
     }
 
     $content = "<?php\n"
-    ."\$version_target = \"$aVersionTarget\";\n"
-    ."\$version_details = \"$aVersionDetails\";\n"
+    ."\$version_target = \"" . addslashes($aVersionTarget) . "\";\n"
+    ."\$version_details = \"" . addslashes($aVersionDetails) . "\";\n"
     ."?>\n";
 
     if ($input_os != 'both') {
