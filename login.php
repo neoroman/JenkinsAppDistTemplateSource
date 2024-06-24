@@ -42,7 +42,7 @@ if (isset($_POST['login'])) {
         ];  
       }
     }
-    if (isset($row)) {
+    if (isset($row) && $loginPW == $row['password']) {
         if ($row['status'] == "2" || $loginType == "2") {
           $_SESSION['internal_id'] = $row['userId'];
           $_SESSION['id'] = $row['userId'];
