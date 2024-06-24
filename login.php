@@ -38,11 +38,12 @@ if (isset($_POST['login'])) {
           "token" => $finalJson->{'token'},
           "status" => "1",
           "email" => $finalJson->{'email'},
-          "name" => $finalJson->{'name'}
+          "name" => $finalJson->{'name'},
+          "password" => $loginPW
         ];  
       }
     }
-    if (isset($row)) {
+    if (isset($row) && $loginPW == $row['password']) {
         if ($row['status'] == "2" || $loginType == "2") {
           $_SESSION['internal_id'] = $row['userId'];
           $_SESSION['id'] = $row['userId'];
