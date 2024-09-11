@@ -207,6 +207,12 @@ if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
   AAB_GOOGLESTORE="${APK_GOOGLESTORE%.apk}.aab"
 fi
 APK_ONESTORE="${INPUT_FILE}$(cat $jsonConfig | $JQ '.android.outputOneStoreSuffix' | tr -d '"')"
+##### for debug APK
+if [ -f "${APK_GOOGLESTORE%release.*}debug.apk" ]; then
+  APK_DEBUG="${APK_GOOGLESTORE%release.*}debug.apk"
+elif [ -f "${APK_ONESTORE%release.*}debug.apk" ]; then
+  APK_DEBUG="${APK_ONESTORE%release.*}debug.apk"
+fi
 ##### for debugging
 if [ $DEBUGGING -eq 1 ]; then
   USING_HTML=0
@@ -399,6 +405,9 @@ if [ $USING_JSON -eq 1 ]; then
   if [ -f $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE ]; then
     SIZE_ONESTORE_APK_FILE=$(du -sh ${OUTPUT_FOLDER}/${SIGNED_FILE_ONESTORE} | awk '{print $1}')
   fi
+  if [ -f $OUTPUT_FOLDER/$APK_DEBUG ]; then
+    SIZE_DEBUG_APK_FILE=$(du -sh ${OUTPUT_FOLDER}/${APK_DEBUG} | awk '{print $1}')
+  fi
 
   OUTPUT_FILENAME_JSON="${INPUT_FILE}.json"
   JSON_FILE=$OUTPUT_FOLDER/$OUTPUT_FILENAME_JSON
@@ -414,14 +423,14 @@ if [ $USING_JSON -eq 1 ]; then
   RELEASE_TYPE=$(cat $JSON_FILE | $JQ -r '.releaseType')
   FILES_ARRAY=$(cat $JSON_FILE | $JQ -r '.files')
   # 2nd APKSigner for Google Play Store
-  TITLE[0]=${TITLE_GOOGLE_STORE}
-  SIZE[0]="${SIZE_GOOGLESTORE_APK_FILE}"
+  TITLE[0]="${TITLE_GOOGLE_STORE}"
+  SIZE[0]="${SIZE_GOOGLESTORE_APK_FILE}B"
   URL[0]="${SIGNED_FILE_GOOGLESTORE}"
   PLIST[0]=""
-  if [ -f $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE ]; then
+  if [ -f "$OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE" ]; then
     # 2nd APKSigner for One Store
-    TITLE[1]=${TITLE_ONE_STORE}
-    SIZE[1]="${SIZE_ONESTORE_APK_FILE}"
+    TITLE[1]="${TITLE_ONE_STORE}"
+    SIZE[1]="${SIZE_ONESTORE_APK_FILE}B"
     URL[1]="${SIGNED_FILE_ONESTORE}"
     PLIST[1]=""
   else
@@ -440,16 +449,28 @@ if [ $USING_JSON -eq 1 ]; then
   SIZE[3]=$(echo $FILES_ARRAY | $JQ -r '.[3].size')
   URL[3]=$(echo $FILES_ARRAY | $JQ -r '.[3].file')
   PLIST[3]=$(echo $FILES_ARRAY | $JQ -r '.[3].plist')
+  # 검증용 DEBUG 버전
+  if [ -f "$OUTPUT_FOLDER/$APK_DEBUG" ]; then
+    TITLE[4]="검증용 DEBUG 버전"
+    SIZE[4]="${SIZE_DEBUG_APK_FILE}B"
+    URL[4]=${APK_DEBUG}
+    PLIST[4]=""
+  else
+    TITLE[1]=""
+    SIZE[1]=""
+    URL[1]=""
+    PLIST[1]=""
+  fi
   # 1st APKSigner for Google Play Store
-  TITLE[4]=$(echo $FILES_ARRAY | $JQ -r '.[0].title')
-  SIZE[4]=$(echo $FILES_ARRAY | $JQ -r '.[0].size')
-  URL[4]=$(echo $FILES_ARRAY | $JQ -r '.[0].file')
-  PLIST[4]=$(echo $FILES_ARRAY | $JQ -r '.[0].plist')
+  TITLE[5]=$(echo $FILES_ARRAY | $JQ -r '.[0].title')
+  SIZE[5]=$(echo $FILES_ARRAY | $JQ -r '.[0].size')
+  URL[5]=$(echo $FILES_ARRAY | $JQ -r '.[0].file')
+  PLIST[5]=$(echo $FILES_ARRAY | $JQ -r '.[0].plist')
   # 1st APKSigner for One Store
-  TITLE[5]=$(echo $FILES_ARRAY | $JQ -r '.[1].title')
-  SIZE[5]=$(echo $FILES_ARRAY | $JQ -r '.[1].size')
-  URL[5]=$(echo $FILES_ARRAY | $JQ -r '.[1].file')
-  PLIST[5]=$(echo $FILES_ARRAY | $JQ -r '.[1].plist')
+  TITLE[6]=$(echo $FILES_ARRAY | $JQ -r '.[1].title')
+  SIZE[6]=$(echo $FILES_ARRAY | $JQ -r '.[1].size')
+  URL[6]=$(echo $FILES_ARRAY | $JQ -r '.[1].file')
+  PLIST[6]=$(echo $FILES_ARRAY | $JQ -r '.[1].plist')
   ##
   GIT_LAST_LOG=$(cat $JSON_FILE | $JQ -r '.gitLastLog | gsub("[\\n\\t]"; "")')
   ##### Read from JSON  E N D ######
@@ -493,6 +514,10 @@ if [ $USING_JSON -eq 1 ]; then
   --arg file6_size "${SIZE[5]}" \
   --arg file6_binary "${URL[5]}" \
   --arg file6_plist "${PLIST[5]}" \
+  --arg file7_title "${TITLE[6]}" \
+  --arg file7_size "${SIZE[6]}" \
+  --arg file7_binary "${URL[6]}" \
+  --arg file7_plist "${PLIST[6]}" \
   --arg git_last_log "$GIT_LAST_LOG" \
 '{"title": $title, "appVersion": $av, "buildVersion": $bv, "versionKey": $vk,'\
 ' "buildNumber": $bn, "buildTime": $bt, "urlPrefix": $url_prefix,  "releaseType": $rt, '\
@@ -501,7 +526,8 @@ if [ $USING_JSON -eq 1 ]; then
 '{ "title": $file3_title, "size": $file3_size, "file": $file3_binary, "plist": $file3_plist} , '\
 '{ "title": $file4_title, "size": $file4_size, "file": $file4_binary, "plist": $file4_plist} , '\
 '{ "title": $file5_title, "size": $file5_size, "file": $file5_binary, "plist": $file5_plist} , '\
-'{ "title": $file6_title, "size": $file6_size, "file": $file6_binary, "plist": $file6_plist} ], '\
+'{ "title": $file6_title, "size": $file6_size, "file": $file6_binary, "plist": $file6_plist} , '\
+'{ "title": $file7_title, "size": $file7_size, "file": $file7_binary, "plist": $file7_plist} ], '\
 '"gitLastLog": $git_last_log}')
   echo "${JSON_STRING}" > $JSON_FILE
   ##### JSON Generation END ########
