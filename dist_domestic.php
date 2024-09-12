@@ -31,7 +31,7 @@ if ($usingLogin && !isset($_SESSION['internal_id'])) {
     <!-- select Css -->
     <link rel="stylesheet" href="./css/nice-select.css">
     <!-- common Css -->
-    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/common.css?v3">
     <?php
         if (file_exists('../custom/user.css')) {
             echo "<link rel=\"stylesheet\" href=\"./custom/user.css\">";

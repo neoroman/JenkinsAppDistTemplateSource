@@ -222,9 +222,11 @@ input::placeholder {color:rgba(0, 0, 0, 0.27) !important;}
 .item .cont .list_down li .btn_down:after {content:'';clear:both;display:block;position:absolute;right:10px;top:4px;width:24px;height:24px;background:url('../images/svg/ic_down.svg') no-repeat 0 0;background-size:24px 24px;}
 .item .cont .list_down .item_type2 .btn_down {margin-right:39px;}
 .item .cont .list_down .item_type2 .btn_ios,
-.item .cont .list_down .item_type2 .btn_android {overflow:hidden;position:absolute;right:0;top:0;width:32px;height:32px;text-indent:-9999em;font:0/0 arial;border-radius:4px;}
+.item .cont .list_down .item_type2 .btn_android,
+.item .cont .list_down .item_type2 .btn_debug {overflow:hidden;position:absolute;right:0;top:0;width:32px;height:32px;text-indent:-9999em;font:0/0 arial;border-radius:4px;}
 .item .cont .list_down .item_type2 .btn_ios {background:url('../images/svg/button_app_store_ios.svg') no-repeat 0 0;background-size:cover;}
 .item .cont .list_down .item_type2 .btn_android {background:url('../images/svg/button_app_store_android.svg') no-repeat 0 0;background-size:cover;}
+.item .cont .list_down .item_type2 .btn_debug {background:url('../images/svg/debugging.svg') no-repeat 0 0;background-size:cover;}
 .item .history_area {position:relative;padding-top:50px;}
 .item .history_area .btn {position:absolute;right:0;top:10px;height:24px;padding-right:30px;font-size:14px;line-height:24px;color:#258BDB;cursor:pointer;background:url('../images/svg/ic_minus.svg') no-repeat 100% 50%;background-size:24px 24px;}
 .item .history_area .btn.on {color:rgba(37, 139, 219, 0.64);background:url('../images/svg/ic_plus.svg') no-repeat 100% 50%;}

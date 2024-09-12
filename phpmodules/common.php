@@ -412,6 +412,28 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             // TODO: change button link after done uploaded to App Store, need to add AppID('1542294610') into config.json
                             // https://appstoreconnect.apple.com/apps/1542294610/testflight/ios
                         }
+                        else if ($os == "ios" && $jsonReleaseType == 'release' && $json->{$os}->{'Adhoc'}->{'title'} == $binTitle) { // AdHoc
+                            $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
+                            if (count($pathArray) < 2) {
+                                $tempTopPath = explode('/', $topPath);
+                                if (count($tempTopPath) > 1) {
+                                    $pathArray = explode($tempTopPath[1], $finalJson->{'urlPrefix'});
+                                }
+                            }
+                            $adhocFilename = str_replace('AdHoc.ipa', 'AdHoc_Debug.ipa', $anItem->{'file'});
+                            $adhocFilePath = ".." . $pathArray[1] . $adhocFilename;
+                            if (!file_exists($adhocFilePath)) {
+                                $adhocFilePath = "../.." . $pathArray[1] . $adhocFilename;
+                            }
+
+                            if (file_exists($adhocFilePath)) {
+                                $itemClassForAppStore = "class=\"item_type2\"";
+                                $itemClassForAppStoreDesc = "<!-- 20220119 item_type2 클래스 추가 -->";
+                                $downUrl = str_replace('AdHoc.plist', 'AdHoc_Debug.ipa', $downUrl);
+                                $adhocDebugURL = "javascript:appDownloader('$downUrl');";
+                                $appStoreUploadLink = "<a href=\"$adhocDebugURL\" class=\"btn_debug\" alt=\"ADHOC DEBUG 다운로드\">" .strtoupper($os). " ADHOC DEBUG 다운로드</a> <!-- 20220119 추가 -->";
+                            }
+                        }
                         // Android download AAB Bundle and apk
                         if ($os == "android" && $jsonReleaseType == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
                             $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
