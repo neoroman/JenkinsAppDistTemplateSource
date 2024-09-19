@@ -86,6 +86,8 @@
                 "agentEmail": "admin@company.com",
                 "agentAppSpecificPassword": "abcd-efgh-ijkl-mno"
             },
+            "obfuscationSource": "CompanyProject/FooBar/Objc/IxShield.m",
+            "sourceCodeAbsPath": "KT/file/src/project_ios_version.zip",
             "showToClient": false
         },
         "Adhoc": {
@@ -126,6 +128,7 @@
             "taskName": "GoogleStore",
             "releaseType": "Release",
             "usingBundleAAB": false,
+            "sourceCodeAbsPath": "KT/file/src/project_android_version.zip",
             "showToClient": false
         },
         "OneStore": {
