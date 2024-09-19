@@ -258,12 +258,15 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                 $finalSnippet .= "</a>";
             }
             $finalSnippet .= "</span></h2>";
+            if ($isDomesticQA && $distMode == "release") {
+                $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('');\" class=\"btn_src\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
+            }
             $finalSnippet .= "<!--COPY_BOTTON --><a class=\"btn_copy\" onclick=\"copyToClip('[$versionTarget $versionDetail] ";
             $finalSnippet .= L::app_name ." $osName v" . $finalJson->{'appVersion'} . ".";
             $finalSnippet .= $finalJson->{'buildVersion'} . " (" . $finalJson->{'buildTime'} . "), Jenkins(";
-            $finalSnippet .= $finalJson->{'buildNumber'} . ")')\"><span class=\"hide\">복사</span></a>
-<!--DIST_BOTTON --><a href=\"$shareUrl\" class=\"btn_share\"><span class=\"hide\">공유</span></a>
-<!--REMOVE_BOTTON--><a href=\"javascript:deleteFiles('$removalUrl','$outBoundPoint');\" class=\"btn_del\"><span class=\"hide\">삭제</span></a><a href=\"$undoRemovalUrl\" class=\"btn_re\"><span class=\"hide\">되돌리기</span></a>
+            $finalSnippet .= $finalJson->{'buildNumber'} . ")')\" alt=\"배포문구복사\"><span class=\"hide\">복사</span></a>
+<!--DIST_BOTTON --><a href=\"$shareUrl\" class=\"btn_share\" alt=\"공유\"><span class=\"hide\">공유</span></a>
+<!--REMOVE_BOTTON--><a href=\"javascript:deleteFiles('$removalUrl','$outBoundPoint');\" class=\"btn_del\" alt=\"삭제\"><span class=\"hide\">삭제</span></a><a href=\"$undoRemovalUrl\" class=\"btn_re\"><span class=\"hide\">되돌리기</span></a>
 <div class=\"cont\">
 <span class=\"date\">" . $finalJson->{'buildTime'} . "</span>
 <p class=\"stit\"><strong class=\"point_c\">". L::app_name ." ". $osName;
