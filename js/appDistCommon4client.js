@@ -270,7 +270,60 @@ function copyToClip(str) {
   document.addEventListener("copy", listener);
   document.execCommand("copy");
   document.removeEventListener("copy", listener);
+
+  // for mobile
+  copyToClipboard(str);
 };
+
+function copyToClipboard(text) {
+    // Check if the Clipboard API is available
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            console.log('Text copied to clipboard');
+        }).catch(function(err) {
+            console.error('Could not copy text: ', err);
+        });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
+// Fallback method for older browsers that do not support navigator.clipboard
+function fallbackCopyTextToClipboard(text) {
+    // Create a temporary text area element
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Avoid scrolling to the bottom of the page on iOS devices
+    textArea.style.position = "fixed";
+    textArea.style.top = 0;
+    textArea.style.left = 0;
+    textArea.style.width = "2em";
+    textArea.style.height = "2em";
+    textArea.style.padding = 0;
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+
+    document.body.appendChild(textArea);
+    
+    // Select the text area content
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        const msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Fallback: Copying text was ' + msg);
+    } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    // Remove the temporary text area
+    document.body.removeChild(textArea);
+}
 
 function logout() {
 	document.location.replace('logout.php');
