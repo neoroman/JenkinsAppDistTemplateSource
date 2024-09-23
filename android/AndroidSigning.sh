@@ -208,10 +208,13 @@ if [ $USING_BUNDLE_GOOGLESTORE -eq 1 ]; then
 fi
 APK_ONESTORE="${INPUT_FILE}$(cat $jsonConfig | $JQ '.android.outputOneStoreSuffix' | tr -d '"')"
 ##### for debug APK
-if [ -f "${APK_GOOGLESTORE%release.*}debug.apk" ]; then
+if [ -f "${OUTPUT_FOLDER}/${APK_GOOGLESTORE%release.*}debug.apk" ]; then
   APK_DEBUG="${APK_GOOGLESTORE%release.*}debug.apk"
-elif [ -f "${APK_ONESTORE%release.*}debug.apk" ]; then
+elif [ -f "${OUTPUT_FOLDER}/${APK_ONESTORE%release.*}debug.apk" ]; then
   APK_DEBUG="${APK_ONESTORE%release.*}debug.apk"
+fi
+if test -z "${APK_DEBUG}"; then
+  APK_DEBUG=$(find ${OUTPUT_FOLDER} -name "*${INPUT_FILE}*-debug.*" | head -1 | xargs basename $1)
 fi
 ##### for debugging
 if [ $DEBUGGING -eq 1 ]; then
@@ -402,10 +405,10 @@ fi
 if [ $USING_JSON -eq 1 ]; then
   # Step: Find out size of app files
   SIZE_GOOGLESTORE_APK_FILE=$(du -sh ${OUTPUT_FOLDER}/${SIGNED_FILE_GOOGLESTORE} | awk '{print $1}')
-  if [ -f $OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE ]; then
+  if [ -f "$OUTPUT_FOLDER/$SIGNED_FILE_ONESTORE" ]; then
     SIZE_ONESTORE_APK_FILE=$(du -sh ${OUTPUT_FOLDER}/${SIGNED_FILE_ONESTORE} | awk '{print $1}')
   fi
-  if [ -f $OUTPUT_FOLDER/$APK_DEBUG ]; then
+  if [ -f "$OUTPUT_FOLDER/$APK_DEBUG" ]; then
     SIZE_DEBUG_APK_FILE=$(du -sh ${OUTPUT_FOLDER}/${APK_DEBUG} | awk '{print $1}')
   fi
 
@@ -456,10 +459,10 @@ if [ $USING_JSON -eq 1 ]; then
     URL[4]=${APK_DEBUG}
     PLIST[4]=""
   else
-    TITLE[1]=""
-    SIZE[1]=""
-    URL[1]=""
-    PLIST[1]=""
+    TITLE[4]=""
+    SIZE[4]=""
+    URL[4]=""
+    PLIST[4]=""
   fi
   # 1st APKSigner for Google Play Store
   TITLE[5]=$(echo $FILES_ARRAY | $JQ -r '.[0].title')
