@@ -87,7 +87,8 @@
                 "agentAppSpecificPassword": "abcd-efgh-ijkl-mno"
             },
             "obfuscationSource": "CompanyProject/FooBar/Objc/IxShield.m",
-            "sourceCodeAbsPath": "KT/file/src/project_ios_version.zip",
+            "sourceCodeAbsPath": "Company/file/src/{AppName+Version}-ios_source.zip",
+            "sourceCodeFileSuffix": "-ios_source.zip",
             "showToClient": false
         },
         "Adhoc": {
@@ -128,7 +129,8 @@
             "taskName": "GoogleStore",
             "releaseType": "Release",
             "usingBundleAAB": false,
-            "sourceCodeAbsPath": "KT/file/src/project_android_version.zip",
+            "sourceCodeAbsPath": "Company/file/src/{AppName+Version}-android_source.zip",
+            "sourceCodeFileSuffix": "-android_source.zip",
             "showToClient": false
         },
         "OneStore": {
