@@ -135,7 +135,6 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
         $versionTarget = "";
         $versionDetail = "";
         $path = pathinfo($file, PATHINFO_DIRNAME);
-        $basename = basename($file);
         if (endsWith($file, "deleted")) {
             $basenameWithoutExt = basename($file, '.html.deleted');
         } else {
@@ -178,10 +177,13 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
             if ($os == "ios") {
                 $osName = L::os_ios;
+                $storeTarget = "AppStore";
             } else if ($os == "android") {
                 $osName = L::os_android;
+                $storeTarget = "GoogleStore";
             } else {
                 $osName = 'unknown';
+                $storeTarget = "Unknown";
             }
             $jsonReleaseType = "Debug";
             if (isset($finalJson->{'releaseType'})) {
@@ -259,7 +261,14 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             }
             $finalSnippet .= "</span></h2>";
             if ($isDomesticQA && $distMode == "release") {
-                $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('');\" class=\"btn_src\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
+                $sourcePath = dirname($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'});
+                $sourceFileSuffix = $json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'};
+                $realSourceFile = $basenameWithoutExt . $sourceFileSuffix;
+                $realSourceFilePath = $sourcePath ."/". $realSourceFile;
+
+                $inBoundPoint = "$frontEndProtocol://$frontEndPoint";
+                $srcUrl = "$inBoundPoint/$realSourceFilePath";
+                $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('". $srcUrl ."');\" class=\"btn_src\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
             }
             $finalSnippet .= "<!--COPY_BOTTON --><a class=\"btn_copy\" onclick=\"copyToClip('[$versionTarget $versionDetail] ";
             $finalSnippet .= L::app_name ." $osName v" . $finalJson->{'appVersion'} . ".";

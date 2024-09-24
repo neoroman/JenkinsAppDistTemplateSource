@@ -166,6 +166,17 @@ function enterprise4web(url) {
 	}
 }
 
+
+///////////////////////////////////////
+// Download Source File ///////////////
+function downloadSrc(url) {
+	const basename = url.substring(url.lastIndexOf('/') + 1);
+	var result = confirm("[ Source File ]\n\n" + basename + "\n파일을 다운로드하시겠습니까?");
+	if (result == true && url) {
+		window.location.href = url;
+	}
+}
+
 ///////////////////////////////////////
 // Android signing for Android only
 function androidSigning(url, file, apksignerVersion, unsignedGoogle, unsignedOneStore, outboundDomain) {
