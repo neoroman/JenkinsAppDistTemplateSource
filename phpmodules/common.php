@@ -323,6 +323,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                         }
 
                         $downUrl = $anItem->{'file'};
+                        $downSize = $anItem->{'size'};
 
                         if (!startsWith($downUrl, "http") &&
                             strpos($downUrl, 'android_signing.php') === false) {
@@ -401,6 +402,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                             } else {
                                 $apkSignerVersion = '0';
                                 $finalURL = "javascript:androidSigning('$apkSignerPath', '$apkFile', '$apkSignerVersion', $isGoogleExist, $isOneStoreExist, '$outBoundPoint');";
+                            }
+                            if ($isGoogleExist || $isOneStoreExist) {
+                                $downSize = "2차 난독화 수행";
                             }
                         } else {
                             $finalURL = "javascript:appDownloader('$downUrl');";
@@ -481,7 +485,7 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                                 <a href=\"$finalURL\" class=\"btn_down\">
                                     <em class=\"txt1\">" . $anItem->{'title'} . "</em>
                                     <span class=\"bar\">|</span>
-                                    <span class=\"txt2\">" . $anItem->{'size'} . "</span>               
+                                    <span class=\"txt2\">" . $downSize . "</span>               
                                     <span class=\"hide\">다운로드</span>
                                 </a>
                                 $appStoreUploadLink
