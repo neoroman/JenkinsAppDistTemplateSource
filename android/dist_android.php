@@ -53,7 +53,7 @@ $selectedPattern = "";
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css?v6">
+  <link rel="stylesheet" href="../css/common.css?v8">
   <?php
     if (file_exists('../../custom/user.css')) {
       echo "<link rel=\"stylesheet\" href=\"../custom/user.css\">";
@@ -192,7 +192,7 @@ $selectedPattern = "";
 <!-- placeholder JS : For ie9 -->
 <script src="../plugin/jquery-placeholder/jquery.placeholder.min.js"></script>
 <!-- common JS -->
-<script src="../js/common.js?v1"></script>
+<script src="../js/common.js?v2"></script>
 <!-- app dist common for client JS -->
 <script src="../js/appDistCommon4client.js?v5"></script>
 </body>

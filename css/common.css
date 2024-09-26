@@ -221,11 +221,11 @@ input::placeholder {color:rgba(0, 0, 0, 0.27) !important;}
 .item .cont .list_down li:after {content:'';clear:both;display:block;}
 .item .cont .list_down li:hover {border-color:#258BDB;}
 .item .cont .list_down li:active {border-color:#97CEE0;background-color:rgba(0, 0, 0, 0.04);}
-.item .cont .list_down li .txt1 {float:left;margin-left:18px;}
+.item .cont .list_down li .txt1 {float:left;margin-left:25px;}
 .item .cont .list_down li .txt2 {float:left;color:#258BDB;}
 .item .cont .list_down li .bar {float:left;overflow:hidden;width:1px;height:10px;margin:11px 5px 0 7px;font:0/0 arial;text-indent:-9999em;background-color:#97CEE0;}
 .item .cont .list_down li .btn_down {position:relative;display:block;height:32px;box-sizing:border-box;border:1px solid #97CEE0;border-radius:4px;background-color:#fff;}
-.item .cont .list_down li .btn_down:after {content:'';clear:both;display:block;position:absolute;right:10px;top:4px;width:24px;height:24px;background:url('../images/svg/ic_down.svg') no-repeat 0 0;background-size:24px 24px;}
+.item .cont .list_down li .btn_down:after {content:'';clear:both;display:block;position:absolute;left:2px;top:4px;width:24px;height:24px;background:url('../images/svg/ic_down.svg') no-repeat 0 0;background-size:24px 24px;}
 .item .cont .list_down .item_type2 .btn_down {margin-right:39px;}
 .item .cont .list_down .item_type2 .btn_ios,
 .item .cont .list_down .item_type2 .btn_android,
@@ -331,9 +331,9 @@ input::placeholder {color:rgba(0, 0, 0, 0.27) !important;}
   .item .btn_share, .item .btn_del, .item .btn_copy, .item .btn_src {display:block;}
   .item .cont .list_down li {width:100%;height:32px;font-size:12px;line-height:32px;}
   .item .cont .list_down li .btn_down {height:32px;}
-  .item .cont .list_down li .btn_down:after {top:3px;right:10px;}
+  .item .cont .list_down li .btn_down:after {top:3px;left:2px;}
   .item .cont .list_down li .bar {margin-top:12px;}
-  .item .cont .list_down li .txt1 {margin-left:14px;}
+  .item .cont .list_down li .txt1 {margin-left:25px;}
   .item .history_area .btn {overflow:hidden;left:50%;top:15px;width:24px;margin-left:-12px;font:0/0 arial;text-indent:-9999em;background:url(../images/svg/ic_plus.svg) no-repeat 100% 50%;}
   .item .history_area .btn.on {background:url(../images/svg/ic_minus.svg) no-repeat 100% 50%;}
   .item .history_area .list li {padding-left:90px;}
