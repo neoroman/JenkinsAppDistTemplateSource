@@ -97,7 +97,7 @@
 		"reset_password": "비밀번호 재설정",
 		"upload": "업로드",
 		"send_to_client": "고객사 배포",
-		"resend_mail": "메일 재전송",
+		"resend_mail": "수정 / 메일 재전송",
 		"link_to_client": "{고객사} 배포 페이지 확인",
 		"send_link": "링크 보내기",
 		"link_to_recommand": "동료에게 본 앱 링크 보내기"

@@ -97,7 +97,7 @@
 		"reset_password": "Reset Password",
 		"upload": "Upload",
 		"send_to_client": "Send to client",
-		"resend_mail": "Resend mail",
+		"resend_mail": "Modify / Resend mail",
 		"link_to_client": "Check pages for {Client}",
 		"send_link": "Send link",
 		"link_to_recommand": "Send this app. link to colleague"
