@@ -99,6 +99,7 @@
             "fileSuffix": "_AdHoc",
             "bundleId": "com.company.mobile-adhoc",
             "bundleName": "Company Projects (Ad-Hoc)",
+            "buildDebugVersion": false,
             "showToClient": false
         },
         "Enterprise": {
@@ -129,6 +130,7 @@
             "taskName": "GoogleStore",
             "releaseType": "Release",
             "usingBundleAAB": false,
+            "buildDebugVersion": false,
             "sourceCodeAbsPath": "Company/file/src/{AppName+Version}-android_source.zip",
             "sourceCodeFileSuffix": "-android_source.zip",
             "showToClient": false
