@@ -97,7 +97,22 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
 
       //Recipients
       $mail->setFrom(L::mail_from, L::mail_from_name);
-      if (isset($to)) {
+      if (isset($to_domestic)) {
+        if (is_array($to_domestic)) {
+          foreach ($to_domestic as $recipient) {
+            if ($recipient == L::mail_to_domestic) {
+              $mail->addAddress($recipient, L::mail_to_domestic_name);     // Add a recipient
+            }
+            else {
+              $mail->addAddress($recipient);               // Name is optional
+            }
+          }
+        }
+        else {
+          $mail->addAddress($to_domestic);               // Name is optional
+        }
+      }
+      else if (isset($to)) {
         if (is_array($to)) {
           foreach ($to as $recipient) {
             if ($recipient == L::mail_to) {

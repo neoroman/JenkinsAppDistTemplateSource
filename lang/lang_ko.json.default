@@ -126,11 +126,13 @@
         "from_name": "앱 배포 담당",
         "to": "foo@client.com|foo2@client.com",
         "to_name": "고객사 담당자1|고객사 담당자2",
+		"to_domestic": "zoo@client.com|zoo2@client.com",
+        "to_domestic_name": "화사동료1|회사동료2",
 		"debug_to": "neoroman@gmail.com",
 		"debug_to_name": "테스트 메일 수신자",
-        "reply_to": "appdev.svc@company.com",
+        "reply_to": "appdevaccount@company.com",
         "reply_to_name": "App Support",
-		"cc": "domestic@client.com|domestic2@client.com|appdev.svc@company.com",
+		"cc": "domestic@client.com|domestic2@client.com|appdevaccount@company.com",
 		"cc_name": "내부 담당자1|내부 담당자2|Company App Support"
 	},
 	"page": {

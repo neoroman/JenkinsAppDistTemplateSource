@@ -126,11 +126,13 @@
         "from_name": "App Dist Support",
         "to": "foo@client.com|foo2@client.com",
         "to_name": "ClientName1|ClientName2",
+        "to_domestic": "zoo@client.com|zoo2@client.com",
+        "to_domestic_name": "ColleaguetName1|ColleaguetName2",
 		"debug_to": "test@company.com",
 		"debug_to_name": "Receipient of Test for debug",
-        "reply_to": "appdev.svc@company.com",
+        "reply_to": "appdevaccount@company.com",
         "reply_to_name": "App Support",
-		"cc": "domestic@client.com|domestic2@client.com|appdev.svc@company.com",
+		"cc": "domestic@client.com|domestic2@client.com|appdevaccount@company.com",
 		"cc_name": "support1|support2|Company App Support"
 	},
 	"page": {
