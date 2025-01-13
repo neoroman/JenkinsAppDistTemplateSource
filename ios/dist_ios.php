@@ -53,7 +53,7 @@ $selectedPattern = "";
   <!-- select Css -->
   <link rel="stylesheet" href="../css/nice-select.css">
   <!-- common Css -->
-  <link rel="stylesheet" href="../css/common.css?v8">
+  <link rel="stylesheet" href="../css/common.css?v9">
   <?php
     if (file_exists('../../custom/user.css')) {
       echo "<link rel=\"stylesheet\" href=\"../custom/user.css\">";
@@ -204,6 +204,6 @@ $selectedPattern = "";
 <!-- common JS -->
 <script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
-<script src="../js/appDistCommon4client.js?v5"></script>
+<script src="../js/appDistCommon4client.js?v16"></script>
 </body>
 </html>

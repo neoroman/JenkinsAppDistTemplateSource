@@ -150,6 +150,30 @@ function deleteFiles(url, outboundDomain) {
 	}
 }
 
+
+///////////////////////////////////////
+// for downloading full packages, final warning
+function downloadPackages(url, inputFile, appVersion, buildNumber, outboundDomain, srcPath) {
+	if (url) {
+		if (outboundDomain && window.location.hostname === outboundDomain) {
+			alert("[ WARNING ]\n\n 사내 네트워크에서만 Package 생성 및 다운로드가 가능합니다.");
+			return;
+		}
+		var inputOS = "{iOS|Android}";
+		if (/android_distributions/i.test(inputFile)) {
+			inputOS = "Android";
+		}
+		else if (/ios_distributions/i.test(inputFile)) {
+			inputOS = "iOS";
+		}
+		var appVerFilename = appVersion.replaceAll('.','_');
+		var result = confirm("앱 Binary와 소스 코드 등 전체 파일을 \n"+ appVerFilename + "_" + buildNumber + "-" + inputOS + ".zip파일로 다운로드 합니다.\n\n(최초인 경우) 용량에 따라 10분 내외의 시간이 소요될 것입니다.\n\n\n진행 하시려면 '확인(OK)'를 누르세요.");
+		if (result == true) {
+			window.location.href = url + "?input_filename=" + inputFile + "&appVer=" + appVersion + "&buildVer=" + buildNumber + "&srcPath=" + srcPath;
+		}
+	}
+}
+
 ///////////////////////////////////////
 // for iOS uDev3 only (Enterprise4Web)
 function enterprise4web(url) {
