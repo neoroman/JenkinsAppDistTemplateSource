@@ -194,6 +194,6 @@ $selectedPattern = "";
 <!-- common JS -->
 <script src="../js/common.js?v2"></script>
 <!-- app dist common for client JS -->
-<script src="../js/appDistCommon4client.js?v16"></script>
+<script src="../js/appDistCommon4client.js?v17"></script>
 </body>
 </html>

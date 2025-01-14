@@ -44,14 +44,14 @@ function getPaginationSnippets($os, $isDomesticQA)
 
     if (empty($page) || $page == 1) {
         $start_val = 0;
-        $end_val = $CardsPerSite - 1;
+        $end_val = min($CardsPerSite - 1, $total_data - 1); // Make sure the end value does not exceed the total data
     } else {
         $start_val = ($page * $CardsPerSite) - $CardsPerSite;
-        $end_val = $start_val + ($CardsPerSite - 1);
+        $end_val = min($start_val + ($CardsPerSite - 1), $total_data - 1); // Ensure the end value is within bounds
     }
 
-    $less_than = $total_data / $CardsPerSite;
-    if ($less_than > intval($less_than)) $less_than = $less_than + 1;
+    $less_than = ceil($total_data / $CardsPerSite); // Use ceil to properly calculate total pages
+    $less_than = max($less_than, 1); // Ensure at least 1 page is available
 
     if ($total_data > 1) {
         $pageContents .= '<div class="pagination">';
@@ -68,7 +68,7 @@ function getPaginationSnippets($os, $isDomesticQA)
     }
 
     $result = array();
-    array_push($result, array_slice($files, $start_val, $end_val));
+    array_push($result, array_slice($files, $start_val, $end_val - $start_val + 1)); // Correct slicing
     array_push($result, $pageContents);
     array_push($result, $page . "/" . (int)$less_than);
 
