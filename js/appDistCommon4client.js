@@ -167,8 +167,16 @@ function downloadPackages(url, inputFile, appVersion, buildNumber, outboundDomai
 			inputOS = "iOS";
 		}
 		var appVerFilename = appVersion.replaceAll('.','_');
-		var result = confirm("앱 Binary와 소스 코드 등 전체 파일을 \n"+ appVerFilename + "_" + buildNumber + "-" + inputOS + ".zip파일로 다운로드 합니다.\n\n(최초인 경우) 용량에 따라 10분 내외의 시간이 소요될 것입니다.\n\n\n진행 하시려면 '확인(OK)'를 누르세요.");
+		var result = confirm("앱 Binary와 소스 코드 등 전체 파일을 \n"+ appVerFilename + "_" + buildNumber + "-" + inputOS
+			+ ".zip파일로 다운로드 합니다.\n\n(최초인 경우) 용량에 따라 10분 내외의 시간이 소요될 것입니다.\n"
+			+ "만약 404에러가 발생한다면 잠시 후 다시 시도해보시길 바랍니다.\n"
+			+ "\n\n진행 하시려면 '확인(OK)'를 누르세요.");
 		if (result == true) {
+            if (typeof loading !== 'undefined') { // Check if `loading` is available
+                window.uploadingAnimation('loadingAni');
+            } else {
+                console.error("Loading animation data is not available.");
+            }
 			window.location.href = url + "?input_filename=" + inputFile + "&appVer=" + appVersion + "&buildVer=" + buildNumber + "&srcPath=" + srcPath;
 		}
 	}

@@ -202,8 +202,8 @@ $selectedPattern = "";
 <script src="../plugin/lottie.js"></script>
 <script src="../js/loading.js"></script> <!-- 220127추가 -->
 <!-- common JS -->
-<script src="../js/common.js"></script>
+<script src="../js/common.js?v5"></script>
 <!-- app dist common for client JS -->
-<script src="../js/appDistCommon4client.js?v17"></script>
+<script src="../js/appDistCommon4client.js?v19"></script>
 </body>
 </html>

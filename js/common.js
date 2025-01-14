@@ -25,18 +25,18 @@ $(document).ready(function(){
 
 	/* (모바일)검색시 화면 움직임 막음 */
 	$('.link_search').click(function() {
-    $('body').css('overflow','hidden');
-  });
+		$('body').css('overflow','hidden');
+	});
 	$('.search_area a').click(function() {
 		$('body').css('overflow','inherit');
 	});
 
 	/*
 	$('.modal_box').click(function(event) {
-    if (event.target.id === 'modal-S') {
-      $('.modal_box:target').css('opacity','0');
-    }
-  });
+		if (event.target.id === 'modal-S') {
+		$('.modal_box:target').css('opacity','0');
+		}
+	});
 	*/
 
 	/* placeholder 적용 (for ie9) */
@@ -48,16 +48,16 @@ $(document).ready(function(){
 
 	/* 맨위로 이동 버튼 */
 	$('#moveTop').on('click',function(e){
-			e.preventDefault();
-			$('html, body').animate({scrollTop:0}, 400);
-  });
-  $(window).scroll(function() {
-    if ($(document).scrollTop() > 100) {
-      $('#moveTop').addClass('show');
-    } else {
-      $('#moveTop').removeClass('show');
-    }
-  });
+		e.preventDefault();
+		$('html, body').animate({scrollTop:0}, 400);
+	});
+	$(window).scroll(function() {
+		if ($(document).scrollTop() > 100) {
+			$('#moveTop').addClass('show');
+		} else {
+			$('#moveTop').removeClass('show');
+		}
+	});
 
 	/* 히스토리 토글 */
 	$('.history_area .btn').click(function() {
