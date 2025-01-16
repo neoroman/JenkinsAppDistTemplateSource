@@ -79,7 +79,7 @@ elif [[ "${INPUT_OS}" == "android" ]]; then
         TARGET=$(realpath $TARGET)
     fi
 fi
-if [ -f $jsonConfig ]; then
+if [ -f "$jsonConfig" ]; then
   if [ $DEBUGGING -eq 1 ]; then
     config=$(cat $jsonConfig | $JQ '.development')
   else
@@ -87,23 +87,67 @@ if [ -f $jsonConfig ]; then
   fi
   PREFIX=$(echo $config | $JQ '.outputPrefix')
 fi
-LIST=$(find ${TARGET} -name "*.json")
+LIST=$(find "${TARGET}" -name "*.json")
+
+# Iterate through each JSON file
 for jsonFile in $LIST; do
-    fileDirname=$(dirname ${jsonFile})
-    fileBasename=${jsonFile#"${fileDirname}/"}
-    fileBasename=${fileBasename%".json"}
-    htmlFile="${fileBasename}.html"
-    timeToBe=$(cat ${jsonFile} | jq '.buildTime' | tr -d '". :')
-    realHtml=$(find "${fileDirname}" -name "*${htmlFile}*")
-    for x in $realHtml; do
-      echo "touch -t ${timeToBe} ${realHtml}"
-      if [ -f ${realHtml} ]; then
-        touch -t ${timeToBe} "${realHtml}"
-      fi
-      realJson="${realHtml%.html}.json"
-      realJson="${realJson/zzz_/}"
-      if [ -f ${realJson} ]; then
-        touch -t ${timeToBe} "${realJson}"
+  # Extract directory and basename (filename without path)
+  fileDirname=$(dirname "${jsonFile}")
+  fileBasename=$(basename "${jsonFile}" .json)
+
+  # Define the corresponding HTML file
+  htmlFile="${fileBasename}.html"
+
+  # Extract the build time from the JSON file
+  timeToBe=$(jq -r '.buildTime' "${jsonFile}" | tr -d '". :')
+
+  # Find all matching HTML files in the same directory
+  realHtml=$(find "${fileDirname}" -name "*${htmlFile}*")
+
+  # Process each matching HTML file
+  for x in $realHtml; do
+    echo "Touching file: ${x} with build time: ${timeToBe}"
+
+    # Update the timestamp of the HTML file if it exists
+    if [ -f "${x}" ]; then
+      touch -t "${timeToBe}" "${x}"
+    fi
+
+    # Update timestamp for the corresponding JSON file, if it exists
+    realJson="${x%.html}.json"
+    realJson="${realJson/zzz_/}"
+    if [ -f "${realJson}" ]; then
+      touch -t "${timeToBe}" "${realJson}"
+    fi
+
+    # Remove "zzz_" version if both "zzz_" and normal HTML files exist
+    zzzHtml="${x}"
+    normalHtml="${x/zzz_/}"
+    if [[ "${zzzHtml}" != "${normalHtml}" && -f "${zzzHtml}" && -f "${normalHtml}" ]]; then
+      echo "Removing redundant file: ${zzzHtml}"
+      rm -f "${zzzHtml}"
+    fi
+
+    # Get the base filename for further matching
+    filenameOnly=${fileBasename/zzz_/}
+
+    # Touch files matching $filenameOnly*.{ipa, plist, apk, aab, png, zip, inc.php}
+    matchingFiles=$(find "${fileDirname}" -type f \( \
+      -name "${filenameOnly}*.ipa" -o \
+      -name "${filenameOnly}*.plist" -o \
+      -name "${filenameOnly}*.apk" -o \
+      -name "${filenameOnly}*.aab" -o \
+      -name "${filenameOnly}*.png" -o \
+      -name "${filenameOnly}*.zip" -o \
+      -name "${filenameOnly}*.inc.php" \))
+
+    for file in $matchingFiles; do
+      echo "Touching file: ${file} with build time: ${timeToBe}"
+
+      # Update the timestamp of the file
+      if [ -f "${file}" ]; then
+        touch -t "${timeToBe}" "${file}"
       fi
     done
+  done
 done
