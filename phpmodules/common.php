@@ -262,9 +262,17 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             }
             $finalSnippet .= "</span></h2>";
             if ($isDomesticQA && $distMode == "release") {
-                $sourcePath = dirname($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'});
-                $sourceFileSuffix = $json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'};
+                if (isset($json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'})) {
+                    $sourceFileSuffix = $json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'};
+                } else {
+                    $sourceFileSuffix = "-". $os ."_source.zip";
+                }
                 $realSourceFile = $basenameWithoutExt . $sourceFileSuffix;
+                if (isset($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'})) {
+                    $sourcePath = dirname($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'});
+                } else {
+                    $sourcePath = "{OutputFolder}";
+                }
 
                 $inBoundPoint = "$frontEndProtocol://$frontEndPoint";
                 if ($sourcePath == "{OutputFolder}") {
