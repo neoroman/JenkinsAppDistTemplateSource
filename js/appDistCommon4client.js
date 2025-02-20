@@ -154,32 +154,58 @@ function deleteFiles(url, outboundDomain) {
 ///////////////////////////////////////
 // for downloading full packages, final warning
 function downloadPackages(url, inputFile, appVersion, buildNumber, outboundDomain, srcPath) {
-	if (url) {
-		if (outboundDomain && window.location.hostname === outboundDomain) {
-			alert("[ WARNING ]\n\n 사내 네트워크에서만 Package 생성 및 다운로드가 가능합니다.");
-			return;
-		}
-		var inputOS = "{iOS|Android}";
-		if (/android_distributions/i.test(inputFile)) {
-			inputOS = "Android";
-		}
-		else if (/ios_distributions/i.test(inputFile)) {
-			inputOS = "iOS";
-		}
-		var appVerFilename = appVersion.replaceAll('.','_');
-		var result = confirm("앱 Binary와 소스 코드 등 전체 파일을 \n"+ appVerFilename + "_" + buildNumber + "-" + inputOS
-			+ ".zip파일로 다운로드 합니다.\n\n(최초인 경우) 용량에 따라 10분 내외의 시간이 소요될 것입니다.\n"
-			+ "만약 404에러가 발생한다면 잠시 후 다시 시도해보시길 바랍니다.\n"
-			+ "\n\n진행 하시려면 '확인(OK)'를 누르세요.");
-		if (result == true) {
-            if (typeof loading !== 'undefined') { // Check if `loading` is available
-                window.uploadingAnimation('loadingAni');
-            } else {
-                console.error("Loading animation data is not available.");
+    if (!url || !inputFile || !appVersion || !buildNumber || !srcPath) return;
+
+    // First check if file exists using our PHP endpoint
+    const checkUrl = '../phpmodules/check_file_exists.php' +
+        '?appVer=' + encodeURIComponent(appVersion) +
+        '&buildVer=' + encodeURIComponent(buildNumber) +
+        '&srcPath=' + encodeURIComponent(srcPath);
+
+    fetch(checkUrl)
+        .then(response => response.json())
+        .then(data => {
+            let regenerateParam = '';
+            if (data.exists) {
+                // File exists, ask for confirmation to delete and recreate
+                const filename = data.path.split('/').pop(); // Get just the filename from the path
+                if (confirm(`[ ${filename} ]\n파일이 이미 존재합니다.\n삭제하고 다시 생성하시겠습니까?\n\n동일버전(빌드)으로 Jenkins빌드한 경우\n삭제 후 재생성를 권장합니다.)`)) {
+                    regenerateParam = '&regenerate=1';
+                }
             }
-			window.location.href = url + "?input_filename=" + inputFile + "&appVer=" + appVersion + "&buildVer=" + buildNumber + "&srcPath=" + srcPath;
-		}
-	}
+            proceedWithDownload(url, inputFile, appVersion, buildNumber, outboundDomain, srcPath, regenerateParam);
+        })
+        .catch(error => {
+            console.error('Error checking file existence:', error);
+            proceedWithDownload(url, inputFile, appVersion, buildNumber, outboundDomain, srcPath, '');
+        });
+}
+
+function proceedWithDownload(url, inputFile, appVersion, buildNumber, outboundDomain, srcPath, regenerateParam) {
+    if (outboundDomain && window.location.hostname === outboundDomain) {
+        alert("[ WARNING ]\n\n 사내 네트워크에서만 Package 생성 및 다운로드가 가능합니다.");
+        return;
+    }
+    var inputOS = "{iOS|Android}";
+    if (/android_distributions/i.test(inputFile)) {
+        inputOS = "Android";
+    }
+    else if (/ios_distributions/i.test(inputFile)) {
+        inputOS = "iOS";
+    }
+    var appVerFilename = appVersion.replaceAll('.','_');
+    var result = confirm("앱 Binary와 소스 코드 등 전체 파일을 \n"+ appVerFilename + "_" + buildNumber + "-" + inputOS
+        + ".zip파일로 다운로드 합니다.\n\n(최초인 경우) 용량에 따라 10분 내외의 시간이 소요될 것입니다.\n"
+        + "만약 404에러가 발생한다면 잠시 후 다시 시도해보시길 바랍니다.\n"
+        + "\n\n진행 하시려면 '확인(OK)'를 누르세요.");
+    if (result == true) {
+        if (typeof loading !== 'undefined') {
+            window.uploadingAnimation('loadingAni');
+        } else {
+            console.error("Loading animation data is not available.");
+        }
+        window.location.href = url + "?input_filename=" + inputFile + "&appVer=" + appVersion + "&buildVer=" + buildNumber + "&srcPath=" + srcPath + regenerateParam;
+    }
 }
 
 ///////////////////////////////////////
@@ -190,8 +216,8 @@ function enterprise4web(url) {
 		if (getMobileOperatingSystem() != "iOS" && url.startsWith("itms-services://")) {
 			var plistFile = url.substring(46); // get-rid-of ``itms-services://?action=download-manifest&url=''
 			var finalUrl = plistFile.split('.').slice(0,-1).join('.')
-			window.location.href = finalUrl + '.ipa';
-		}
+				window.location.href = finalUrl + '.ipa';
+			}
 		else {
 			window.location.href = url;
 		}

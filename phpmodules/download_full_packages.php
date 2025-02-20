@@ -164,9 +164,17 @@ file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "fileVers
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "filenameOnly: $filenameOnly\n", FILE_APPEND);
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "finalZipPath: $finalZipPath\n\n", FILE_APPEND);
 
+// Check if regenerate parameter is set to 1
+if (isset($_GET["regenerate"]) && $_GET["regenerate"] === "1") {
+    if (file_exists($finalZipPath)) {
+        unlink($finalZipPath);
+    }
+}
+
 if (!is_file($finalZipPath)) {
     if (!is_dir($tmpBaseDir)) mkdir($tmpBaseDir, 0777, true);
     if (is_dir($tmpTargetDir)) deleteDirectory($tmpTargetDir);
+
     createDirectoryTree($tmpTargetDir, $isAndroid, $finalBaseDir, $sourceFilename);
     createZipFile($tmpTargetDir, $zipFilePath, $filenameOnly);
 
