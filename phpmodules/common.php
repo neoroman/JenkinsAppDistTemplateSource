@@ -364,9 +364,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
 
                         if (startsWith($downUrl, "http")) {
                             // It's not plf'2'mini.company.com domain
-                            $downUrl = str_replace($frontEndProtocol, $outBoundProtocol, $downUrl);
+                            // Replace any protocol (http or https) with outbound protocol
+                            $downUrl = preg_replace('/^(http|https|httpss):\/\//', $outBoundProtocol . '://', $downUrl);
                             $downUrl = str_replace($frontEndPoint, $outBoundPoint, $downUrl);
-                            $downUrl = str_replace("httpss", "https", $downUrl);
                             
                             $tempUrl = $downUrl;
                             if (isset($plistUrl)) {
