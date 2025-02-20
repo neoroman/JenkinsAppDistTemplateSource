@@ -9,6 +9,13 @@ if (!class_exists('i18n')) {
       require_once(__DIR__ . '/../../config.php');
   }
 }
+// Include the language update functionality
+require_once(__DIR__ . '/../phpmodules/update_lang_settings.php');
+// Check and update language files if needed
+if (checkLanguageUpdatesNeeded()) {
+    updateLanguageFiles();
+}
+
 global $usingLogin, $topPath;
 global $outBoundPoint;
 global $topPath, $boanEndPoint;
@@ -113,7 +120,8 @@ $selectedPattern = "";
       </div>
       <!-- //검색 팝업 : modal-S(모바일의 경우만 모달처리됨) -->
 
-      <a href="../phpmodules/pw_guide_uaqa.php" class="link_pw"><?php echo L::title_admin_password; ?></a>
+      <a href="../phpmodules/pw_guide_uaqa.php" class="link_pw"><?php if ($lang == 'ko') { echo '설정'; } else { echo 'Settings'; } ?></a>
+
       <a href="#modal-S" class="link_search"><?php echo L::search_title; ?></a>
     </div>
   </div>

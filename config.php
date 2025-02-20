@@ -1,4 +1,7 @@
 <?php
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+
 $src_top_path = __DIR__;
 require($src_top_path . '/phpmodules/utils/json.php');
 $defaultLang = $src_top_path . "/../lang/default.json";
@@ -85,7 +88,7 @@ $userDict = [
         "email" => $userQC->{'email'},
         ],
 ];
-
+$isDebugMode = false;
 if (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
     $isDebugMode = true;
     $config = $json->{'development'};
