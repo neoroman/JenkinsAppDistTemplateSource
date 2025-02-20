@@ -76,8 +76,8 @@ for dir in "${directories[@]}"; do
         if [ "$dry_run" = false ]; then
             # Create backup file
             cp "$file" "${file}.bak"
-            # Perform replacement
-            if sed -i "" "s/$find_str/$replace_str/g" "$file"; then
+            # Perform replacement using | as delimiter and making sure to close it
+            if sed -i "" "s|${find_str}|${replace_str}|g" "$file"; then
                 echo "✓ Updated: $file"
             else
                 echo "✗ Error updating: $file"
