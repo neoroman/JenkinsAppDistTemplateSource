@@ -47,7 +47,20 @@ function updateLanguageFiles($emailData = null) {
             'debug_to_email' => '디버그 수신자 이메일',
             'debug_to_name' => '디버그 수신자 이름',
             'to_recipients' => '수신자 목록',
-            'cc_recipients' => 'CC 수신자 목록'
+            'cc_recipients' => 'CC 수신자 목록',
+            'information_management' => '정보 관리',
+            'app_settings' => '앱 설정',
+            'app_name' => '앱 이름',
+            'app_version' => '앱 버전',
+            'client_settings' => '고객사 설정',
+            'client_short_url' => '고객사에 전달할 (짧은) 배포 주소',
+            'client_title' => '프로젝트 이름',
+            'client_name' => '고객사 (짧은) 회사명',
+            'client_full_name' => '고객사 (전체) 회사명',
+            'company_settings' => '배포 회사 설정',
+            'company_name' => '배포 회사 이름',
+            'company_team' => '배포 팀 이름',
+            'company_email' => '배포 팀 메일 주소'
         ],
         'en' => [
             'admin_password' => 'Settings',
@@ -74,7 +87,20 @@ function updateLanguageFiles($emailData = null) {
             'debug_to_email' => 'Debug Recipient Email',
             'debug_to_name' => 'Debug Recipient Name',
             'to_recipients' => 'Recipients List',
-            'cc_recipients' => 'CC Recipients List'
+            'cc_recipients' => 'CC Recipients List',
+            'information_management' => 'Information Management',
+            'app_settings' => 'App Settings',
+            'app_name' => 'App Name',
+            'app_version' => 'App Version',
+            'client_settings' => 'Client Settings',
+            'client_short_url' => 'Client Short URL',
+            'client_title' => 'Project Title',
+            'client_name' => 'Client Name',
+            'client_full_name' => 'Company Name',
+            'company_settings' => 'Distribution Company Settings',
+            'company_name' => 'Distribution Company Name',
+            'company_team' => 'Distribution Team Name',
+            'company_email' => 'Distribution Team Email'
         ]
     ];
 
@@ -91,16 +117,29 @@ function updateLanguageFiles($emailData = null) {
                 continue;
             }
 
+
             // Add new language strings
             $lang = basename($file) === 'lang_ko.json' ? 'ko' : 'en';
             foreach ($newStrings[$lang] as $key => $value) {
-                $data[$key] = $value;
+                $data['title'][$key] = $value;
             }
 
             // Update mail settings if provided
             if ($emailData !== null) {
                 if (!isset($data['mail'])) {
                     $data['mail'] = [];
+                }
+
+                // Update app, client, company
+                $appClientCompany = ['app_name', 'app_version', 'client_short_url', 'client_title', 
+                                    'client_name', 'client_full_name', 
+                                    'company_name', 'company_team', 'company_email'];
+                foreach ($appClientCompany as $acc) {
+                    if (isset($emailData[$acc])) {
+                        $firstKey = explode('_', $acc)[0];
+                        $field = explode($firstKey . '_', $acc)[1];
+                        $data[$firstKey][$field] = $emailData[$acc];
+                    }
                 }
 
                 // Update simple fields
@@ -154,6 +193,10 @@ function updateLanguageFiles($emailData = null) {
                     if (file_exists($cacheFile)) {
                         unlink($cacheFile);
                     }
+                    $cacheFile = __DIR__ . '/../langcache/' . basename($file, '.json') . '.cache.php';
+                    if (file_exists($cacheFile)) {
+                        unlink($cacheFile);
+                    }
                 }
             } else {
                 error_log("Error encoding JSON for file: " . $file);
@@ -182,7 +225,7 @@ function checkLanguageUpdatesNeeded() {
         $content = file_get_contents($koFile);
         $data = json_decode($content, true);
         if ($data) {
-            return !isset($data['admin_password']) || $data['admin_password'] !== "설정";
+            return !isset($data['title']['information_management']) || $data['title']['information_management'] !== "정보 관리";
         }
     }
     return true;
@@ -196,7 +239,10 @@ function getCurrentEmailSettings() {
         $data = json_decode($content, true);
         if ($data && isset($data['mail'])) {
             $mail = $data['mail'];
-            
+            $app = $data['app'];
+            $client = $data['client'];
+            $company = $data['company'];
+
             // Get simple fields
             $settings = [
                 'releaseKeyword' => isset($mail['releaseKeyword']) ? $mail['releaseKeyword'] : '',
@@ -206,7 +252,16 @@ function getCurrentEmailSettings() {
                 'reply_to' => isset($mail['reply_to']) ? $mail['reply_to'] : '',
                 'reply_to_name' => isset($mail['reply_to_name']) ? $mail['reply_to_name'] : '',
                 'debug_to' => isset($mail['debug_to']) ? $mail['debug_to'] : '',
-                'debug_to_name' => isset($mail['debug_to_name']) ? $mail['debug_to_name'] : ''
+                'debug_to_name' => isset($mail['debug_to_name']) ? $mail['debug_to_name'] : '',
+                'app_name' => isset($app['name']) ? $app['name'] : '',
+                'app_version' => isset($app['version']) ? $app['version'] : '',
+                'client_short_url' => isset($client['short_url']) ? $client['short_url'] : '',
+                'client_title' => isset($client['title']) ? $client['title'] : '',
+                'client_name' => isset($client['name']) ? $client['name'] : '',
+                'client_full_name' => isset($client['full_name']) ? $client['full_name'] : '',
+                'company_name' => isset($company['name']) ? $company['name'] : '',
+                'company_team' => isset($company['team']) ? $company['team'] : '',
+                'company_email' => isset($company['email']) ? $company['email'] : ''
             ];
             
             // Get recipient lists
@@ -243,7 +298,16 @@ function getCurrentEmailSettings() {
         'to' => [],
         'to_name' => [],
         'cc' => [],
-        'cc_name' => []
+        'cc_name' => [],
+        'app_name' => '',
+        'app_version' => '',
+        'client_short_url' => '',
+        'client_title' => '',
+        'client_name' => '',
+        'client_full_name' => '',
+        'company_name' => '',
+        'company_team' => '',
+        'company_email' => ''
     ];
 }
 
