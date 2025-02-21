@@ -10,7 +10,7 @@ if (!class_exists('i18n')) {
   }
 }
 // Include the language update functionality
-require_once(__DIR__ . '/../phpmodules/update_lang_settings.php');
+require_once(__DIR__ . '/../phpmodules/update_settings.php');
 // Check and update language files if needed
 if (checkLanguageUpdatesNeeded()) {
     updateLanguageFiles();

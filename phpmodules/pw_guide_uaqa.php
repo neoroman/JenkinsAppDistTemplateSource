@@ -12,7 +12,7 @@ if (!class_exists('i18n')) {
   }
 }
 // Include the language update functionality
-require_once(__DIR__ . '/update_lang_settings.php');
+require_once(__DIR__ . '/update_settings.php');
 // Check and update language files if needed
 if (checkLanguageUpdatesNeeded()) {
     updateLanguageFiles();
@@ -133,112 +133,155 @@ if ($usingLogin && !isset($_SESSION['id'])) {
   <div class="container">
     <div class="box_guide">
       <h1 class="tit"><?php if ($lang == 'ko') { echo '설정 변경'; } else { echo 'Change Settings'; } ?></h1>
-      
-      <!-- Email Management -->
-      <div class="email_management">
-        <h2 class="stit"><?php echo L::mail_recipients_management; ?></h2>
-        <form id="emailForm" class="email-form">
-          <!-- Keywords Section -->
+
+      <form id="emailForm" class="email-form">
+        <!-- Information Management -->
+        <div class="information_management">
+          <h2 class="stit"><?php echo L::title_information_management; ?></h2>
           <div class="settings-group">
-            <h3><?php echo L::keywords_settings; ?></h3>
             <div class="form-row">
-              <label for="releaseKeyword"><?php echo L::release_keyword; ?></label>
-              <input type="text" id="releaseKeyword" name="releaseKeyword" class="input_text" value="<?php echo htmlspecialchars($emailSettings['releaseKeyword']); ?>">
+              <label for="app_name"><?php echo L::title_app_name; ?></label>
+              <input type="text" id="app_name" name="app_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['app_name']); ?>">
             </div>
             <div class="form-row">
-              <label for="developKeyword"><?php echo L::develop_keyword; ?></label>
-              <input type="text" id="developKeyword" name="developKeyword" class="input_text" value="<?php echo htmlspecialchars($emailSettings['developKeyword']); ?>">
+              <label for="app_version"><?php echo L::title_app_version; ?></label>
+              <input type="text" id="app_version" name="app_version" class="input_text" value="<?php echo htmlspecialchars($emailSettings['app_version']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="client_short_url"><?php echo L::title_client_short_url; ?></label>
+              <input type="text" id="client_short_url" name="client_short_url" class="input_text" value="<?php echo htmlspecialchars($emailSettings['client_short_url']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="client_title"><?php echo L::title_client_title; ?></label>
+              <input type="text" id="client_title" name="client_title" class="input_text" value="<?php echo htmlspecialchars($emailSettings['client_title']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="client_name"><?php echo L::title_client_name; ?></label>
+              <input type="text" id="client_name" name="client_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['client_name']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="client_full_name"><?php echo L::title_client_full_name; ?></label>
+              <input type="text" id="client_full_name" name="client_full_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['client_full_name']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="company_name"><?php echo L::title_company_name; ?></label>
+              <input type="text" id="company_name" name="company_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['company_name']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="company_team"><?php echo L::title_company_team; ?></label>
+              <input type="text" id="company_team" name="company_team" class="input_text" value="<?php echo htmlspecialchars($emailSettings['company_team']); ?>">
+            </div>
+            <div class="form-row">
+              <label for="company_email"><?php echo L::title_company_email; ?></label>
+              <input type="email" id="company_email" name="company_email" class="input_text" value="<?php echo htmlspecialchars($emailSettings['company_email']); ?>">
             </div>
           </div>
+        </div>
 
-          <!-- From Settings -->
-          <div class="settings-group">
-            <h3><?php echo L::from_settings; ?></h3>
-            <div class="form-row">
-              <label for="from"><?php echo L::from_email; ?></label>
-              <input type="email" id="from" name="from" class="input_text" value="<?php echo htmlspecialchars($emailSettings['from']); ?>">
+        <!-- Email Management -->
+        <div class="email_management">
+          <h2 class="stit"><?php echo L::title_mail_recipients_management; ?></h2>
+            <!-- Keywords Section -->
+            <div class="settings-group">
+              <h3><?php echo L::title_keywords_settings; ?></h3>
+              <div class="form-row">
+                <label for="releaseKeyword"><?php echo L::title_release_keyword; ?></label>
+                <input type="text" id="releaseKeyword" name="releaseKeyword" class="input_text" value="<?php echo htmlspecialchars($emailSettings['releaseKeyword']); ?>">
+              </div>
+              <div class="form-row">
+                <label for="developKeyword"><?php echo L::title_develop_keyword; ?></label>
+                <input type="text" id="developKeyword" name="developKeyword" class="input_text" value="<?php echo htmlspecialchars($emailSettings['developKeyword']); ?>">
+              </div>
             </div>
-            <div class="form-row">
-              <label for="from_name"><?php echo L::from_name; ?></label>
-              <input type="text" id="from_name" name="from_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['from_name']); ?>">
-            </div>
-          </div>
 
-          <!-- Reply-To Settings -->
-          <div class="settings-group">
-            <h3><?php echo L::reply_to_settings; ?></h3>
-            <div class="form-row">
-              <label for="reply_to"><?php echo L::reply_to_email; ?></label>
-              <input type="email" id="reply_to" name="reply_to" class="input_text" value="<?php echo htmlspecialchars($emailSettings['reply_to']); ?>">
+            <!-- From Settings -->
+            <div class="settings-group">
+              <h3><?php echo L::title_from_settings; ?></h3>
+              <div class="form-row">
+                <label for="from"><?php echo L::title_from_email; ?></label>
+                <input type="email" id="from" name="from" class="input_text" value="<?php echo htmlspecialchars($emailSettings['from']); ?>">
+              </div>
+              <div class="form-row">
+                <label for="from_name"><?php echo L::title_from_name; ?></label>
+                <input type="text" id="from_name" name="from_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['from_name']); ?>">
+              </div>
             </div>
-            <div class="form-row">
-              <label for="reply_to_name"><?php echo L::reply_to_name; ?></label>
-              <input type="text" id="reply_to_name" name="reply_to_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['reply_to_name']); ?>">
-            </div>
-          </div>
 
-          <!-- Debug Settings -->
-          <div class="settings-group">
-            <h3><?php echo L::debug_settings; ?></h3>
-            <div class="form-row">
-              <label for="debug_to"><?php echo L::debug_to_email; ?></label>
-              <input type="email" id="debug_to" name="debug_to" class="input_text" value="<?php echo htmlspecialchars($emailSettings['debug_to']); ?>">
+            <!-- Reply-To Settings -->
+            <div class="settings-group">
+              <h3><?php echo L::title_reply_to_settings; ?></h3>
+              <div class="form-row">
+                <label for="reply_to"><?php echo L::title_reply_to_email; ?></label>
+                <input type="email" id="reply_to" name="reply_to" class="input_text" value="<?php echo htmlspecialchars($emailSettings['reply_to']); ?>">
+              </div>
+              <div class="form-row">
+                <label for="reply_to_name"><?php echo L::title_reply_to_name; ?></label>
+                <input type="text" id="reply_to_name" name="reply_to_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['reply_to_name']); ?>">
+              </div>
             </div>
-            <div class="form-row">
-              <label for="debug_to_name"><?php echo L::debug_to_name; ?></label>
-              <input type="text" id="debug_to_name" name="debug_to_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['debug_to_name']); ?>">
-            </div>
-          </div>
 
-          <!-- Recipients (TO) -->
-          <div class="settings-group">
-            <h3><?php echo L::to_recipients; ?></h3>
-            <div id="toEmailEntries">
-              <?php
-              $toCount = max(count($emailSettings['to']), count($emailSettings['to_name']), 1);
-              for ($i = 0; $i < $toCount; $i++) {
-                $name = isset($emailSettings['to_name'][$i]) ? $emailSettings['to_name'][$i] : '';
-                $email = isset($emailSettings['to'][$i]) ? $emailSettings['to'][$i] : '';
-              ?>
-              <div class="email-entry">
-                <input type="text" name="to_name[]" placeholder="<?php echo L::recipient_name; ?>" value="<?php echo htmlspecialchars($name); ?>" class="input_text">
-                <input type="email" name="to[]" placeholder="<?php echo L::recipient_email; ?>" value="<?php echo htmlspecialchars($email); ?>" class="input_text">
-                <?php if ($i > 0) { ?>
-                  <button type="button" class="btn_remove" onclick="removeEntry(this, 'toEmailEntries')"><?php echo L::remove; ?></button>
+            <!-- Debug Settings -->
+            <div class="settings-group">
+              <h3><?php echo L::title_debug_settings; ?></h3>
+              <div class="form-row">
+                <label for="debug_to"><?php echo L::title_debug_to_email; ?></label>
+                <input type="email" id="debug_to" name="debug_to" class="input_text" value="<?php echo htmlspecialchars($emailSettings['debug_to']); ?>">
+              </div>
+              <div class="form-row">
+                <label for="debug_to_name"><?php echo L::title_debug_to_name; ?></label>
+                <input type="text" id="debug_to_name" name="debug_to_name" class="input_text" value="<?php echo htmlspecialchars($emailSettings['debug_to_name']); ?>">
+              </div>
+            </div>
+
+            <!-- Recipients (TO) -->
+            <div class="settings-group">
+              <h3><?php echo L::title_to_recipients; ?></h3>
+              <div id="toEmailEntries">
+                <?php
+                $toCount = max(count($emailSettings['to']), count($emailSettings['to_name']), 1);
+                for ($i = 0; $i < $toCount; $i++) {
+                  $name = isset($emailSettings['to_name'][$i]) ? $emailSettings['to_name'][$i] : '';
+                  $email = isset($emailSettings['to'][$i]) ? $emailSettings['to'][$i] : '';
+                ?>
+                <div class="email-entry">
+                  <input type="text" name="to_name[]" placeholder="<?php echo L::title_recipient_name; ?>" value="<?php echo htmlspecialchars($name); ?>" class="input_text">
+                  <input type="email" name="to[]" placeholder="<?php echo L::title_recipient_email; ?>" value="<?php echo htmlspecialchars($email); ?>" class="input_text">
+                  <?php if ($i > 0) { ?>
+                    <button type="button" class="btn_remove" onclick="removeEntry(this, 'toEmailEntries')"><?php echo L::title_remove; ?></button>
+                  <?php } ?>
+                </div>
                 <?php } ?>
               </div>
-              <?php } ?>
+              <button type="button" class="btn_add" onclick="addEntry('toEmailEntries')"><?php echo L::title_add_recipient; ?></button>
             </div>
-            <button type="button" class="btn_add" onclick="addEntry('toEmailEntries')"><?php echo L::add_recipient; ?></button>
-          </div>
 
-          <!-- CC Recipients -->
-          <div class="settings-group">
-            <h3><?php echo L::cc_recipients; ?></h3>
-            <div id="ccEmailEntries">
-              <?php
-              $ccCount = max(count($emailSettings['cc']), count($emailSettings['cc_name']), 1);
-              for ($i = 0; $i < $ccCount; $i++) {
-                $name = isset($emailSettings['cc_name'][$i]) ? $emailSettings['cc_name'][$i] : '';
-                $email = isset($emailSettings['cc'][$i]) ? $emailSettings['cc'][$i] : '';
-              ?>
-              <div class="email-entry">
-                <input type="text" name="cc_name[]" placeholder="<?php echo L::recipient_name; ?>" value="<?php echo htmlspecialchars($name); ?>" class="input_text">
-                <input type="email" name="cc[]" placeholder="<?php echo L::recipient_email; ?>" value="<?php echo htmlspecialchars($email); ?>" class="input_text">
-                <?php if ($i > 0) { ?>
-                  <button type="button" class="btn_remove" onclick="removeEntry(this, 'ccEmailEntries')"><?php echo L::remove; ?></button>
+            <!-- CC Recipients -->
+            <div class="settings-group">
+              <h3><?php echo L::title_cc_recipients; ?></h3>
+              <div id="ccEmailEntries">
+                <?php
+                $ccCount = max(count($emailSettings['cc']), count($emailSettings['cc_name']), 1);
+                for ($i = 0; $i < $ccCount; $i++) {
+                  $name = isset($emailSettings['cc_name'][$i]) ? $emailSettings['cc_name'][$i] : '';
+                  $email = isset($emailSettings['cc'][$i]) ? $emailSettings['cc'][$i] : '';
+                ?>
+                <div class="email-entry">
+                  <input type="text" name="cc_name[]" placeholder="<?php echo L::title_recipient_name; ?>" value="<?php echo htmlspecialchars($name); ?>" class="input_text">
+                  <input type="email" name="cc[]" placeholder="<?php echo L::title_recipient_email; ?>" value="<?php echo htmlspecialchars($email); ?>" class="input_text">
+                  <?php if ($i > 0) { ?>
+                    <button type="button" class="btn_remove" onclick="removeEntry(this, 'ccEmailEntries')"><?php echo L::title_remove; ?></button>
+                  <?php } ?>
+                </div>
                 <?php } ?>
               </div>
-              <?php } ?>
+              <button type="button" class="btn_add" onclick="addEntry('ccEmailEntries')"><?php echo L::title_add_cc_recipient; ?></button>
             </div>
-            <button type="button" class="btn_add" onclick="addEntry('ccEmailEntries')"><?php echo L::add_cc_recipient; ?></button>
-          </div>
 
-          <div class="btn_wrap">
-            <button type="submit" class="btn_save"><?php echo L::save; ?></button>
-          </div>
-        </form>
-      </div>
+            <div class="btn_wrap">
+              <button type="submit" class="btn_save"><?php echo L::title_save; ?></button>
+            </div>
+        </div>
+      </form>
 
 <!-- Email management script -->
 <script>
@@ -246,17 +289,17 @@ function addEntry(containerId) {
     const container = document.getElementById(containerId);
     const count = container.querySelectorAll('.email-entry').length;
     if (count >= 20) {
-        alert('<?php echo L::max_recipients; ?>');
+        alert('<?php echo L::title_max_recipients; ?>');
         return;
     }
     
     const template = `
         <div class="email-entry">
             <input type="text" name="${containerId === 'ccEmailEntries' ? 'cc_name[]' : 'to_name[]'}" 
-                   placeholder="<?php echo L::recipient_name; ?>" class="input_text">
+                   placeholder="<?php echo L::title_recipient_name; ?>" class="input_text">
             <input type="email" name="${containerId === 'ccEmailEntries' ? 'cc[]' : 'to[]'}" 
-                   placeholder="<?php echo L::recipient_email; ?>" class="input_text">
-            <button type="button" class="btn_remove" onclick="removeEntry(this, '${containerId}')"><?php echo L::remove; ?></button>
+                   placeholder="<?php echo L::title_recipient_email; ?>" class="input_text">
+            <button type="button" class="btn_remove" onclick="removeEntry(this, '${containerId}')"><?php echo L::title_remove; ?></button>
         </div>
     `;
     container.insertAdjacentHTML('beforeend', template);
@@ -275,7 +318,7 @@ document.getElementById('emailForm').addEventListener('submit', function(e) {
     const formData = new FormData(this);
     formData.append('action', 'update_email');
     
-    fetch('update_lang_settings.php', {
+    fetch('update_settings.php', {
         method: 'POST',
         body: formData
     })
@@ -285,18 +328,18 @@ document.getElementById('emailForm').addEventListener('submit', function(e) {
         try {
             const data = JSON.parse(text); // Parse the response text as JSON
             if (data.success) {
-                alert('<?php echo L::save_success; ?>');
+                alert('<?php echo L::title_save_success; ?>');
             } else {
-                alert('<?php echo L::save_error; ?>');
+                alert('<?php echo L::title_save_error; ?>');
             }
         } catch (error) {
             console.error('JSON parse error:', error);
-            alert('<?php echo L::save_error; ?>');
+            alert('<?php echo L::title_save_error; ?>');
         }
     })
     .catch(error => {
         console.error('Fetch error:', error);
-        alert('<?php echo L::save_error; ?>');
+        alert('<?php echo L::title_save_error; ?>');
     });
 });
 </script>
