@@ -193,6 +193,10 @@ function updateLanguageFiles($emailData = null) {
                     if (file_exists($cacheFile)) {
                         unlink($cacheFile);
                     }
+                    $cacheFile = __DIR__ . '/../langcache/' . basename($file, '.json') . '.cache.php';
+                    if (file_exists($cacheFile)) {
+                        unlink($cacheFile);
+                    }
                 }
             } else {
                 error_log("Error encoding JSON for file: " . $file);
