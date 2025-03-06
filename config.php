@@ -145,8 +145,9 @@ if (isset($_SERVER['HTTP_HOST']) &&
         $boanEndPoint = $json->{'development'}->{'urlLoginRemoteAPI'};
     }
 }
-elseif (isset($_SERVER['SERVER_NAME']) &&
-        strpos($_SERVER['SERVER_NAME'], 'localhost') !== false) {
+
+if (isset($_SERVER['SERVER_NAME']) &&
+    (strpos($_SERVER['SERVER_NAME'], 'localhost') !== false || strpos($_SERVER['SERVER_NAME'], '127.0.0.1') !== false)) {
     $dirArray = explode('/', getcwd());
     $topPath = implode('/', array_slice($dirArray,-2,2,false));
     if (strpos($output, 'src/phpmodules') !== false) {
