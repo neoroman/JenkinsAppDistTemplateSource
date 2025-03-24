@@ -137,10 +137,10 @@ function appDownloader(url) {
 // for remove files, final warning
 function deleteFiles(url, outboundDomain) {
 	if (url) {
-		if (outboundDomain && window.location.hostname === outboundDomain) {
+		if (outboundDomain && window.location.hostname === outboundDomain && !window.location.href.includes('/UangelEdu/')) {
 			alert("[ WARNING ]\n\n 사내 네트워크에서만 삭제가 가능합니다.");
 			return;
-		}	
+		}
 		var result = confirm("선택하신 빌드의 모든 파일이 삭제됩니다.\n\n삭제 후에는 수작업으로만 파일을 복구할 수 있습니다.\n\n\n완전 삭제를 진행 하시려면 '확인(OK)'를 누르세요.\n\n'취소(Cancel)'을 누르시면 임시 삭제(복원 가능)가 진행됩니다.\n\n");
 		if (result == true) {
 			window.location.href = url;
