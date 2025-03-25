@@ -181,8 +181,12 @@ else {
       <legend><?php echo L::app_name; ?></legend>
       <h1 class="logo"><?php echo L::app_name; ?> 배포 사이트</h1>
   			<div class="inputs">
-  				<label class="id_type"><input type="text" name="login_id" class="inp_text" placeholder="아이디를 입력하세요." required></label>
-  				<label class="pw_type"><input type="password" name="login_pw" class="inp_text" placeholder="비밀번호를 입력하세요." required></label>
+  				<label class="id_type">
+            <input type="text" name="login_id" class="inp_text" placeholder="아이디를 입력하세요." autocomplete="username" required>
+          </label>
+  				<label class="pw_type">
+            <input type="password" name="login_pw" class="inp_text" placeholder="비밀번호를 입력하세요." autocomplete="current-password" required>
+          </label>
   			</div>
         <?php if (isset($login_desc) && strlen($login_desc) > 0) echo "<div>$login_desc</div>"; ?>
         <div class="btn_area">
