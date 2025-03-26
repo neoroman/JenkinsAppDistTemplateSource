@@ -56,12 +56,18 @@ if (isset($_POST['login'])) {
           if (isset($row['name'])) {
             $_SESSION['name'] = $row['name'];
           }
+          
           $redirUrl = "";
           if (isset($_POST['redirection'])) {
             $redirUrl = $_POST['redirection'];
+          } else if (isset($_GET['redirection'])) {
+            $redirUrl = $_GET['redirection'];
           } else if (isset($_GET['redirect'])) {
             $redirUrl = $_GET['redirect'];
+          } else if (isset($_POST['redirect'])) {
+            $redirUrl = $_POST['redirect'];
           }
+          
           if (strpos($redirUrl, '?')) {
             $temp = explode('?', $redirUrl);
             $redirUrl = $temp[0];
