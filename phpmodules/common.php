@@ -468,19 +468,37 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                                 $appStoreUploadLink = "<a href=\"$adhocDebugURL\" class=\"btn_debug\" alt=\"ADHOC DEBUG 다운로드\">" .strtoupper($os). " ADHOC DEBUG 다운로드</a> <!-- 20220119 추가 -->";
                             }
                         }
+                        
                         // Android download AAB Bundle and apk
                         if ($os == "android" && $jsonReleaseType == 'release' &&  $json->{$os}->{'GoogleStore'}->{'usingBundleAAB'}) {
                             $pathArray = explode($topPath, $finalJson->{'urlPrefix'});
-                            if (count($pathArray) < 2) {
+                            $pathSuffix = '';
+                            
+                            if (count($pathArray) >= 2) {
+                                $pathSuffix = $pathArray[1];
+                            } else {
                                 $tempTopPath = explode('/', $topPath);
                                 if (count($tempTopPath) > 1) {
                                     $pathArray = explode($tempTopPath[1], $finalJson->{'urlPrefix'});
+                                    if (count($pathArray) >= 2) {
+                                        $pathSuffix = $pathArray[1];
+                                    }
                                 }
                             }
+                            
                             $bundleFilename = str_replace('apk', 'aab', $anItem->{'file'});
-                            $bundleFilePath = ".." . $pathArray[1] . $bundleFilename;
-                            if (!file_exists($bundleFilePath)) {
-                                $bundleFilePath = "../.." . $pathArray[1] . $bundleFilename;
+                            
+                            if (!empty($pathSuffix)) {
+                                $bundleFilePath = ".." . $pathSuffix . $bundleFilename;
+                                if (!file_exists($bundleFilePath)) {
+                                    $bundleFilePath = "../.." . $pathSuffix . $bundleFilename;
+                                }
+                            } else {
+                                // 경로를 찾을 수 없는 경우 대체 경로 사용
+                                $bundleFilePath = "../android_distributions/" . $bundleFilename;
+                                if (!file_exists($bundleFilePath)) {
+                                    $bundleFilePath = "../../android_distributions/" . $bundleFilename;
+                                }
                             }
 
                             if ($json->{$os}->{'GoogleStore'}->{'title'} == $binTitle) {
