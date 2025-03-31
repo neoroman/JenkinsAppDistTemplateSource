@@ -148,18 +148,39 @@ ln -sf src/login.php login.php
 ln -sf src/logout.php logout.php
 ln -sf src/setup.php setup.php
 
-# 원본 디렉토리와 대상 디렉토리의 절대 경로 계산
-SRC_SVG_PATH="$(pwd)/src/images/svg"
-TARGET_SVG_PATH="$(pwd)/images/svg"
-
-# 대상 디렉토리의 존재 여부 확인 및 필요시 제거
-if [ -e "$TARGET_SVG_PATH" ] || [ -h "$TARGET_SVG_PATH" ]; then
-    rm -rf "$TARGET_SVG_PATH"
+# Check if images directory exists, create if not
+if [ ! -d "images" ]; then
+    mkdir -p "images"
 fi
 
-# 절대 경로를 사용하여 심볼릭 링크 생성
-ln -sf "$SRC_SVG_PATH" "$TARGET_SVG_PATH"
-echo "Created symbolic link: $TARGET_SVG_PATH -> $SRC_SVG_PATH"
+# Change to images directory
+cd images
+
+# Check if svg symbolic link exists and points to the correct target
+if [ -h "svg" ]; then
+    # Get the target of the existing symbolic link
+    LINK_TARGET=$(readlink "svg")
+    if [ "$LINK_TARGET" = "../src/images/svg" ]; then
+        echo "Symbolic link already correctly points to ../src/images/svg"
+    else
+        # Remove incorrect symbolic link
+        rm -f "svg"
+        # Create correct symbolic link
+        ln -sf "../src/images/svg" "svg"
+        echo "Updated symbolic link: images/svg -> ../src/images/svg"
+    fi
+else
+    # Remove any existing non-symbolic link file or directory
+    if [ -e "svg" ]; then
+        rm -rf "svg"
+    fi
+    # Create symbolic link
+    ln -sf "../src/images/svg" "svg"
+    echo "Created symbolic link: images/svg -> ../src/images/svg"
+fi
+
+# Return to original directory
+cd ..
 
 # Additional redirects for specific HTML files - Create HTML redirects instead of symlinks
 echo "Creating HTML redirects for specific pages..."
@@ -204,15 +225,6 @@ EOL
     echo "Created/Updated dist_uaqa.html with redirect to dist_domestic.php"
 else
     echo "dist_uaqa.html already exists with correct redirect"
-fi
-
-# Create symbolic link for dist_kt.html if needed
-if [ ! -h dist_kt.html ] || [ "$(readlink dist_kt.html)" != "dist_client.html" ]; then
-    rm -f dist_kt.html
-    ln -sf dist_client.html dist_kt.html
-    echo "Created symbolic link: dist_kt.html -> dist_client.html"
-else
-    echo "dist_kt.html symbolic link already exists"
 fi
 
 chmod -R 777 $SCRIPT_PATH
