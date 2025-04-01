@@ -1,4 +1,7 @@
 <?php
+// Set execution time limit to 300 seconds (5 minutes)
+set_time_limit(300);
+
 if (!class_exists('i18n')) {
     if (file_exists(__DIR__ .'/../config.php')) {
         require_once(__DIR__ . '/../config.php');

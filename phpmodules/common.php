@@ -262,18 +262,33 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
             }
             $finalSnippet .= "</span></h2>";
             if ($isDomesticQA && $distMode == "release") {
-                if (isset($json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'})) {
+                // 소스 코드 파일 접미사 확인
+                $sourceFileSuffix = "-". $os ."_source.zip"; // 기본값 설정
+                if (isset($json->{$os}->{$storeTarget}) && 
+                    isset($json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'})) {
                     $sourceFileSuffix = $json->{$os}->{$storeTarget}->{'sourceCodeFileSuffix'};
-                } else {
-                    $sourceFileSuffix = "-". $os ."_source.zip";
                 }
+                
                 $realSourceFile = $basenameWithoutExt . $sourceFileSuffix;
-                if (isset($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'})) {
+                
+                // 소스 코드 경로 확인
+                $sourcePath = "{OutputFolder}"; // 기본값 설정
+                if (isset($json->{$os}->{$storeTarget}) && 
+                    isset($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'})) {
                     $sourcePath = dirname($json->{$os}->{$storeTarget}->{'sourceCodeAbsPath'});
-                } else {
-                    $sourcePath = "{OutputFolder}";
                 }
-
+            
+                // documentRootPath가 정의되지 않았을 때를 대비한 초기화
+                if (!isset($documentRootPath) || empty($documentRootPath)) {
+                    $documentRootPath = $_SERVER['DOCUMENT_ROOT'];
+                    if (empty($documentRootPath)) {
+                        // 서버 환경 변수가 없는 경우 다른 방법으로 경로 찾기 시도
+                        $scriptPath = dirname($_SERVER['SCRIPT_FILENAME']);
+                        $requestUri = dirname($_SERVER['REQUEST_URI']);
+                        $documentRootPath = str_replace($requestUri, '', $scriptPath);
+                    }
+                }
+                
                 $inBoundPoint = "$frontEndProtocol://$frontEndPoint";
                 if ($sourcePath == "{OutputFolder}") {
                     $newSourcePath = parse_url($finalJson->{'urlPrefix'})['path'];
@@ -283,11 +298,13 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     $realSourceFilePath = $sourcePath ."/". $realSourceFile;
                     $srcUrl = "$inBoundPoint/$realSourceFilePath";
                 }
+                
                 $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('". $srcUrl ."');\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
 
                 $packageUrl = "$php_module_prefix/download_full_packages.php";
                 $finalSnippet .= "<!--PACKAGE_BUTTON --><a class=\"btn_package\" onclick=\"javascript:downloadPackages('$packageUrl','". urldecode($file) ."','". $finalJson->{'appVersion'} ."','". $finalJson->{'buildVersion'} ."','$outBoundPoint','$realSourceFilePath');\" alt=\"Packages\"><span class=\"hide\">Packages</span></a>";
             }
+            $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('". $srcUrl ."');\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
             $finalSnippet .= "<!--COPY_BOTTON --><a class=\"btn_copy\" onclick=\"copyToClip('[$versionTarget $versionDetail] ";
             $finalSnippet .= L::app_name ." $osName v" . $finalJson->{'appVersion'} . ".";
             $finalSnippet .= $finalJson->{'buildVersion'} . " (" . $finalJson->{'buildTime'} . "), Jenkins(";

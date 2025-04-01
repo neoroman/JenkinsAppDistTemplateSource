@@ -95,8 +95,8 @@ if ($json->{'android'}->{'GoogleStore'}->{'enabled'} && !file_exists($target_goo
 if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'} && !file_exists($bundle_google)) {
     $error1 = $_FILES['bundle_google']['error'];
     $name1 = $_FILES['bundle_google']['name'];
-    $last1 = & explode('.', $name1);
-    $ext1 = array_pop($last1);
+    $name_parts = explode('.', $name1);
+    $ext1 = array_pop($name_parts);
 
     // 오류 확인
     if( $error1 != UPLOAD_ERR_OK ) {
@@ -137,8 +137,8 @@ if ($json->{'android'}->{'GoogleStore'}->{'usingBundleAAB'} && !file_exists($bun
 if ($json->{'android'}->{'OneStore'}->{'enabled'} && !file_exists($target_one)) {
     $error2 = $_FILES['file_one']['error'];
     $name2 = $_FILES['file_one']['name'];
-    $last2 = & explode('.', $name2);
-    $ext2 = array_pop($last2);
+    $name_parts = explode('.', $name2);
+    $ext2 = array_pop($name_parts);
 
     // 오류 확인
     if( $error2 != UPLOAD_ERR_OK ) {

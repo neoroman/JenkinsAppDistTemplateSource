@@ -156,9 +156,16 @@ $zipFilePath = "{$tmpBaseDir}/$zipFilename";
 $finalBaseDir = "{$sourceDir}/$sourceSuffixPath";
 $finalZipPath = "{$finalBaseDir}/$zipFilename";
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "Source Filename: $sourceFilename\n\n", FILE_APPEND);
+if (isset($folder) && isset($filePattern)) {
+    file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "Folder: $folder\nFile Pattern: $filePattern\n\n", FILE_APPEND);
+}
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "Folder: $folder\nFile Pattern: $filePattern\n\n", FILE_APPEND);
-file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "version: $version\n", FILE_APPEND);
-file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "build: $build\n", FILE_APPEND);
+if (isset($version)) {
+    file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "version: $version\n", FILE_APPEND);
+}
+if (isset($build)) {
+    file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "build: $build\n", FILE_APPEND);
+}
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "buildDate: $buildDate\n", FILE_APPEND);
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "fileVersion: $fileVersion\n\n", FILE_APPEND);
 file_put_contents($finalBaseDir .'/'. $sourceFilename .'_pattern.txt', "filenameOnly: $filenameOnly\n", FILE_APPEND);
