@@ -298,9 +298,9 @@ function getHtmlSnippets($os, $isDomesticQA, $isSearch, $searchPattern, $files):
                     $realSourceFilePath = $sourcePath ."/". $realSourceFile;
                     $srcUrl = "$inBoundPoint/$realSourceFilePath";
                 }
-                
-                $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('". $srcUrl ."');\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
-
+                if (isset($srcUrl)) {
+                    $finalSnippet .= "<!--SOURCE_BOTTON --><a class=\"btn_src\" onclick=\"javascript:downloadSrc('". $srcUrl ."');\" alt=\"소스코드\"><span class=\"hide\">소스코드</span></a>";
+                }
                 $packageUrl = "$php_module_prefix/download_full_packages.php";
                 $finalSnippet .= "<!--PACKAGE_BUTTON --><a class=\"btn_package\" onclick=\"javascript:downloadPackages('$packageUrl','". urldecode($file) ."','". $finalJson->{'appVersion'} ."','". $finalJson->{'buildVersion'} ."','$outBoundPoint','$realSourceFilePath');\" alt=\"Packages\"><span class=\"hide\">Packages</span></a>";
             }
