@@ -198,5 +198,11 @@ $selectedPattern = "";
 <script src="../js/common.js"></script>
 <!-- app dist common for client JS -->
 <script src="../js/appDistCommon4client.js?v5"></script>
+
+<!-- ChannelIO 스크립트 -->
+<?php
+require_once('../phpmodules/ChannelIO.php');
+echo generateChannelIOScript();
+?>
 </body>
 </html>

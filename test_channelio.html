@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ChannelIO 테스트</title>
+</head>
+<body>
+    <h1>ChannelIO 스크립트 테스트</h1>
+    <p>이 페이지는 ChannelIO 스크립트가 제대로 작동하는지 테스트하기 위한 페이지입니다.</p>
+    
+    <div>
+        <h2>사용법:</h2>
+        <ul>
+            <li>브라우저 개발자 도구의 콘솔을 열어주세요</li>
+            <li><code>debugUserInfo()</code> 함수를 호출하여 사용자 정보를 확인할 수 있습니다</li>
+            <li>ChannelIO 초기화 상태를 확인할 수 있습니다</li>
+        </ul>
+    </div>
+    
+    <div>
+        <h2>테스트 버튼:</h2>
+        <button onclick="debugUserInfo()">사용자 정보 확인</button>
+        <button onclick="console.log('ChannelIO 상태:', window.channelIOInitialized)">ChannelIO 상태 확인</button>
+    </div>
+
+    <!-- ChannelIO 스크립트 테스트 -->
+    <script>
+    // 테스트용 사용자 정보 (실제로는 PHP 세션에서 가져옴)
+    const TEST_USER_INFO = {
+        id: 'test-user-001',
+        name: '테스트 사용자',
+        email: 'test@example.com',
+        type: 'test',
+        isLoggedIn: true,
+        token: 'test-token-123'
+    };
+    
+    // 테스트용 ChannelIO 초기화
+    function initTestChannelIO() {
+        console.log('테스트 ChannelIO 초기화 - 사용자:', TEST_USER_INFO);
+        
+        // 실제 ChannelIO가 로드되면 부트
+        if (window.ChannelIO) {
+            window.ChannelIO('boot', {
+                "pluginKey": 'a8998820-06d9-420b-964a-c3e072a1265f',
+                "profile": {
+                    "name": TEST_USER_INFO.name,
+                    "email": TEST_USER_INFO.email,
+                    "mobileNumber": "",
+                    "landlineNumber": "+82 31 710 6200",
+                    "os": "pc",
+                    "CUSTOM_VALUE_1": TEST_USER_INFO.id,
+                    "CUSTOM_VALUE_2": TEST_USER_INFO.type,
+                    "CUSTOM_VALUE_3": TEST_USER_INFO.isLoggedIn ? 'true' : 'false',
+                    "CUSTOM_VALUE_4": window.location.pathname,
+                    "CUSTOM_VALUE_5": new Date().toISOString()
+                }
+            });
+            
+            window.channelIOInitialized = true;
+            console.log('테스트 ChannelIO 부트 완료');
+        }
+    }
+    
+    // 테스트용 디버깅 함수
+    window.debugUserInfo = function() {
+        console.log('=== 테스트 사용자 정보 ===');
+        console.log('사용자 정보:', TEST_USER_INFO);
+        console.log('ChannelIO 상태:', window.channelIOInitialized);
+        console.log('현재 페이지:', window.location.href);
+        console.log('=======================');
+    };
+    
+    // 초기화
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTestChannelIO);
+    } else {
+        initTestChannelIO();
+    }
+    </script>
+
+    <!-- ChannelIO 로더 -->
+    <script>
+    (function(){
+        var w=window;
+        if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}
+        var ch=function(){ch.c(arguments);};
+        ch.q=[];ch.c=function(args){ch.q.push(args);};
+        w.ChannelIO=ch;
+        function l(){
+            if(w.ChannelIOInitialized){return;}
+            w.ChannelIOInitialized=true;
+            var s=document.createElement("script");
+            s.type="text/javascript";
+            s.async=true;
+            s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";
+            var x=document.getElementsByTagName("script")[0];
+            if(x.parentNode){x.parentNode.insertBefore(s,x);}
+        }
+        if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}
+    })();
+    </script>
+</body>
+</html>
