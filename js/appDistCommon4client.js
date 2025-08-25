@@ -137,7 +137,10 @@ function appDownloader(url) {
 // for remove files, final warning
 function deleteFiles(url, outboundDomain) {
 	if (url) {
-		if (outboundDomain && window.location.hostname === outboundDomain && !window.location.href.includes('/UangelEdu/')) {
+		if (outboundDomain && window.location.hostname === outboundDomain 
+			&& !window.location.href.includes('/UangelEdu/')
+			&& !window.location.href.includes('/CID_Service/')
+		) {
 			alert("[ WARNING ]\n\n 사내 네트워크에서만 삭제가 가능합니다.");
 			return;
 		}
