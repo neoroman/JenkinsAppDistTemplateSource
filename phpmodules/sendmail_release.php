@@ -185,7 +185,7 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
         $mail->Body .= '<tr><td align="center">';
         $mail->Body .= '<table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:10px;border:1px solid #dbe0e8;overflow:hidden;">';
 
-        $mail->Body .= '<tr><td style="background:#1e40af;padding:22px 26px;color:#ffffff;">';
+        $mail->Body .= '<tr><td style="background:#2563eb;padding:22px 26px;color:#ffffff;">';
         $mail->Body .= '<div style="font-size:18px;font-weight:700;letter-spacing:-0.02em;line-height:1.3;">'. L::title_h2_client .' · 릴리스 안내</div>';
         $mail->Body .= '<div style="font-size:13px;opacity:0.92;margin-top:6px;">'. htmlspecialchars(date("Y.m.d"), ENT_QUOTES | ENT_HTML5, 'UTF-8') .'</div>';
         $mail->Body .= '</td></tr>';
@@ -235,9 +235,10 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
 
         $mail->Body .= '</table></td></tr></table></body></html>';
 
-        $mail->AltBody = "안녕하세요.\n\n" . $message_header . "\n\n";
+        $mail->AltBody = "안녕하세요.\n\n" . strip_tags($message_header) . "\n\n";
         $mail->AltBody .= '설치 및 다운로드 URL: ' . L::client_short_url . ' (ID/PW: ' . $siteUser . '/' . $sitePass . ")\n\n";
-        $mail->AltBody .= "수정 및 반영사항\n" . $message_description . "\n\n";
+        $mail->AltBody .= "수정 및 반영사항\n" . strip_tags($mh) . "\n\n";
+        $mail->AltBody .= "빌드 환경\n" . $message_description . "\n\n";
         if (isset($message_attachment)) {
           $mail->AltBody .= '첨부파일: ' . $message_attachment . "\n\n";
         }
