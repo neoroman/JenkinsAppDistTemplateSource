@@ -172,45 +172,78 @@ if (file_exists("$documentRootPath/PHPMailer/PHPMailer/PHPMailer.php")) {
         $mail->Body    = $message;
         $mail->AltBody = $message;
       } else {
-        $mail->Body    = '<HTML>';
-        $mail->Body   .= isset($html_header) ? $html_header : "";
-        $mail->Body   .= '<BODY>';
-        $mail->Body   .= '<br />안녕하세요.<br />';
-        $mail->Body   .= '<div>'.$message_header.'</div><br />';
-        $mail->Body   .= '<H2><b>설치 및 다운로드 URL</b></H2>';
-        $mail->Body   .= '<div style="background: ghostwhite; font-size: 12px; padding: 10px; border: 1px solid lightgray; margin: 10px;">';
-        $mail->Body   .= '<a href='. L::client_short_url .'>'. L::client_short_url .'</a>&nbsp;(ID/PW: '. $siteUser .'/'. $sitePass .')';
-        $mail->Body   .= '</div>';
-        $mail->Body   .= '<div style="font-size: 10px; padding: 10px; margin: 10px"> ※'. L::description_notice18;
-        $mail->Body   .= '</div>';
-        $mail->Body   .= '<br /><br />';
-        $mail->Body   .= '<H2><b>수정 및 반영사항</b></H2>';
-        $mail->Body   .= '<div>'. isset($message_html) ? $message_html : "" .'</div>';
-        $mail->Body   .= '<br /><br /><br />';
-        $mail->Body   .= '<H2><b>빌드 환경</b></H2><br />';
-        $mail->Body   .= $message_description;
-        $mail->Body   .= '<br /><br />';
-        if (isset($message_attachment)) {
-          $mail->Body   .= '<H2><b>첨부파일:</b></H2>';
-          $mail->Body   .= '<div><pre>'.$message_attachment.'</pre></div>';
-          $mail->Body   .= '<br />';
-        }
-        $mail->Body   .= '<br /><br />';
-        $mail->Body   .= '감사합니다.<br /><br />';
-        $mail->Body   .= 'App Development Team<br />';
-        $mail->Body   .= L::copywrite_company .'</BODY></HTML>';
+        // Table-based layout + inline styles for common mail clients; fix isset() concat precedence bug on message_html
+        $mh = isset($message_html) ? $message_html : '';
+        $urlEsc = htmlspecialchars((string) L::client_short_url, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $userEsc = htmlspecialchars((string) $siteUser, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $passEsc = htmlspecialchars((string) $sitePass, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $attachEsc = isset($message_attachment) ? htmlspecialchars((string) $message_attachment, ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
 
-        // This is the body in plain text for non-HTML mail clients
-        $mail->AltBody  = '안녕하세요.\n\n'.$message_header.'\n\n';
-        $mail->AltBody .= '설치 및 다운로드 URL: '. L::client_short_url .' (ID/PW: '. $siteUser .'/'. $sitePass .')\n\n';
-        $mail->AltBody .= '수정 및 반영사항\n항목:\n'.$message_description.'\n\n';
-        if (isset($message_attachment)) {
-          $mail->AltBody .= '첨부파일: '.$message_attachment.'\n\n';
+        $mail->Body = '<!DOCTYPE html><html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>'. L::title_h2_client .'</title></head>';
+        $mail->Body .= '<body style="margin:0;padding:0;background-color:#eef2f7;">';
+        $mail->Body .= '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#eef2f7;padding:20px 12px;">';
+        $mail->Body .= '<tr><td align="center">';
+        $mail->Body .= '<table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;background:#ffffff;border-radius:10px;border:1px solid #dbe0e8;overflow:hidden;">';
+
+        $mail->Body .= '<tr><td style="background:#1e40af;padding:22px 26px;color:#ffffff;">';
+        $mail->Body .= '<div style="font-size:18px;font-weight:700;letter-spacing:-0.02em;line-height:1.3;">'. L::title_h2_client .' · 릴리스 안내</div>';
+        $mail->Body .= '<div style="font-size:13px;opacity:0.92;margin-top:6px;">'. htmlspecialchars(date("Y.m.d"), ENT_QUOTES | ENT_HTML5, 'UTF-8') .'</div>';
+        $mail->Body .= '</td></tr>';
+
+        if (isset($html_header) && $html_header !== '') {
+          $mail->Body .= '<tr><td style="padding:0 26px 8px;">'.$html_header.'</td></tr>';
         }
-        $mail->AltBody .= '\n\n';
-        $mail->AltBody .= '감사합니다.\n\n';
-        $mail->AltBody .= 'App Development Team\n';
-        $mail->AltBody .= L::copywrite_company .'\n';
+
+        $mail->Body .= '<tr><td style="padding:22px 26px 8px;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Helvetica Neue\',Arial,sans-serif;font-size:15px;line-height:1.55;color:#1f2937;">';
+        $mail->Body .= '<p style="margin:0 0 14px;">안녕하세요.</p>';
+        $mail->Body .= '<div style="color:#374151;">'.$message_header.'</div>';
+        $mail->Body .= '</td></tr>';
+
+        $mail->Body .= '<tr><td style="padding:8px 26px 18px;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Helvetica Neue\',Arial,sans-serif;">';
+        $mail->Body .= '<div style="font-size:14px;font-weight:700;color:#111827;padding-bottom:8px;border-bottom:3px solid #2563eb;display:inline-block;">설치 및 다운로드 URL</div>';
+        $mail->Body .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">';
+        $mail->Body .= '<tr><td style="padding:16px 18px;font-size:13px;line-height:1.5;">';
+        $mail->Body .= '<a href="'. $urlEsc .'" style="color:#2563eb;word-break:break-all;text-decoration:none;border-bottom:1px solid #93c5fd;">'. $urlEsc .'</a>';
+        $mail->Body .= '<div style="margin-top:12px;font-size:12px;color:#64748b;">';
+        $mail->Body .= 'ID: <span style="font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#fff;padding:3px 10px;border-radius:4px;border:1px solid #e2e8f0;color:#0f172a;">'. $userEsc .'</span>';
+        $mail->Body .= ' &nbsp; PW: <span style="font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#fff;padding:3px 10px;border-radius:4px;border:1px solid #e2e8f0;color:#0f172a;">'. $passEsc .'</span>';
+        $mail->Body .= '</div></td></tr></table>';
+        $mail->Body .= '<p style="font-size:11px;color:#94a3b8;margin:12px 0 0;line-height:1.45;">※ '. L::description_notice18 .'</p>';
+        $mail->Body .= '</td></tr>';
+
+        $mail->Body .= '<tr><td style="padding:8px 26px 18px;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Helvetica Neue\',Arial,sans-serif;">';
+        $mail->Body .= '<div style="font-size:14px;font-weight:700;color:#111827;padding-bottom:8px;border-bottom:3px solid #2563eb;display:inline-block;">수정 및 반영사항</div>';
+        $mail->Body .= '<div style="margin-top:14px;color:#374151;font-size:14px;line-height:1.55;">'. $mh .'</div>';
+        $mail->Body .= '</td></tr>';
+
+        $mail->Body .= '<tr><td style="padding:8px 26px 18px;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Helvetica Neue\',Arial,sans-serif;">';
+        $mail->Body .= '<div style="font-size:14px;font-weight:700;color:#111827;padding-bottom:8px;border-bottom:3px solid #2563eb;display:inline-block;">빌드 환경</div>';
+        $mail->Body .= '<div style="margin-top:14px;font-size:13px;color:#374151;line-height:1.55;white-space:pre-wrap;">'. $message_description .'</div>';
+        $mail->Body .= '</td></tr>';
+
+        if (isset($message_attachment)) {
+          $mail->Body .= '<tr><td style="padding:8px 26px 22px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;">';
+          $mail->Body .= '<div style="font-size:14px;font-weight:700;color:#111827;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;padding-bottom:8px;">첨부파일</div>';
+          $mail->Body .= '<div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:14px;font-size:12px;line-height:1.45;color:#0f172a;white-space:pre-wrap;word-break:break-word;">'. $attachEsc .'</div>';
+          $mail->Body .= '</td></tr>';
+        }
+
+        $mail->Body .= '<tr><td style="padding:22px 26px;background:#f8fafc;border-top:1px solid #e5e7eb;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Helvetica Neue\',Arial,sans-serif;">';
+        $mail->Body .= '<p style="margin:0 0 10px;color:#374151;font-size:15px;">감사합니다.</p>';
+        $mail->Body .= '<p style="margin:0;font-size:13px;color:#6b7280;line-height:1.5;">App Development Team<br />'. L::copywrite_company .'</p>';
+        $mail->Body .= '</td></tr>';
+
+        $mail->Body .= '</table></td></tr></table></body></html>';
+
+        $mail->AltBody = "안녕하세요.\n\n" . $message_header . "\n\n";
+        $mail->AltBody .= '설치 및 다운로드 URL: ' . L::client_short_url . ' (ID/PW: ' . $siteUser . '/' . $sitePass . ")\n\n";
+        $mail->AltBody .= "수정 및 반영사항\n" . $message_description . "\n\n";
+        if (isset($message_attachment)) {
+          $mail->AltBody .= '첨부파일: ' . $message_attachment . "\n\n";
+        }
+        $mail->AltBody .= "감사합니다.\n\n";
+        $mail->AltBody .= "App Development Team\n";
+        $mail->AltBody .= L::copywrite_company . "\n";
       }
 
       $mail->send();
